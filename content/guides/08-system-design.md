@@ -53,3 +53,11 @@ Jumping to boxes without requirements; no numbers; naming technologies without r
 
 ## Self-check after each practice
 Did I state requirements? Did I estimate? Did I name the bottleneck? Did I explain one trade-off per component? Did I describe a failure and recovery? Did I keep to time?
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Sliding-window rate limiter](practice:rate-limit-decisions)
+- [Exponential backoff schedule](practice:backoff-schedule)
+- [Latest record per key](practice:latest-per-key)

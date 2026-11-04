@@ -1,0 +1,37 @@
+slug: valid-palindrome
+title: Valid Palindrome
+kind: function
+difficulty: Easy
+tags: [strings, two-pointers]
+topic_keys: [dsa-and-coding-rounds-two-pointers-and-sliding-window]
+statement: |
+  A phrase is a palindrome if, after lowercasing it and removing everything that is not a letter or a
+  digit, it reads the same forwards and backwards.
+
+  Given `s`, return `true` if it is a palindrome. Use two pointers; do not build a reversed copy.
+signature:
+  name: is_palindrome
+  params:
+  - {name: s, type: str}
+  returns: bool
+tests:
+- name: classic
+  args: ['A man, a plan, a canal: Panama']
+  expected: true
+- name: not a palindrome
+  args: [race a car]
+  expected: false
+- name: only a space
+  args: [' ']
+  expected: true
+- name: letter and digit
+  args: [0P]
+  expected: false
+- name: underscore is ignored
+  args: [ab_a]
+  expected: true
+  hidden: true
+- name: digits
+  args: ['12321']
+  expected: true
+  hidden: true

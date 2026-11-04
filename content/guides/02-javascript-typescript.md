@@ -67,3 +67,12 @@ Typed API clients and Redux Toolkit slices in the Elphi frontend; Yup schemas ne
 
 ## Common mistakes
 Saying JavaScript is "multi-threaded"; mixing up microtasks and macrotasks; believing `const` makes objects immutable; using `any` to silence errors.
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Two Sum](practice:two-sum)
+- [Group anagrams](practice:group-anagrams)
+- [Flatten a nested list](practice:flatten-nested-list)
+- [Merge intervals](practice:merge-intervals)

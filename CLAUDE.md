@@ -16,6 +16,7 @@ Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [R
 - New module: add it to the `containers` list in the import-linter contract in `apps/api/pyproject.toml`, and add the "keeps its internals private" contract for it. Other modules may import its `service`, `schemas` and `dependencies` only.
 - Every query is scoped by `owner_id`; add a cross-owner test for each new resource (see `other_api` in `tests/conftest.py`).
 - Links shown in the UI must be validated as http(s) in the schema (`Url` in `modules/tracker/schemas.py`).
+- Practice problems: tests are language-neutral JSON in `content/problems/<slug>.yaml`; add a reference solution to `tests/problem_solutions.py` and link the problem from a guide with `practice:<slug>`. Learner code only ever runs in the browser workers under their own CSP (ADR 0007); never run it on the server.
 - Anything that leaves the machine (email, applications) needs explicit user approval; there is no send action.
 
 ## Safety

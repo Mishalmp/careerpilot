@@ -1,0 +1,40 @@
+slug: longest-unique-substring
+title: Longest Substring Without Repeating Characters
+kind: function
+difficulty: Medium
+tags: [sliding-window, strings]
+topic_keys: [dsa-and-coding-rounds-two-pointers-and-sliding-window]
+statement: |
+  Return the length of the longest substring of `s` in which no character appears twice.
+
+  Use a sliding window: grow it on the right and move the left edge past a repeated character.
+signature:
+  name: length_of_longest_substring
+  params:
+  - {name: s, type: str}
+  returns: int
+tests:
+- name: abcabcbb
+  args: [abcabcbb]
+  expected: 3
+- name: all the same
+  args: [bbbbb]
+  expected: 1
+- name: pwwkew
+  args: [pwwkew]
+  expected: 3
+- name: empty
+  args: ['']
+  expected: 0
+- name: dvdf
+  args: [dvdf]
+  expected: 3
+  hidden: true
+- name: abba
+  args: [abba]
+  expected: 2
+  hidden: true
+- name: tmmzuxt
+  args: [tmmzuxt]
+  expected: 5
+  hidden: true

@@ -63,3 +63,14 @@ Per-tenant PostgreSQL databases, Alembic migrations across tenants, single-fligh
 
 ## Common mistakes
 Using `NOT IN` with NULLs; filtering the right side of a LEFT JOIN in `WHERE`; claiming an index always helps; forgetting that `OFFSET` paging is unstable.
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Second highest salary](practice:second-highest-salary)
+- [Duplicate emails](practice:duplicate-emails)
+- [Customers without orders (anti-join)](practice:customers-without-orders)
+- [Running total (window function)](practice:running-total)
+- [Top two salaries per department](practice:top-two-salaries-per-department)
+- [Longest login streak (gaps and islands)](practice:longest-login-streak)

@@ -1,0 +1,62 @@
+slug: latest-per-key
+title: Keep the Latest Record per Key
+kind: function
+difficulty: Medium
+tags: [data-engineering, hashing]
+topic_keys: [data-engineering-idempotency-deduplication-late-arriving-data-backfills]
+statement: |
+  A pipeline receives change records `[key, version, value]`, possibly out of order and with repeats. Keep
+  only the newest record for each key: the one with the highest `version`. If two records for a key have the
+  same version, the one that appears later in the input wins.
+
+  Return the kept records sorted by key. This is the same idea as deduplicating a raw layer by its business key.
+signature:
+  name: latest_per_key
+  params:
+  - {name: records, type: 'any[][]'}
+  returns: any[][]
+tests:
+- name: simple
+  args:
+  - - [a, 1, x]
+    - [b, 1, y]
+    - [a, 2, z]
+  expected:
+  - [a, 2, z]
+  - [b, 1, y]
+- name: out of order
+  args:
+  - - [a, 3, c]
+    - [a, 1, a]
+  expected:
+  - [a, 3, c]
+- name: same version, later wins
+  args:
+  - - [k, 1, old]
+    - [k, 1, new]
+  expected:
+  - [k, 1, new]
+- name: empty
+  args:
+  - []
+  expected: []
+- name: sorted by key
+  args:
+  - - [b, 1, 1]
+    - [a, 1, 2]
+  expected:
+  - [a, 1, 2]
+  - [b, 1, 1]
+  hidden: true
+- name: many keys
+  args:
+  - - [x, 1, 0]
+    - [y, 5, 1]
+    - [x, 2, 2]
+    - [y, 4, 3]
+    - [z, 1, 4]
+  expected:
+  - [x, 2, 2]
+  - [y, 5, 1]
+  - [z, 1, 4]
+  hidden: true

@@ -14,7 +14,7 @@ Written 2026-11-03 for Mishal MP. Status: plan, awaiting approval. Nothing is bu
 | Database | **PostgreSQL 16+ with pgvector** (Docker for dev) | Relational data, full-text search and vector search in one store. You already know Postgres. One thing to back up |
 | Queue and schedule | **Postgres-backed queue** (procrastinate, to be confirmed in a spike), no Redis | The database is already there; enqueue in the same transaction as your writes; fewer moving parts |
 | Backend | Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2 async, Alembic, `uv`, `ruff`, `pytest` | Your stack; strict typing; boring and proven |
-| Frontend | Next.js (App Router), TypeScript strict, Tailwind, TanStack Query and Table, dnd-kit, Monaco | Your stack; generated API client so types never drift |
+| Frontend | Next.js (App Router), TypeScript strict, Tailwind, TanStack Query and Table, dnd-kit, CodeMirror 6 | Your stack; generated API client so types never drift |
 | LLM access | **Provider interface**. Default: **Anthropic API key**. Optional, off by default: local `claude -p` using your own plan | See section 15; the token question is answered there |
 | RAG | Own implementation in a `knowledge` module: heading-aware chunking, local embeddings (FastEmbed, 384-d), pgvector HNSW, Postgres full-text, reciprocal rank fusion, evals | You learn the parts; the corpus is small; zero embedding cost |
 | MCP | Own **MCP server** exposing the platform to Claude Desktop or Claude Code (stdio first) | You learn the protocol; Claude can then operate your tracker. Read tools and write tools are separated, and there is **no send-email tool** |
@@ -84,7 +84,7 @@ Single user (you). Journeys the design must make fast:
 | F7 | Interview Intel: rounds, process, topics, reported questions, difficulty, confidence, source; similar-company fallback labelled as inferred | Must |
 | F8 | Prep: 45-day roadmap with start-date-driven dates, 159 topics with confidence and next-review date, study sessions, guide reader | Must |
 | F9 | Mock interviews with an LLM interviewer, rubric scores, weak-topic extraction, transcripts stored | Should |
-| F10 | Practice: problem list, Monaco editor, run against tests in Python, JavaScript, TypeScript and SQL; submissions history; deep links from guides, topics, intel questions | Must |
+| F10 | Practice: problem list, code editor (CodeMirror 6, see ADR 0007), run against tests in Python, JavaScript, TypeScript and SQL; submissions history; deep links from guides, topics, intel questions | Must |
 | F11 | Knowledge search ("Ask my notes"): hybrid retrieval, citations, "I do not know" when evidence is weak | Should |
 | F12 | MCP server: read tools, guarded write tools, resources, prompts | Should |
 | F13 | Scoring: JD match percent, chance estimate, fit score and breakdown, priority | Must |
@@ -321,7 +321,7 @@ Task kinds: `discover`, `verify_company`, `collect_intel`, `score_job`, `embed_d
 Routes: `/` Today and dashboard, `/jobs` (table and Kanban), `/jobs/[id]` (Overview, JD, Company check, Intel, Contacts, Outreach, Timeline), `/companies`, `/intel`, `/prep` (Today, Roadmap, Topics, Guides, Mocks, Stories), `/practice` and `/practice/[slug]`, `/ask`, `/outreach` (approval queue), `/analytics`, `/tasks`, `/settings`.
 - Layout: left navigation, global quick-add (paste URL or text), command palette.
 - Tables: virtualised, saved filters, status colours matching the workbook, keyboard navigation.
-- Editor: Monaco with language switch, test panel, run and reset, timer, submissions drawer, "open in guide" link back.
+- Editor: CodeMirror 6 with language switch, test panel, run and reset, timer, submissions drawer, "open in guide" link back.
 - Accessibility: semantic markup, focus management in dialogs and drag and drop (keyboard alternative to dragging), contrast checks.
 - State: TanStack Query for server state; local state for UI; forms with Zod schemas shared with the generated client where possible.
 - Rendering untrusted text (JDs, intel, guides): Markdown rendered through a sanitiser with raw HTML disabled; CSP set by the server.
@@ -429,7 +429,7 @@ Time-box: building takes at most **2 hours a day** in the first three weeks; int
 |---|---|---|---|---|
 | **0 Foundation** | 1 | Repository, `uv` and `pnpm` setup, Docker Postgres with pgvector, Alembic baseline, config, structured logging, auth with CSRF and Host checks, CI skeleton, ADRs 1 to 6, module-boundary check | `make dev` starts everything; login works; CI green; migration up and down passes | 5 to 6 |
 | **1 Tracker + Prep (first usable)** | 2 to 5 | Jobs and applications with the state machine and history, table and Kanban, job detail, contacts, workbook import, prep roadmap and topics seeded from `content/`, guide reader, study sessions, dashboard | Import the v2 workbook round trip; move a job through all statuses with history; Today screen shows the roadmap day and due follow-ups; tests for state machine and import idempotency | 14 to 18 |
-| **2 Practice runner** | 6 to 9 | Problem format, 25 original problems, Monaco editor, Python (Pyodide), JavaScript and TypeScript workers, SQL (PGlite), submissions, deep links from guides and topics | Every language runs tests; infinite loop is stopped within the limit; CSP blocks network; clicking a guide question opens the right problem | 12 to 15 |
+| **2 Practice runner** | 6 to 9 | Problem format, 25 original problems, code editor (CodeMirror 6, see ADR 0007), Python (Pyodide), JavaScript and TypeScript workers, SQL (PGlite), submissions, deep links from guides and topics | Every language runs tests; infinite loop is stopped within the limit; CSP blocks network; clicking a guide question opens the right problem | 12 to 15 |
 | **3 Knowledge (RAG) + MCP** | 10 to 14 | Ingest, chunk, embed, hybrid retrieval, answers with citations, golden eval set; MCP server with read tools and guarded write tools; learning notes | Eval recall@5 at or above the target set after the first run (target decided from the baseline); `Ask` cites sources; Claude Desktop or Code lists due follow-ups through MCP | 12 to 15 |
 | **4 Research agents + scoring + outreach** | 15 to 21 | Fetcher with policy and SSRF guard, verification, intel and similar-company fallback, scoring service, outreach drafts with lint and approval, LLM audit and budget guard, mock interviews | SSRF suite passes; quote verification rejects a fabricated quote in tests; verdict follows the rule; no send action exists; daily cap blocks a runaway job | 14 to 18 |
 | **5 Discovery + scheduler** | 22 to 28 | Greenhouse, Lever and Ashby adapters, policy registry, daily digest, task screen, optional Gmail alert parser | Re-running discovery creates no duplicates; blocked domains are refused; failures visible and retryable | 8 to 10 |
@@ -518,7 +518,7 @@ Primary references to read (and cite in ADRs): the MCP specification and Python 
 |---|---|---|---|
 | Building the platform eats prep time | High | High | Phase slicing; 2-hour cap; platform useful by day 3; prep first every day |
 | Scope creep ("more features") | High | Medium | MoSCoW list; every addition needs a real case and a deletion elsewhere |
-| A spike fails (Pyodide, PGlite, procrastinate, MCP v2 API) | Medium | Low to medium | Spikes first; named fallbacks (Celery plus Redis; Monaco plus JS-only; server runner later) |
+| A spike fails (Pyodide, PGlite, procrastinate, MCP v2 API) | Medium | Low to medium | Spikes first; named fallbacks (Celery plus Redis; CodeMirror 6 plus JS-only; server runner later) |
 | LLM output wrong or fabricated | High | High | Quote verification, rules for verdicts, human approval, evals, uncertainty shown |
 | Review and portal terms change | Medium | Medium | Policy registry with review dates; manual paste path always works |
 | API cost surprises | Low | Low | Daily cap, audit table, batch and caching |

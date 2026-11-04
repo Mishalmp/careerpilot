@@ -1,0 +1,58 @@
+slug: running-total
+title: Running Total
+kind: sql
+difficulty: Medium
+tags: [sql, window-functions]
+topic_keys: [sql-and-postgresql-window-functions-row-number-rank-lag-lead-running-totals]
+statement: |
+  Table `sales(day, amount)` with one row per day.
+
+  Return `day` and `running_total`, the sum of `amount` for that day and every earlier day, ordered by
+  `day` ascending.
+sql:
+  ddl: |
+    CREATE TABLE sales (day date PRIMARY KEY, amount int);
+  starter: |
+    -- Return day and running_total, ordered by day.
+    SELECT day, amount AS running_total FROM sales;
+  tests:
+  - name: three days
+    data: |
+      INSERT INTO sales VALUES ('2024-01-01',10),('2024-01-02',20),('2024-01-03',5);
+    expected:
+      columns: [day, running_total]
+      rows:
+      - ['2024-01-01', 10]
+      - ['2024-01-02', 30]
+      - ['2024-01-03', 35]
+      ordered: true
+  - name: inserted out of order
+    data: |
+      INSERT INTO sales VALUES ('2024-01-03',5),('2024-01-01',10),('2024-01-02',20);
+    expected:
+      columns: [day, running_total]
+      rows:
+      - ['2024-01-01', 10]
+      - ['2024-01-02', 30]
+      - ['2024-01-03', 35]
+      ordered: true
+  - name: negative amounts and gaps
+    data: |
+      INSERT INTO sales VALUES ('2024-02-01',100),('2024-02-05',-40),('2024-02-09',15);
+    expected:
+      columns: [day, running_total]
+      rows:
+      - ['2024-02-01', 100]
+      - ['2024-02-05', 60]
+      - ['2024-02-09', 75]
+      ordered: true
+    hidden: true
+  - name: one day
+    data: |
+      INSERT INTO sales VALUES ('2024-03-01',7);
+    expected:
+      columns: [day, running_total]
+      rows:
+      - ['2024-03-01', 7]
+      ordered: true
+    hidden: true

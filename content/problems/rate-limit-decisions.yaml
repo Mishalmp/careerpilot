@@ -1,0 +1,59 @@
+slug: rate-limit-decisions
+title: Sliding-Window Rate Limiter
+kind: function
+difficulty: Medium
+tags: [system-design, queues]
+topic_keys: [system-design-design-rate-limiter, system-design-reliability-timeouts-retries-with-jitter-circuit-breakers-graceful-deg]
+statement: |
+  A rate limiter allows at most `limit` requests in any window of `window` seconds. `timestamps` lists
+  request times in seconds, in non-decreasing order.
+
+  Return one boolean per request: `true` if it is allowed. A request at time `t` is allowed when fewer
+  than `limit` *allowed* requests happened in the window `(t - window, t]`. Rejected requests do not count
+  toward the limit.
+signature:
+  name: rate_limit
+  params:
+  - {name: timestamps, type: 'int[]'}
+  - {name: limit, type: int}
+  - {name: window, type: int}
+  returns: bool[]
+tests:
+- name: burst then block
+  args:
+  - [1, 2, 3, 4, 5]
+  - 3
+  - 10
+  expected: [true, true, true, false, false]
+- name: window slides
+  args:
+  - [1, 2, 3, 11, 12, 13]
+  - 2
+  - 10
+  expected: [true, true, false, true, true, false]
+- name: same second
+  args:
+  - [5, 5, 5]
+  - 2
+  - 1
+  expected: [true, true, false]
+- name: boundary is exclusive
+  args:
+  - [0, 10]
+  - 1
+  - 10
+  expected: [true, true]
+- name: no requests
+  args:
+  - []
+  - 3
+  - 5
+  expected: []
+  hidden: true
+- name: one second apart
+  args:
+  - [1, 2]
+  - 1
+  - 1
+  expected: [true, true]
+  hidden: true

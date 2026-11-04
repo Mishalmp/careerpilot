@@ -1,0 +1,48 @@
+slug: customers-without-orders
+title: Customers Who Never Ordered
+kind: sql
+difficulty: Easy
+tags: [sql, joins]
+topic_keys: [sql-and-postgresql-joins-all-types-set-operations-null-semantics]
+statement: |
+  Tables `customers(id, name)` and `orders(id, customer_id)`.
+
+  Return the `name` of every customer who has placed no orders. Row order does not matter.
+sql:
+  ddl: |
+    CREATE TABLE customers (id int PRIMARY KEY, name text);
+    CREATE TABLE orders (id int PRIMARY KEY, customer_id int REFERENCES customers(id));
+  starter: |
+    -- Return the names of customers with no orders.
+    SELECT name FROM customers;
+  tests:
+  - name: one customer without orders
+    data: |
+      INSERT INTO customers VALUES (1,'Asha'),(2,'Ben'),(3,'Chen'); INSERT INTO orders VALUES (10,1),(11,2);
+    expected:
+      columns: [name]
+      rows:
+      - [Chen]
+  - name: everyone has ordered
+    data: |
+      INSERT INTO customers VALUES (1,'Asha'); INSERT INTO orders VALUES (10,1),(11,1);
+    expected:
+      columns: [name]
+      rows: []
+  - name: no orders at all
+    data: |
+      INSERT INTO customers VALUES (1,'Asha'),(2,'Ben');
+    expected:
+      columns: [name]
+      rows:
+      - [Asha]
+      - [Ben]
+    hidden: true
+  - name: repeat customers
+    data: |
+      INSERT INTO customers VALUES (1,'Asha'),(2,'Ben'),(3,'Chen'); INSERT INTO orders VALUES (10,1),(11,1),(12,1),(13,3);
+    expected:
+      columns: [name]
+      rows:
+      - [Ben]
+    hidden: true

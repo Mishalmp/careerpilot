@@ -1,0 +1,54 @@
+slug: group-anagrams
+title: Group Anagrams
+kind: function
+difficulty: Medium
+tags: [hashing, strings]
+topic_keys: [dsa-and-coding-rounds-arrays-strings-hashing, python-collections-and-complexity-list-dict-set-deque-heapq-counter]
+statement: |
+  Group the strings in `strs` that are anagrams of each other (same letters, any order).
+
+  Return a list of groups. The order of the groups, and of the words inside a group, does not matter.
+signature:
+  name: group_anagrams
+  params:
+  - {name: strs, type: 'str[]'}
+  returns: str[][]
+tests:
+- name: example
+  args:
+  - [eat, tea, tan, ate, nat, bat]
+  expected:
+  - [bat]
+  - [nat, tan]
+  - [ate, eat, tea]
+  compare: unordered_nested
+- name: empty string
+  args:
+  - ['']
+  expected:
+  - ['']
+  compare: unordered_nested
+- name: single
+  args:
+  - [a]
+  expected:
+  - [a]
+  compare: unordered_nested
+- name: different lengths
+  args:
+  - [ab, ba, abc, cab, bca, c]
+  expected:
+  - [ab, ba]
+  - [abc, cab, bca]
+  - [c]
+  compare: unordered_nested
+  hidden: true
+- name: no anagrams
+  args:
+  - [a, b, c]
+  expected:
+  - [a]
+  - [b]
+  - [c]
+  compare: unordered_nested
+  hidden: true

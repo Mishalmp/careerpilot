@@ -1,0 +1,47 @@
+slug: duplicate-emails
+title: Duplicate Emails
+kind: sql
+difficulty: Easy
+tags: [sql, group-by]
+topic_keys: [sql-and-postgresql-aggregation-group-by-having-conditional-aggregation]
+statement: |
+  Table `users(id, email)`.
+
+  Return every email address that appears more than once, in a column called `email`, one row per
+  address. Row order does not matter. Emails are compared exactly as stored.
+sql:
+  ddl: |
+    CREATE TABLE users (id int PRIMARY KEY, email text);
+  starter: |
+    -- Return emails that appear more than once.
+    SELECT email FROM users;
+  tests:
+  - name: one duplicate
+    data: |
+      INSERT INTO users VALUES (1,'a@x.com'),(2,'b@x.com'),(3,'a@x.com');
+    expected:
+      columns: [email]
+      rows:
+      - [a@x.com]
+  - name: no duplicates
+    data: |
+      INSERT INTO users VALUES (1,'a@x.com'),(2,'b@x.com');
+    expected:
+      columns: [email]
+      rows: []
+  - name: several
+    data: |
+      INSERT INTO users VALUES (1,'c@x.com'),(2,'c@x.com'),(3,'c@x.com'),(4,'d@x.com'),(5,'d@x.com'),(6,'e@x.com');
+    expected:
+      columns: [email]
+      rows:
+      - [c@x.com]
+      - [d@x.com]
+    hidden: true
+  - name: case matters
+    data: |
+      INSERT INTO users VALUES (1,'A@x.com'),(2,'a@x.com');
+    expected:
+      columns: [email]
+      rows: []
+    hidden: true

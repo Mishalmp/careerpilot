@@ -177,6 +177,32 @@
         "title": "ApplicationUpdate",
         "type": "object"
       },
+      "CaseResult": {
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "error",
+              "timeout",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "status"
+        ],
+        "title": "CaseResult",
+        "type": "object"
+      },
       "CompanyOut": {
         "properties": {
           "country": {
@@ -219,6 +245,17 @@
         ],
         "title": "CompanyOut",
         "type": "object"
+      },
+      "Compare": {
+        "description": "How a function's result is compared with the expected value.",
+        "enum": [
+          "exact",
+          "unordered",
+          "unordered_nested",
+          "float"
+        ],
+        "title": "Compare",
+        "type": "string"
       },
       "ContactCreate": {
         "properties": {
@@ -497,6 +534,15 @@
         "title": "DayUpdate",
         "type": "object"
       },
+      "Difficulty": {
+        "enum": [
+          "Easy",
+          "Medium",
+          "Hard"
+        ],
+        "title": "Difficulty",
+        "type": "string"
+      },
       "EmailMode": {
         "enum": [
           "Not yet",
@@ -566,6 +612,39 @@
         ],
         "title": "EventType",
         "type": "string"
+      },
+      "FunctionTestOut": {
+        "description": "The runner needs every case. `hidden` only hides a case in the UI.",
+        "properties": {
+          "args": {
+            "items": {},
+            "title": "Args",
+            "type": "array"
+          },
+          "compare": {
+            "$ref": "#/components/schemas/Compare"
+          },
+          "expected": {
+            "title": "Expected"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "hidden",
+          "args",
+          "expected",
+          "compare"
+        ],
+        "title": "FunctionTestOut",
+        "type": "object"
       },
       "GuideInfoOut": {
         "properties": {
@@ -1573,6 +1652,53 @@
         "title": "JobUpdate",
         "type": "object"
       },
+      "Kind": {
+        "enum": [
+          "function",
+          "sql"
+        ],
+        "title": "Kind",
+        "type": "string"
+      },
+      "Language": {
+        "enum": [
+          "python",
+          "javascript",
+          "typescript",
+          "sql"
+        ],
+        "title": "Language",
+        "type": "string"
+      },
+      "LanguageSpec": {
+        "properties": {
+          "entry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "starter": {
+            "title": "Starter",
+            "type": "string"
+          }
+        },
+        "required": [
+          "language",
+          "starter",
+          "entry"
+        ],
+        "title": "LanguageSpec",
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "email": {
@@ -1679,6 +1805,164 @@
         "title": "Priority",
         "type": "string"
       },
+      "ProblemDetail": {
+        "properties": {
+          "difficulty": {
+            "$ref": "#/components/schemas/Difficulty"
+          },
+          "function_tests": {
+            "items": {
+              "$ref": "#/components/schemas/FunctionTestOut"
+            },
+            "title": "Function Tests",
+            "type": "array"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind"
+          },
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/Language"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "specs": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageSpec"
+            },
+            "title": "Specs",
+            "type": "array"
+          },
+          "sql_ddl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sql Ddl"
+          },
+          "sql_tests": {
+            "items": {
+              "$ref": "#/components/schemas/SqlTestOut"
+            },
+            "title": "Sql Tests",
+            "type": "array"
+          },
+          "statement": {
+            "title": "Statement",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProgressStatus"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "topic_keys": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Topic Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "kind",
+          "difficulty",
+          "tags",
+          "topic_keys",
+          "languages",
+          "status",
+          "statement",
+          "specs",
+          "function_tests",
+          "sql_ddl",
+          "sql_tests"
+        ],
+        "title": "ProblemDetail",
+        "type": "object"
+      },
+      "ProblemSummary": {
+        "properties": {
+          "difficulty": {
+            "$ref": "#/components/schemas/Difficulty"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/Kind"
+          },
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/Language"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProgressStatus"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "topic_keys": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Topic Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "kind",
+          "difficulty",
+          "tags",
+          "topic_keys",
+          "languages",
+          "status"
+        ],
+        "title": "ProblemSummary",
+        "type": "object"
+      },
+      "ProgressStatus": {
+        "enum": [
+          "unsolved",
+          "attempted",
+          "solved"
+        ],
+        "title": "ProgressStatus",
+        "type": "string"
+      },
       "Region": {
         "enum": [
           "India",
@@ -1759,6 +2043,63 @@
           "kind"
         ],
         "title": "SessionCreate",
+        "type": "object"
+      },
+      "SqlExpectedOut": {
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "ordered": {
+            "title": "Ordered",
+            "type": "boolean"
+          },
+          "rows": {
+            "items": {
+              "items": {},
+              "type": "array"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "columns",
+          "rows",
+          "ordered"
+        ],
+        "title": "SqlExpectedOut",
+        "type": "object"
+      },
+      "SqlTestOut": {
+        "properties": {
+          "data": {
+            "title": "Data",
+            "type": "string"
+          },
+          "expected": {
+            "$ref": "#/components/schemas/SqlExpectedOut"
+          },
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "hidden",
+          "data",
+          "expected"
+        ],
+        "title": "SqlTestOut",
         "type": "object"
       },
       "Status": {
@@ -1856,6 +2197,106 @@
         ],
         "title": "StudyKind",
         "type": "string"
+      },
+      "SubmissionCreate": {
+        "properties": {
+          "code": {
+            "maxLength": 50000,
+            "title": "Code",
+            "type": "string"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "passed": {
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Passed",
+            "type": "integer"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/CaseResult"
+            },
+            "maxItems": 1000,
+            "title": "Results",
+            "type": "array"
+          },
+          "runtime_ms": {
+            "maximum": 3600000.0,
+            "minimum": 0.0,
+            "title": "Runtime Ms",
+            "type": "integer"
+          },
+          "total": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "language",
+          "code",
+          "passed",
+          "total",
+          "runtime_ms",
+          "results"
+        ],
+        "title": "SubmissionCreate",
+        "type": "object"
+      },
+      "SubmissionOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/CaseResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "runtime_ms": {
+            "title": "Runtime Ms",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "language",
+          "code",
+          "passed",
+          "total",
+          "runtime_ms",
+          "results",
+          "created_at"
+        ],
+        "title": "SubmissionOut",
+        "type": "object"
       },
       "TodayOut": {
         "properties": {
@@ -3097,6 +3538,360 @@
         "summary": "Add Contact",
         "tags": [
           "tracker"
+        ]
+      }
+    },
+    "/api/v1/practice/problems": {
+      "get": {
+        "operationId": "list_problems",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "difficulty",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Difficulty"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Difficulty"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Kind"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 50,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tag"
+            }
+          },
+          {
+            "in": "query",
+            "name": "topic",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 120,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Topic"
+            }
+          },
+          {
+            "in": "query",
+            "name": "progress",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ProgressStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Progress"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProblemSummary"
+                  },
+                  "title": "Response List Problems",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Problems",
+        "tags": [
+          "practice"
+        ]
+      }
+    },
+    "/api/v1/practice/problems/{slug}": {
+      "get": {
+        "operationId": "get_problem",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Problem",
+        "tags": [
+          "practice"
+        ]
+      }
+    },
+    "/api/v1/practice/problems/{slug}/submissions": {
+      "get": {
+        "operationId": "list_submissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Language"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Language"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubmissionOut"
+                  },
+                  "title": "Response List Submissions",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Submissions",
+        "tags": [
+          "practice"
+        ]
+      },
+      "post": {
+        "operationId": "submit_solution",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmissionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Solution",
+        "tags": [
+          "practice"
         ]
       }
     },

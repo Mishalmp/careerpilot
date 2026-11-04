@@ -1,0 +1,49 @@
+slug: word-break
+title: Word Break
+kind: function
+difficulty: Medium
+tags: [dynamic-programming, strings]
+topic_keys: [dsa-and-coding-rounds-dynamic-programming-1d-2d-knapsack-basics]
+statement: |
+  Return `true` if `s` can be split into a sequence of words that all appear in `words`. A word may be used
+  more than once.
+signature:
+  name: word_break
+  params:
+  - {name: s, type: str}
+  - {name: words, type: 'str[]'}
+  returns: bool
+tests:
+- name: two words
+  args:
+  - leetcode
+  - [leet, code]
+  expected: true
+- name: reused word
+  args:
+  - applepenapple
+  - [apple, pen]
+  expected: true
+- name: impossible
+  args:
+  - catsandog
+  - [cats, dog, sand, and, cat]
+  expected: false
+- name: empty string
+  args:
+  - ''
+  - [a]
+  expected: true
+  hidden: true
+- name: needs both lengths
+  args:
+  - aaaaaaa
+  - [aaaa, aaa]
+  expected: true
+  hidden: true
+- name: no match
+  args:
+  - a
+  - [b]
+  expected: false
+  hidden: true

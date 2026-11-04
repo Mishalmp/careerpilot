@@ -1,0 +1,41 @@
+slug: roman-to-integer
+title: Roman to Integer
+kind: function
+difficulty: Easy
+tags: [strings, hashing]
+topic_keys: [dsa-and-coding-rounds-arrays-strings-hashing]
+statement: |
+  Convert a Roman numeral to an integer.
+
+  Symbols: `I`=1, `V`=5, `X`=10, `L`=50, `C`=100, `D`=500, `M`=1000. A smaller symbol written before a
+  larger one is subtracted (`IV` is 4, `IX` is 9, `XL` is 40, `CM` is 900). The input is always a valid
+  numeral from 1 to 3999.
+signature:
+  name: roman_to_int
+  params:
+  - {name: s, type: str}
+  returns: int
+tests:
+- name: III
+  args: [III]
+  expected: 3
+- name: IV
+  args: [IV]
+  expected: 4
+- name: IX
+  args: [IX]
+  expected: 9
+- name: LVIII
+  args: [LVIII]
+  expected: 58
+- name: MCMXCIV
+  args: [MCMXCIV]
+  expected: 1994
+- name: largest
+  args: [MMMCMXCIX]
+  expected: 3999
+  hidden: true
+- name: XL
+  args: [XL]
+  expected: 40
+  hidden: true

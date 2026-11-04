@@ -1,0 +1,46 @@
+slug: valid-parentheses
+title: Valid Parentheses
+kind: function
+difficulty: Easy
+tags: [stacks, strings]
+topic_keys: [dsa-and-coding-rounds-stacks-queues-monotonic-stack]
+statement: |
+  Given a string `s` made only of `()[]{}`, return `true` if every bracket is closed by the same kind of
+  bracket, in the correct order. The empty string is valid.
+signature:
+  name: is_valid
+  params:
+  - {name: s, type: str}
+  returns: bool
+tests:
+- name: simple pair
+  args: [()]
+  expected: true
+- name: three kinds
+  args: ['()[]{}']
+  expected: true
+- name: wrong closer
+  args: ['(]']
+  expected: false
+- name: interleaved
+  args: ['([)]']
+  expected: false
+- name: nested
+  args: ['{[]}']
+  expected: true
+- name: empty
+  args: ['']
+  expected: true
+  hidden: true
+- name: unclosed
+  args: [((]
+  expected: false
+  hidden: true
+- name: closer first
+  args: [']']
+  expected: false
+  hidden: true
+- name: deep
+  args: [(((())))]
+  expected: true
+  hidden: true

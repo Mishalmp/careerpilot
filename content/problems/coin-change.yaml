@@ -1,0 +1,54 @@
+slug: coin-change
+title: Coin Change
+kind: function
+difficulty: Medium
+tags: [dynamic-programming]
+topic_keys: [dsa-and-coding-rounds-dynamic-programming-1d-2d-knapsack-basics]
+statement: |
+  Given coin values `coins` (unlimited supply of each) and a target `amount`, return the fewest coins that add
+  up to `amount`, or `-1` if it cannot be made. An amount of 0 needs 0 coins.
+signature:
+  name: coin_change
+  params:
+  - {name: coins, type: 'int[]'}
+  - {name: amount, type: int}
+  returns: int
+tests:
+- name: example
+  args:
+  - [1, 2, 5]
+  - 11
+  expected: 3
+- name: impossible
+  args:
+  - [2]
+  - 3
+  expected: -1
+- name: zero amount
+  args:
+  - [1]
+  - 0
+  expected: 0
+- name: greedy fails
+  args:
+  - [1, 3, 4]
+  - 6
+  expected: 2
+- name: four coins
+  args:
+  - [2, 5, 10, 1]
+  - 27
+  expected: 4
+  hidden: true
+- name: zero with a big coin
+  args:
+  - [5]
+  - 0
+  expected: 0
+  hidden: true
+- name: no way
+  args:
+  - [3, 7]
+  - 11
+  expected: -1
+  hidden: true

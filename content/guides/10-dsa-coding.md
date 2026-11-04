@@ -89,3 +89,25 @@ Build a small API or a CLI to a spec, parse and transform a file, write SQL and 
 
 ## Common mistakes
 Coding before understanding; no complexity analysis; unreadable names; not testing; going silent; memorising solutions instead of patterns.
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Two Sum (hashing)](practice:two-sum)
+- [Roman to Integer (strings and hashing)](practice:roman-to-integer)
+- [Valid Parentheses (stacks)](practice:valid-parentheses)
+- [Valid Palindrome (two pointers)](practice:valid-palindrome)
+- [Binary Search](practice:binary-search)
+- [Longest unique substring (sliding window)](practice:longest-unique-substring)
+- [Maximum Subarray (DP)](practice:maximum-subarray)
+- [Climbing Stairs (DP)](practice:climbing-stairs)
+- [Coin Change (DP)](practice:coin-change)
+- [Word Break (DP)](practice:word-break)
+- [Merge Intervals](practice:merge-intervals)
+- [Top K Frequent (heaps)](practice:top-k-frequent)
+- [Merge K Sorted Lists (heaps)](practice:merge-k-sorted-lists)
+- [Number of Islands (graphs)](practice:number-of-islands)
+- [Course Schedule (topological sort)](practice:course-schedule)
+- [Product Except Self](practice:product-except-self)
+- [Rotate Image](practice:rotate-matrix)

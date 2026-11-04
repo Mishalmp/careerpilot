@@ -2,7 +2,7 @@
 
 Job application tracker, interview prep, an in-browser practice editor, and a place to learn how RAG and MCP are built. Local-first, single user. The full design is in [plan.md](plan.md); decisions are in [docs/adr](docs/adr).
 
-Status: Phase 1. Sign in, track jobs (table and board, status history, contacts, CSV export), and follow the 45-day prep plan with topics, study sessions and guides. Practice editor, RAG and MCP come in later phases.
+Status: Phase 2. Track jobs, follow the 45-day prep plan, and practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL) that opens from guide links. RAG and MCP come in later phases.
 
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
@@ -25,6 +25,8 @@ uv run python -m careerpilot.cli import-tracker path/to/Job_Hunt_Tracker.xlsx
 ```
 
 ## Run
+The first `npm install` also copies the Python and SQL runtimes into `apps/web/public` (about 30 MB, git-ignored). Run `npm run prepare:runner` to redo that.
+
 Two terminals:
 ```bash
 cd apps/api && uv run uvicorn careerpilot.main:app_factory --factory --reload
@@ -43,7 +45,8 @@ Tests use a separate `careerpilot_test` database that they create themselves.
 
 ## Content
 - `content/curriculum.yaml`: the 45-day plan and its 159 topics. Edit it, then run `seed-prep` again (your progress is kept; topic `key`s are the stable ids).
-- `content/guides/`: study guides shown in the Prep tab.
+- `content/guides/`: study guides shown in the Prep tab. A link written `[text](practice:two-sum)` opens that problem in the editor.
+- `content/problems/`: one YAML file per practice problem (see [ADR 0007](docs/adr/0007-practice-runner.md)). Add a file, add a reference solution in `apps/api/tests/problem_solutions.py`, and the content tests check it.
 - `content/private/` (git-ignored): guides that describe an employer's systems. They appear in the Prep tab but never enter git.
 
 ## After changing the API

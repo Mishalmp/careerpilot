@@ -2,13 +2,38 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { card, muted } from "@/components/ui";
 
 import { useGuide, useGuides } from "./hooks";
 import { PrepNav } from "./PrepNav";
+
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+// `practice:two-sum` in a guide opens that problem in the editor. Every other link keeps
+// react-markdown's default safety rules (no javascript: or data: links).
+const urlTransform = (url: string) =>
+  url.startsWith("practice:") ? url : defaultUrlTransform(url);
+
+function GuideLink({ href, children }: { href?: string; children?: React.ReactNode }) {
+  if (href?.startsWith("practice:")) {
+    const slug = href.slice("practice:".length);
+    return SLUG.test(slug) ? (
+      <Link href={`/practice/${slug}`} className="font-medium">
+        {children} &rarr;
+      </Link>
+    ) : (
+      <span>{children}</span>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  );
+}
 
 export function GuidesListPage() {
   const guides = useGuides();
@@ -44,7 +69,9 @@ export function GuideReaderPage() {
       {guide.data && (
         // Raw HTML in Markdown is ignored (react-markdown's default), so guide text cannot inject markup.
         <article className="guide">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{guide.data.markdown}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} urlTransform={urlTransform} components={{ a: GuideLink }}>
+            {guide.data.markdown}
+          </ReactMarkdown>
         </article>
       )}
     </div>

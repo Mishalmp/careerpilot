@@ -1,0 +1,49 @@
+slug: top-two-salaries-per-department
+title: Top Two Salaries per Department
+kind: sql
+difficulty: Medium
+tags: [sql, window-functions]
+topic_keys: [sql-and-postgresql-window-functions-row-number-rank-lag-lead-running-totals]
+statement: |
+  Tables `departments(id, name)` and `employees(id, name, salary, department_id)`.
+
+  For each department, return the employees whose salary is one of the two highest *distinct* salaries in
+  that department (so ties at either level are all included). Return columns `department`, `employee` and
+  `salary`. Row order does not matter. Departments with no employees are not returned.
+sql:
+  ddl: |
+    CREATE TABLE departments (id int PRIMARY KEY, name text);
+    CREATE TABLE employees (id int PRIMARY KEY, name text, salary int, department_id int REFERENCES departments(id));
+  starter: |
+    -- Return department, employee and salary for the top two distinct salaries in each department.
+    SELECT d.name AS department, e.name AS employee, e.salary
+    FROM employees e JOIN departments d ON d.id = e.department_id;
+  tests:
+  - name: two departments
+    data: |
+      INSERT INTO departments VALUES (1,'Eng'),(2,'Sales'); INSERT INTO employees VALUES (1,'A',300,1),(2,'B',200,1),(3,'C',100,1),(4,'D',150,2),(5,'E',150,2),(6,'F',100,2);
+    expected:
+      columns: [department, employee, salary]
+      rows:
+      - [Eng, A, 300]
+      - [Eng, B, 200]
+      - [Sales, D, 150]
+      - [Sales, E, 150]
+      - [Sales, F, 100]
+  - name: one employee
+    data: |
+      INSERT INTO departments VALUES (1,'Ops'),(2,'Empty'); INSERT INTO employees VALUES (1,'Z',90,1);
+    expected:
+      columns: [department, employee, salary]
+      rows:
+      - [Ops, Z, 90]
+  - name: tie at the top
+    data: |
+      INSERT INTO departments VALUES (1,'Data'); INSERT INTO employees VALUES (1,'P',500,1),(2,'Q',500,1),(3,'R',400,1),(4,'S',300,1);
+    expected:
+      columns: [department, employee, salary]
+      rows:
+      - [Data, P, 500]
+      - [Data, Q, 500]
+      - [Data, R, 400]
+    hidden: true

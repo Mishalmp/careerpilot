@@ -177,6 +177,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/practice/problems": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Problems */
+        get: operations["list_problems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/practice/problems/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Problem */
+        get: operations["get_problem"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/practice/problems/{slug}/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Submissions */
+        get: operations["list_submissions"];
+        put?: never;
+        /** Submit Solution */
+        post: operations["submit_solution"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/prep/days": {
         parameters: {
             query?: never;
@@ -447,6 +499,16 @@ export interface components {
             resume_version?: string | null;
             site_mode?: components["schemas"]["PortalMode"] | null;
         };
+        /** CaseResult */
+        CaseResult: {
+            /** Name */
+            name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "fail" | "error" | "timeout" | "skipped";
+        };
         /** CompanyOut */
         CompanyOut: {
             /** Country */
@@ -461,6 +523,12 @@ export interface components {
             /** Website */
             website: string | null;
         };
+        /**
+         * Compare
+         * @description How a function's result is compared with the expected value.
+         * @enum {string}
+         */
+        Compare: "exact" | "unordered" | "unordered_nested" | "float";
         /** ContactCreate */
         ContactCreate: {
             /** Email */
@@ -540,6 +608,11 @@ export interface components {
             status?: components["schemas"]["DayStatus"] | null;
         };
         /**
+         * Difficulty
+         * @enum {string}
+         */
+        Difficulty: "Easy" | "Medium" | "Hard";
+        /**
          * EmailMode
          * @enum {string}
          */
@@ -567,6 +640,21 @@ export interface components {
          * @enum {string}
          */
         EventType: "created" | "status_changed" | "reopened";
+        /**
+         * FunctionTestOut
+         * @description The runner needs every case. `hidden` only hides a case in the UI.
+         */
+        FunctionTestOut: {
+            /** Args */
+            args: unknown[];
+            compare: components["schemas"]["Compare"];
+            /** Expected */
+            expected: unknown;
+            /** Hidden */
+            hidden: boolean;
+            /** Name */
+            name: string;
+        };
         /** GuideInfoOut */
         GuideInfoOut: {
             /** Name */
@@ -773,6 +861,24 @@ export interface components {
             visa?: components["schemas"]["Visa"] | null;
             work_mode?: components["schemas"]["WorkMode"] | null;
         };
+        /**
+         * Kind
+         * @enum {string}
+         */
+        Kind: "function" | "sql";
+        /**
+         * Language
+         * @enum {string}
+         */
+        Language: "python" | "javascript" | "typescript" | "sql";
+        /** LanguageSpec */
+        LanguageSpec: {
+            /** Entry */
+            entry: string | null;
+            language: components["schemas"]["Language"];
+            /** Starter */
+            starter: string;
+        };
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -820,6 +926,53 @@ export interface components {
          * @enum {string}
          */
         Priority: "High" | "Medium" | "Low";
+        /** ProblemDetail */
+        ProblemDetail: {
+            difficulty: components["schemas"]["Difficulty"];
+            /** Function Tests */
+            function_tests: components["schemas"]["FunctionTestOut"][];
+            kind: components["schemas"]["Kind"];
+            /** Languages */
+            languages: components["schemas"]["Language"][];
+            /** Slug */
+            slug: string;
+            /** Specs */
+            specs: components["schemas"]["LanguageSpec"][];
+            /** Sql Ddl */
+            sql_ddl: string | null;
+            /** Sql Tests */
+            sql_tests: components["schemas"]["SqlTestOut"][];
+            /** Statement */
+            statement: string;
+            status: components["schemas"]["ProgressStatus"];
+            /** Tags */
+            tags: string[];
+            /** Title */
+            title: string;
+            /** Topic Keys */
+            topic_keys: string[];
+        };
+        /** ProblemSummary */
+        ProblemSummary: {
+            difficulty: components["schemas"]["Difficulty"];
+            kind: components["schemas"]["Kind"];
+            /** Languages */
+            languages: components["schemas"]["Language"][];
+            /** Slug */
+            slug: string;
+            status: components["schemas"]["ProgressStatus"];
+            /** Tags */
+            tags: string[];
+            /** Title */
+            title: string;
+            /** Topic Keys */
+            topic_keys: string[];
+        };
+        /**
+         * ProgressStatus
+         * @enum {string}
+         */
+        ProgressStatus: "unsolved" | "attempted" | "solved";
         /**
          * Region
          * @enum {string}
@@ -845,6 +998,25 @@ export interface components {
             notes?: string | null;
             /** Studied On */
             studied_on?: string | null;
+        };
+        /** SqlExpectedOut */
+        SqlExpectedOut: {
+            /** Columns */
+            columns: string[];
+            /** Ordered */
+            ordered: boolean;
+            /** Rows */
+            rows: unknown[][];
+        };
+        /** SqlTestOut */
+        SqlTestOut: {
+            /** Data */
+            data: string;
+            expected: components["schemas"]["SqlExpectedOut"];
+            /** Hidden */
+            hidden: boolean;
+            /** Name */
+            name: string;
         };
         /**
          * Status
@@ -877,6 +1049,44 @@ export interface components {
          * @enum {string}
          */
         StudyKind: "learn" | "practice" | "review" | "mock";
+        /** SubmissionCreate */
+        SubmissionCreate: {
+            /** Code */
+            code: string;
+            language: components["schemas"]["Language"];
+            /** Passed */
+            passed: number;
+            /** Results */
+            results: components["schemas"]["CaseResult"][];
+            /** Runtime Ms */
+            runtime_ms: number;
+            /** Total */
+            total: number;
+        };
+        /** SubmissionOut */
+        SubmissionOut: {
+            /** Code */
+            code: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            language: components["schemas"]["Language"];
+            /** Passed */
+            passed: number;
+            /** Results */
+            results: components["schemas"]["CaseResult"][];
+            /** Runtime Ms */
+            runtime_ms: number;
+            /** Total */
+            total: number;
+        };
         /** TodayOut */
         TodayOut: {
             /** Due Followups */
@@ -1448,6 +1658,149 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContactOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_problems: {
+        parameters: {
+            query?: {
+                difficulty?: components["schemas"]["Difficulty"] | null;
+                kind?: components["schemas"]["Kind"] | null;
+                tag?: string | null;
+                topic?: string | null;
+                progress?: components["schemas"]["ProgressStatus"] | null;
+                q?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_problem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_submissions: {
+        parameters: {
+            query?: {
+                language?: components["schemas"]["Language"] | null;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_solution: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmissionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionOut"];
                 };
             };
             /** @description Validation Error */

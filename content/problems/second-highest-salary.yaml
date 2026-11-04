@@ -1,0 +1,47 @@
+slug: second-highest-salary
+title: Second Highest Salary
+kind: sql
+difficulty: Medium
+tags: [sql, classic]
+topic_keys: [sql-and-postgresql-classic-query-problems-second-highest-duplicates-gaps-and-islands-sess]
+statement: |
+  Table `employees(id, name, salary)`.
+
+  Return the second highest *distinct* salary in a column called `second_highest`. If there is no second
+  highest salary, return `NULL` (one row with a null value).
+sql:
+  ddl: |
+    CREATE TABLE employees (id int PRIMARY KEY, name text, salary int);
+  starter: |
+    -- Return the second highest distinct salary as second_highest.
+    SELECT NULL::int AS second_highest;
+  tests:
+  - name: three salaries
+    data: |
+      INSERT INTO employees VALUES (1,'Ana',100),(2,'Ben',200),(3,'Cy',300);
+    expected:
+      columns: [second_highest]
+      rows:
+      - [200]
+  - name: only one employee
+    data: |
+      INSERT INTO employees VALUES (1,'Ana',100);
+    expected:
+      columns: [second_highest]
+      rows:
+      - [null]
+  - name: duplicates at the top
+    data: |
+      INSERT INTO employees VALUES (1,'Ana',100),(2,'Ben',300),(3,'Cy',300),(4,'Di',200);
+    expected:
+      columns: [second_highest]
+      rows:
+      - [200]
+  - name: everyone earns the same
+    data: |
+      INSERT INTO employees VALUES (1,'Ana',50),(2,'Ben',50);
+    expected:
+      columns: [second_highest]
+      rows:
+      - [null]
+    hidden: true

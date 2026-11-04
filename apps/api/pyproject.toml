@@ -80,6 +80,7 @@ containers = [
   "careerpilot.modules.auth",
   "careerpilot.modules.tracker",
   "careerpilot.modules.prep",
+  "careerpilot.modules.practice",
   "careerpilot.modules.today",
 ]
 layers = ["router", "(dependencies)", "(service)", "(repository)"]
@@ -89,26 +90,33 @@ layers = ["router", "(dependencies)", "(service)", "(repository)"]
 name = "tracker keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.prep", "careerpilot.modules.today", "careerpilot.modules.auth"]
+source_modules = ["careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth"]
 forbidden_modules = ["careerpilot.modules.tracker.models", "careerpilot.modules.tracker.repository"]
 
 [[tool.importlinter.contracts]]
 name = "prep keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.today", "careerpilot.modules.auth"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth"]
 forbidden_modules = ["careerpilot.modules.prep.models", "careerpilot.modules.prep.repository"]
+
+[[tool.importlinter.contracts]]
+name = "practice keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.today", "careerpilot.modules.auth"]
+forbidden_modules = ["careerpilot.modules.practice.models", "careerpilot.modules.practice.repository"]
 
 [[tool.importlinter.contracts]]
 name = "auth keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.today"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today"]
 forbidden_modules = ["careerpilot.modules.auth.models", "careerpilot.modules.auth.repository", "careerpilot.modules.auth.service"]
 
 [[tool.importlinter.contracts]]
 name = "nothing depends on the today aggregator"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.auth"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.auth"]
 forbidden_modules = ["careerpilot.modules.today"]

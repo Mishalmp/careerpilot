@@ -51,3 +51,10 @@ Days 15 and 16. This is your strongest differentiator. Everything here maps to w
 
 ## Common mistakes
 Saying "exactly-once" for a batch system without qualification; claiming checkpoint-resume you do not have; mixing up idempotent and deduplicated; no answer for late data.
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Keep the latest record per key (deduplication)](practice:latest-per-key)
+- [Exponential backoff schedule](practice:backoff-schedule)

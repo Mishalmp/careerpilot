@@ -1,6 +1,6 @@
 # 0005: Browser-first code runner
 
-Status: accepted (2026-11-03), validated by spikes S1 and S2 in Phase 2
+Status: accepted (2026-11-03). Spikes S1 and S2 passed on 2026-11-05; details in [0007](0007-practice-runner.md)
 
 ## Context
 The practice section needs an editor that runs code for questions. Server-side execution of arbitrary code needs a hardened sandbox; self-hosted judges have had sandbox-escape vulnerabilities.

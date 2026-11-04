@@ -1,0 +1,40 @@
+slug: climbing-stairs
+title: Climbing Stairs
+kind: function
+difficulty: Easy
+tags: [dynamic-programming]
+topic_keys: [dsa-and-coding-rounds-dynamic-programming-1d-2d-knapsack-basics]
+statement: |
+  You climb a staircase of `n` steps taking 1 or 2 steps at a time. Return the number of distinct ways to
+  reach the top.
+
+  Do not recompute the same sub-problem: memoise it or build the answer bottom-up.
+signature:
+  name: climb_stairs
+  params:
+  - {name: n, type: int}
+  returns: int
+tests:
+- name: one step
+  args: [1]
+  expected: 1
+- name: two steps
+  args: [2]
+  expected: 2
+- name: three steps
+  args: [3]
+  expected: 3
+- name: five steps
+  args: [5]
+  expected: 8
+- name: ten steps
+  args: [10]
+  expected: 89
+- name: thirty steps
+  args: [30]
+  expected: 1346269
+  hidden: true
+- name: forty-five steps
+  args: [45]
+  expected: 1836311903
+  hidden: true

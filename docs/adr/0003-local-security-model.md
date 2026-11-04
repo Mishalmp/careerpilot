@@ -16,5 +16,5 @@ The API listens on localhost, but any website open in the same browser can send 
 - Validation errors drop the submitted value so passwords are never echoed or logged.
 
 ## Deferred
-- A strict Content-Security-Policy with nonces. It interacts with the in-browser code runner, so it is decided in the Phase 2 runner spike. Until then the app sets frame, nosniff, referrer and permissions headers.
+- A strict page-wide Content-Security-Policy with nonces. Decided in [0007](0007-practice-runner.md): not added yet; the code runner's workers get their own policies instead. The app sets frame, nosniff, referrer and permissions headers.
 - TLS and a real identity provider, required before the app is ever exposed beyond localhost.

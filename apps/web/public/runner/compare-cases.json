@@ -1,0 +1,20 @@
+[
+  { "name": "exact: same list", "mode": "exact", "actual": [1, 2], "expected": [1, 2], "equal": true },
+  { "name": "exact: order matters", "mode": "exact", "actual": [1, 2], "expected": [2, 1], "equal": false },
+  { "name": "exact: true is not 1", "mode": "exact", "actual": true, "expected": 1, "equal": false },
+  { "name": "exact: 1 equals 1.0", "mode": "exact", "actual": 1, "expected": 1.0, "equal": true },
+  { "name": "exact: string is not number", "mode": "exact", "actual": "1", "expected": 1, "equal": false },
+  { "name": "exact: null is not empty list", "mode": "exact", "actual": null, "expected": [], "equal": false },
+  { "name": "exact: nested objects", "mode": "exact", "actual": { "a": [1, { "b": 2 }] }, "expected": { "a": [1, { "b": 2 }] }, "equal": true },
+  { "name": "exact: extra key", "mode": "exact", "actual": { "a": 1, "b": 2 }, "expected": { "a": 1 }, "equal": false },
+  { "name": "exact: different length", "mode": "exact", "actual": [1], "expected": [1, 1], "equal": false },
+  { "name": "unordered: any order", "mode": "unordered", "actual": [3, 1, 2], "expected": [1, 2, 3], "equal": true },
+  { "name": "unordered: multiplicity counts", "mode": "unordered", "actual": [1, 1, 2], "expected": [1, 2, 2], "equal": false },
+  { "name": "unordered: not a list", "mode": "unordered", "actual": 5, "expected": [5], "equal": false },
+  { "name": "nested: groups and members in any order", "mode": "unordered_nested", "actual": [["b", "a"], ["c"]], "expected": [["c"], ["a", "b"]], "equal": true },
+  { "name": "nested: regrouped", "mode": "unordered_nested", "actual": [["a"], ["b"]], "expected": [["a", "b"]], "equal": false },
+  { "name": "nested: not a list of lists", "mode": "unordered_nested", "actual": ["a", "b"], "expected": [["a"], ["b"]], "equal": false },
+  { "name": "float: rounding error", "mode": "float", "actual": 0.30000000000000004, "expected": 0.3, "equal": true },
+  { "name": "float: too far", "mode": "float", "actual": 1.0000011, "expected": 1, "equal": false },
+  { "name": "float: inside a list", "mode": "float", "actual": [0.30000000000000004, 1], "expected": [0.3, 1.0], "equal": true }
+]

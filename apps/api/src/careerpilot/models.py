@@ -2,6 +2,7 @@
 
 from careerpilot.core.db import Base
 from careerpilot.modules.auth.models import AuthSession, User
+from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
 from careerpilot.modules.tracker.models import (
     Application,
@@ -24,6 +25,7 @@ REGISTERED_MODELS = (
     PrepDay,
     PrepPlan,
     StudySession,
+    Submission,
 )
 
 metadata = Base.metadata

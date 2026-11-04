@@ -1,0 +1,52 @@
+slug: two-sum
+title: Two Sum
+kind: function
+difficulty: Easy
+tags: [arrays, hashing]
+topic_keys: [dsa-and-coding-rounds-arrays-strings-hashing, python-collections-and-complexity-list-dict-set-deque-heapq-counter]
+statement: |
+  Given a list of integers `nums` and an integer `target`, return the indices of the two numbers that
+  add up to `target`, smaller index first.
+
+  Exactly one pair works. You may not use the same element twice.
+
+  Aim for one pass using a dictionary, not two nested loops.
+signature:
+  name: two_sum
+  params:
+  - {name: nums, type: 'int[]'}
+  - {name: target, type: int}
+  returns: int[]
+tests:
+- name: example 1
+  args:
+  - [2, 7, 11, 15]
+  - 9
+  expected: [0, 1]
+- name: example 2
+  args:
+  - [3, 2, 4]
+  - 6
+  expected: [1, 2]
+- name: equal numbers
+  args:
+  - [3, 3]
+  - 6
+  expected: [0, 1]
+- name: negative number
+  args:
+  - [-1, -3, 5, 90]
+  - 4
+  expected: [0, 2]
+- name: zeros
+  args:
+  - [0, 4, 3, 0]
+  - 0
+  expected: [0, 3]
+  hidden: true
+- name: pair at the end
+  args:
+  - [5, 75, 25]
+  - 100
+  expected: [1, 2]
+  hidden: true

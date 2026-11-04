@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { Modal } from "@/components/Modal";
@@ -7,6 +8,8 @@ import { button, card, input, muted, primaryButton, select } from "@/components/
 import type { StudyKind, Topic, TopicStatus } from "@/lib/api/types";
 
 import { useLogSession, useTopics, useUpdateTopic } from "./hooks";
+import { useProblems } from "@/features/practice/hooks";
+
 import { PrepNav } from "./PrepNav";
 
 const STATUSES: TopicStatus[] = ["Not started", "Learning", "Revised", "Mock-tested"];
@@ -24,6 +27,11 @@ export function TopicsPage() {
   const all = useTopics({});
   const topics = useTopics({ area: area || undefined, status: status || undefined });
   const update = useUpdateTopic();
+  const problems = useProblems();
+  const practiceCount = new Map<string, number>();
+  for (const problem of problems.data ?? []) {
+    for (const key of problem.topic_keys) practiceCount.set(key, (practiceCount.get(key) ?? 0) + 1);
+  }
 
   const areas = [...new Set((all.data ?? []).map((t) => t.area))];
   const grouped = new Map<string, Topic[]>();
@@ -96,6 +104,11 @@ export function TopicsPage() {
                 >
                   {STATUSES.map((s) => <option key={s}>{s}</option>)}
                 </select>
+                {practiceCount.has(topic.key) && (
+                  <Link href={`/practice?topic=${encodeURIComponent(topic.key)}`} className={button}>
+                    Practise ({practiceCount.get(topic.key)})
+                  </Link>
+                )}
                 <button type="button" onClick={() => setLogging(topic)} className={button}>
                   Log session
                 </button>

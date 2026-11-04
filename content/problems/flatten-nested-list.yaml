@@ -1,0 +1,49 @@
+slug: flatten-nested-list
+title: Flatten a Nested List
+kind: function
+difficulty: Easy
+tags: [recursion, arrays]
+topic_keys: [python-pythonic-idioms-comprehensions-unpacking-walrus-f-strings]
+statement: |
+  `nested` is a list whose items are integers or further lists, nested to any depth. Return one flat list of
+  all the integers, in their original left-to-right order.
+signature:
+  name: flatten
+  params:
+  - {name: nested, type: 'any[]'}
+  returns: int[]
+tests:
+- name: mixed depth
+  args:
+  - - 1
+    - - 2
+      - - 3
+        - [4]
+    - 5
+  expected: [1, 2, 3, 4, 5]
+- name: empty
+  args:
+  - []
+  expected: []
+- name: only empty lists
+  args:
+  - - []
+    - - []
+  expected: []
+- name: already flat
+  args:
+  - [1, 2, 3]
+  expected: [1, 2, 3]
+- name: deep
+  args:
+  - - - - [1]
+    - [2]
+  expected: [1, 2]
+  hidden: true
+- name: negative numbers
+  args:
+  - - -1
+    - - -2
+      - [0]
+  expected: [-1, -2, 0]
+  hidden: true

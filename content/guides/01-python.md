@@ -102,3 +102,12 @@ Generators for streaming rows through ingestion; retries with backoff in connect
 
 ## Common mistakes in interviews
 Explaining definitions without a consequence; confusing concurrency with parallelism; claiming asyncio makes CPU work faster; forgetting that a sync library call blocks the event loop.
+
+## Practise in the editor
+
+Solve these in the browser editor; your code runs in a sandbox and is checked against hidden tests.
+
+- [Group anagrams (dict and sorting)](practice:group-anagrams)
+- [Top K frequent (Counter)](practice:top-k-frequent)
+- [Flatten a nested list (recursion)](practice:flatten-nested-list)
+- [Two Sum](practice:two-sum)

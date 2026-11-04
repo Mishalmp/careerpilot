@@ -1,0 +1,40 @@
+slug: backoff-schedule
+title: Exponential Backoff Schedule
+kind: function
+difficulty: Easy
+tags: [data-engineering, reliability]
+topic_keys: [data-engineering-failure-handling-retries-backoff-dead-letter-queues-checkpointing, system-design-reliability-timeouts-retries-with-jitter-circuit-breakers-graceful-deg]
+statement: |
+  A client retries a failed call. The wait before retry number `i` (starting at `i = 0`) is
+  `base * factor ** i`, but never more than `cap`. All values are in milliseconds.
+
+  Return the list of waits for `attempts` retries.
+signature:
+  name: backoff_schedule
+  params:
+  - {name: base, type: int}
+  - {name: factor, type: int}
+  - {name: cap, type: int}
+  - {name: attempts, type: int}
+  returns: int[]
+tests:
+- name: doubling to the cap
+  args: [100, 2, 1000, 5]
+  expected: [100, 200, 400, 800, 1000]
+- name: tripling
+  args: [10, 3, 100, 4]
+  expected: [10, 30, 90, 100]
+- name: no attempts
+  args: [50, 2, 500, 0]
+  expected: []
+- name: factor of one
+  args: [1, 1, 10, 3]
+  expected: [1, 1, 1]
+- name: cap below base
+  args: [100, 2, 100, 3]
+  expected: [100, 100, 100]
+  hidden: true
+- name: many steps
+  args: [1, 10, 1000000, 8]
+  expected: [1, 10, 100, 1000, 10000, 100000, 1000000, 1000000]
+  hidden: true
