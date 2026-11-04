@@ -8,10 +8,13 @@ from careerpilot import health
 from careerpilot.core.config import Settings, get_settings
 from careerpilot.core.db import create_engine, create_sessionmaker
 from careerpilot.core.errors import register_error_handlers
+from careerpilot.core.llm import make_llm
 from careerpilot.core.logging import configure_logging
 from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
 from careerpilot.modules.auth.router import router as auth_router
 from careerpilot.modules.auth.throttle import LoginThrottle
+from careerpilot.modules.knowledge.embeddings import make_embedder
+from careerpilot.modules.knowledge.router import router as knowledge_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
 from careerpilot.modules.today.router import router as today_router
@@ -36,6 +39,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.state.engine = engine
     app.state.sessionmaker = create_sessionmaker(engine)
+    app.state.embedder = make_embedder(
+        settings.embedder, settings.embedding_model, settings.model_cache_dir
+    )
+    app.state.llm = make_llm(settings)
     app.state.login_throttle = LoginThrottle(
         settings.login_max_failures, settings.login_window_seconds
     )
@@ -51,6 +58,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(tracker_router, prefix=API_PREFIX)
     app.include_router(prep_router, prefix=API_PREFIX)
     app.include_router(practice_router, prefix=API_PREFIX)
+    app.include_router(knowledge_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

@@ -1,0 +1,141 @@
+# Golden questions for retrieval quality. Each answerable question names the document and a piece of text
+# that the right passage contains. `expect: none` marks a question the notes cannot answer: the search
+# must not report it as covered. Questions about git-ignored private notes are skipped when those
+# notes are absent.
+- id: py-mutable-default
+  question: What is the mutable default argument bug in Python?
+  expect: {doc: 01-python, contains: mutable default argument}
+- id: py-is-vs-eq
+  question: What is the difference between is and == in Python?
+  expect: {doc: 01-python, contains: "`is` vs `==`"}
+- id: py-deepcopy
+  question: When do I need deepcopy instead of a shallow copy in Python?
+  expect: {doc: 01-python, contains: Shallow vs deep copy}
+- id: py-hashable
+  question: Why do dictionary keys have to be hashable?
+  expect: {doc: 01-python, contains: How does a dict work}
+- id: py-generators
+  question: Why use a generator instead of building a whole list?
+  expect: {doc: 01-python, contains: Iterator vs generator}
+- id: py-wraps
+  question: Why do I need functools.wraps when I write a decorator?
+  expect: {doc: 01-python, contains: functools.wraps}
+- id: py-gil
+  question: What does the GIL mean for multithreaded Python code?
+  expect: {doc: 01-python, contains: What is the GIL}
+- id: py-concurrency-choice
+  question: Should I use threads, processes or asyncio?
+  expect: {doc: 01-python, contains: Threads vs processes vs asyncio}
+- id: py-mro
+  question: How does Python decide which method runs with multiple inheritance and super?
+  expect: {doc: 01-python, contains: MRO}
+- id: py-late-binding
+  question: Why does a lambda created in a loop capture the last value of the variable?
+  expect: {doc: 01-python, contains: Late-binding closures}
+- id: js-event-loop
+  question: How does the JavaScript event loop order microtasks and macrotasks?
+  expect: {doc: 02-javascript-typescript, contains: The event loop}
+- id: js-debounce
+  question: What is the difference between debounce and throttle?
+  expect: {doc: 02-javascript-typescript, contains: Debounce vs throttle}
+- id: ts-unknown
+  question: When should I use unknown instead of any in TypeScript?
+  expect: {doc: 02-javascript-typescript, contains: "`any` vs `unknown` vs `never`"}
+- id: js-tdz
+  question: What is the temporal dead zone?
+  expect: {doc: 02-javascript-typescript, contains: temporal dead zone}
+- id: sql-where-having
+  question: What is the difference between WHERE and HAVING?
+  expect: {doc: 04-sql-postgresql, contains: "`WHERE` vs `HAVING`"}
+- id: sql-window
+  question: How are window functions different from GROUP BY?
+  expect: {doc: 04-sql-postgresql, contains: Window functions}
+- id: sql-index-ignored
+  question: Why would PostgreSQL ignore an index I created?
+  expect: {doc: 04-sql-postgresql, contains: Indexes}
+- id: sql-upsert
+  question: How do I make an upsert idempotent in Postgres?
+  expect: {doc: 04-sql-postgresql, contains: Idempotent upsert}
+- id: sql-pagination
+  question: Why is offset pagination slow and what is keyset pagination?
+  expect: {doc: 04-sql-postgresql, contains: Pagination}
+- id: sql-islands
+  question: How do I find consecutive login days using gaps and islands?
+  expect: {doc: 04-sql-postgresql, contains: Gaps and islands}
+- id: fastapi-def-async
+  question: What is the difference between def and async def endpoints in FastAPI?
+  expect: {doc: 06-fastapi-async-api-security, contains: "`def` vs `async def`"}
+- id: fastapi-background
+  question: Should I use FastAPI BackgroundTasks or Celery?
+  expect: {doc: 06-fastapi-async-api-security, contains: "Background work"}
+- id: api-sessions-jwt
+  question: Should I use server sessions or JWTs for authentication?
+  expect: {doc: 06-fastapi-async-api-security, contains: Sessions vs JWT}
+- id: api-webhooks
+  question: How do I verify webhook signatures and stop replayed requests?
+  expect: {doc: 06-fastapi-async-api-security, contains: Webhooks}
+- id: api-tenant-leak
+  question: How do I stop one tenant from seeing another tenant's data?
+  expect: {doc: 06-fastapi-async-api-security, contains: Multi-tenant leakage}
+- id: de-medallion
+  question: What is the medallion architecture?
+  expect: {doc: 07-data-engineering, contains: medallion}
+- id: de-delta
+  question: What do I get from Delta Lake compared with plain Parquet files?
+  expect: {doc: 07-data-engineering, contains: "Delta Lake: what do you get"}
+- id: de-dedup
+  question: How do I deduplicate raw records using a business key?
+  expect: {doc: 07-data-engineering, contains: Deduplication}
+- id: de-watermark
+  question: How do watermarks work for incremental loads?
+  expect: {doc: 07-data-engineering, contains: Incremental loading and watermarks}
+- id: de-failure
+  question: What should a pipeline do when a load fails halfway through?
+  expect: {doc: 07-data-engineering, contains: Failure handling in pipelines}
+- id: sd-rate-limiter
+  question: How would I design a rate limiter?
+  expect: {doc: 08-system-design, contains: Rate limiter}
+- id: sd-url-shortener
+  question: How do I design a URL shortener?
+  expect: {doc: 08-system-design, contains: URL shortener}
+- id: sd-scheduler
+  question: How do I design a job scheduler with retries?
+  expect: {doc: 08-system-design, contains: Notification or job scheduler}
+- id: dsa-sliding-window
+  question: How does the sliding window technique find the longest substring without repeating characters?
+  expect: {doc: 10-dsa-coding, contains: sliding window}
+- id: intel-no-data
+  question: What can I do when a company has no public interview data?
+  expect: {doc: 13-interview-intel-method, contains: little or no public data}
+- id: aws-fargate
+  question: What is the difference between the Fargate and EC2 launch types in ECS?
+  expect: {doc: 09-aws-docker-cicd, contains: Fargate}
+- id: defense-exactly-once
+  question: How should I answer if an interviewer asks whether the pipeline is exactly-once?
+  expect: {doc: 12-project-defense-elphi, contains: exactly-once}
+
+# Not covered by the notes: the search should not call these answerable.
+- id: out-capital
+  question: What is the capital of France?
+  expect: none
+- id: out-bread
+  question: How do I bake sourdough bread at home?
+  expect: none
+- id: out-football
+  question: Who won the football world cup in 2022?
+  expect: none
+- id: out-weather
+  question: What is the weather like in Bengaluru today?
+  expect: none
+- id: out-movie
+  question: What is the plot of the movie Inception?
+  expect: none
+- id: out-everest
+  question: How tall is Mount Everest?
+  expect: none
+- id: out-kubernetes
+  question: How do I configure a Kubernetes ingress controller with TLS?
+  expect: none
+- id: out-cnn
+  question: How do I train a convolutional neural network for image classification?
+  expect: none

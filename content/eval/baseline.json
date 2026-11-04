@@ -1,0 +1,7 @@
+{
+  "note": "Floors for `careerpilot eval-rag` with BAAI/bge-small-en-v1.5, min_similarity 0.6, text_weight 0.2. Measured 2026-11-05 on 37 answerable and 8 unanswerable questions: recall@5 1.0, MRR 0.89, answerable_confident 1.0, unanswerable_abstained 0.875. Floors sit a little below so noise does not fail the gate; raise them when quality improves.",
+  "recall_at_k": 0.95,
+  "mrr": 0.8,
+  "answerable_confident": 0.95,
+  "unanswerable_abstained": 0.8
+}

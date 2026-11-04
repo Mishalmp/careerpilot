@@ -27,6 +27,9 @@ EMAIL = "owner@example.com"
 _dev_url = make_url(Settings().database_url)  # pyright: ignore[reportCallIssue]
 TEST_URL = _dev_url.set(database=TEST_DB).render_as_string(hide_password=False)
 os.environ["CAREERPILOT_DATABASE_URL"] = TEST_URL
+# Tests never download the embedding model or call the AI provider.
+os.environ["CAREERPILOT_EMBEDDER"] = "hash"
+os.environ["ANTHROPIC_API_KEY"] = ""
 
 
 def alembic_config() -> Config:

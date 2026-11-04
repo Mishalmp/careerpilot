@@ -17,6 +17,9 @@ Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [R
 - Every query is scoped by `owner_id`; add a cross-owner test for each new resource (see `other_api` in `tests/conftest.py`).
 - Links shown in the UI must be validated as http(s) in the schema (`Url` in `modules/tracker/schemas.py`).
 - Practice problems: tests are language-neutral JSON in `content/problems/<slug>.yaml`; add a reference solution to `tests/problem_solutions.py` and link the problem from a guide with `practice:<slug>`. Learner code only ever runs in the browser workers under their own CSP (ADR 0007); never run it on the server.
+- Changing chunking, embeddings, ranking or prompts for notes search: run `careerpilot eval-rag` before and after and keep the numbers in the PR; `CAREERPILOT_RUN_MODEL_TESTS=1 pytest tests/test_rag_eval.py` is the gate.
+- MCP tools call services, never repositories. Writes preview until `confirm=true` and are audited. Never add a tool that sends, deletes or changes settings. User-facing tool errors use `ToolError`; other exceptions are hidden from the model.
+- All model calls go through `core/llm.call_llm` (daily token cap, audit table).
 - Anything that leaves the machine (email, applications) needs explicit user approval; there is no send action.
 
 ## Safety

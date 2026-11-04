@@ -13,9 +13,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from careerpilot.core.errors import ProblemError
 from careerpilot.modules.tracker import repository
 from careerpilot.modules.tracker.enums import EventType, Status
+from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.identity import job_fingerprint, normalize_company
 from careerpilot.modules.tracker.models import Application, Contact, Job
-from careerpilot.modules.tracker.repository import JobFilters
 from careerpilot.modules.tracker.schemas import (
     ApplicationInit,
     ApplicationUpdate,

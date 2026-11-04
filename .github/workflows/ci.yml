@@ -35,6 +35,14 @@ jobs:
       - run: uv run pyright
       - run: uv run lint-imports
       - run: uv run pytest
+      - name: Notes search quality (downloads the embedding model, cached between runs)
+        uses: actions/cache@v4
+        with:
+          path: .cache/fastembed
+          key: fastembed-bge-small-en-v1.5
+      - run: uv run pytest tests/test_rag_eval.py
+        env:
+          CAREERPILOT_RUN_MODEL_TESTS: "1"
       - name: OpenAPI file is up to date
         run: |
           uv run python -m careerpilot.export_openapi openapi.json

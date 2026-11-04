@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import json
 import sys
 from collections.abc import Awaitable, Callable
 from getpass import getpass
@@ -12,6 +13,9 @@ from careerpilot.core.clock import today_in
 from careerpilot.core.config import get_settings
 from careerpilot.core.db import create_engine, create_sessionmaker
 from careerpilot.modules.auth import service as auth_service
+from careerpilot.modules.knowledge import evaluation as rag_eval
+from careerpilot.modules.knowledge import service as knowledge_service
+from careerpilot.modules.knowledge.embeddings import make_embedder
 from careerpilot.modules.prep import service as prep_service
 from careerpilot.modules.prep.curriculum import load_curriculum
 from careerpilot.modules.tracker import importer
@@ -84,6 +88,57 @@ def _import_tracker(args: argparse.Namespace) -> int:
     return _guarded(action)
 
 
+def _embedder():
+    settings = get_settings()
+    return make_embedder(settings.embedder, settings.embedding_model, settings.model_cache_dir)
+
+
+def _ingest(_: argparse.Namespace) -> int:
+    settings = get_settings()
+
+    async def action(db: AsyncSession) -> None:
+        user = await auth_service.sole_user(db)
+        result = await knowledge_service.ingest(db, user.id, settings.content_dir, _embedder())
+        print(result.model_dump_json())
+
+    return _guarded(action)
+
+
+def _search(args: argparse.Namespace) -> int:
+    settings = get_settings()
+
+    async def action(db: AsyncSession) -> None:
+        user = await auth_service.sole_user(db)
+        found = await knowledge_service.search(
+            db, user.id, _embedder(), settings, args.query, args.limit
+        )
+        print(f"confident: {found.confident} (best similarity {found.best_similarity})")
+        for hit in found.hits:
+            sim = f"{hit.similarity:.2f}" if hit.similarity is not None else " -- "
+            print(f"  {sim}  {hit.document_name} > {hit.heading_path or '(top)'}")
+            print(f"        {hit.text[:110]!r}")
+
+    return _guarded(action)
+
+
+def _eval_rag(args: argparse.Namespace) -> int:
+    settings = get_settings()
+
+    async def action(db: AsyncSession) -> None:
+        user = await auth_service.sole_user(db)
+        questions = rag_eval.load_questions(settings.content_dir)
+        results, skipped = await rag_eval.run(
+            db, user.id, _embedder(), settings, questions, k=args.k, mode=args.mode
+        )
+        report = rag_eval.summarize(results, skipped, args.k)
+        print(json.dumps(report.__dict__, indent=2))
+        if args.details:
+            for r in results:
+                print(f"  {r.id:28s} rank={r.rank} confident={r.confident} sim={r.best_similarity}")
+
+    return _guarded(action)
+
+
 def _guarded(action: Callable[[AsyncSession], Awaitable[None]]) -> int:
     try:
         asyncio.run(_run(action))
@@ -104,6 +159,20 @@ def main(argv: list[str] | None = None) -> int:
     imp = commands.add_parser("import-tracker", help="import jobs from the tracker workbook")
     imp.add_argument("file", help="path to Job_Hunt_Tracker.xlsx")
     imp.set_defaults(run=_import_tracker)
+    commands.add_parser("ingest", help="index your notes for search (safe to repeat)").set_defaults(
+        run=_ingest
+    )
+    find = commands.add_parser("search", help="search your notes")
+    find.add_argument("query")
+    find.add_argument("--limit", type=int, default=5)
+    find.set_defaults(run=_search)
+    measure = commands.add_parser(
+        "eval-rag", help="measure retrieval quality on the golden questions"
+    )
+    measure.add_argument("--k", type=int, default=5)
+    measure.add_argument("--details", action="store_true")
+    measure.add_argument("--mode", choices=["hybrid", "vector", "text"], default="hybrid")
+    measure.set_defaults(run=_eval_rag)
     args = parser.parse_args(argv)
     return args.run(args)
 

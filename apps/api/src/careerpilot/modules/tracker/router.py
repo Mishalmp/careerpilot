@@ -9,8 +9,8 @@ from careerpilot.core.deps import AppSettings, DbSession
 from careerpilot.modules.auth.dependencies import Authenticated
 from careerpilot.modules.tracker import service
 from careerpilot.modules.tracker.enums import Region, Status, WorkMode
+from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.models import Job
-from careerpilot.modules.tracker.repository import JobFilters
 from careerpilot.modules.tracker.schemas import (
     ApplicationUpdate,
     ContactCreate,

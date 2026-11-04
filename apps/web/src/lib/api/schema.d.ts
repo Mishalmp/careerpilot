@@ -177,6 +177,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/knowledge/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Knowledge Ask */
+        post: operations["knowledge_ask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/ingest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Knowledge Ingest
+         * @description Re-index changed notes. Safe to repeat; the first run downloads the embedding model.
+         */
+        post: operations["knowledge_ingest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Knowledge Search */
+        get: operations["knowledge_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Knowledge Status */
+        get: operations["knowledge_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/practice/problems": {
         parameters: {
             query?: never;
@@ -499,6 +570,31 @@ export interface components {
             resume_version?: string | null;
             site_mode?: components["schemas"]["PortalMode"] | null;
         };
+        /**
+         * AskOut
+         * @description `mode` says what happened:
+         *     answered: a written answer with citations; retrieval_only: no AI key, passages only;
+         *     not_in_notes: nothing relevant enough; ungrounded: the AI cited nothing, so it was withheld;
+         *     refused: the AI declined.
+         */
+        AskOut: {
+            /** Answer */
+            answer: string | null;
+            /** Citations */
+            citations: components["schemas"]["CitationOut"][];
+            /** Hits */
+            hits: components["schemas"]["HitOut"][];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "answered" | "retrieval_only" | "not_in_notes" | "ungrounded" | "refused";
+        };
+        /** AskRequest */
+        AskRequest: {
+            /** Question */
+            question: string;
+        };
         /** CaseResult */
         CaseResult: {
             /** Name */
@@ -508,6 +604,12 @@ export interface components {
              * @enum {string}
              */
             status: "pass" | "fail" | "error" | "timeout" | "skipped";
+        };
+        /** CitationOut */
+        CitationOut: {
+            hit: components["schemas"]["HitOut"];
+            /** Number */
+            number: number;
         };
         /** CompanyOut */
         CompanyOut: {
@@ -613,6 +715,11 @@ export interface components {
          */
         Difficulty: "Easy" | "Medium" | "Hard";
         /**
+         * DocumentKind
+         * @enum {string}
+         */
+        DocumentKind: "guide" | "private";
+        /**
          * EmailMode
          * @enum {string}
          */
@@ -685,6 +792,40 @@ export interface components {
          * @enum {string}
          */
         HiringFromIndia: "Yes" | "India only" | "No" | "Unknown";
+        /** HitOut */
+        HitOut: {
+            /**
+             * Chunk Id
+             * Format: uuid
+             */
+            chunk_id: string;
+            /** Document Name */
+            document_name: string;
+            /** Document Title */
+            document_title: string;
+            /** Heading Path */
+            heading_path: string;
+            kind: components["schemas"]["DocumentKind"];
+            /** Score */
+            score: number;
+            /** Similarity */
+            similarity: number | null;
+            /** Text */
+            text: string;
+        };
+        /** IngestOut */
+        IngestOut: {
+            /** Added */
+            added: number;
+            /** Chunks */
+            chunks: number;
+            /** Removed */
+            removed: number;
+            /** Unchanged */
+            unchanged: number;
+            /** Updated */
+            updated: number;
+        };
         /** JobCreate */
         JobCreate: {
             /** Apply Url */
@@ -978,6 +1119,15 @@ export interface components {
          * @enum {string}
          */
         Region: "India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)";
+        /** SearchOut */
+        SearchOut: {
+            /** Best Similarity */
+            best_similarity: number | null;
+            /** Confident */
+            confident: boolean;
+            /** Hits */
+            hits: components["schemas"]["HitOut"][];
+        };
         /** SeedResult */
         SeedResult: {
             /** Days Added */
@@ -1043,6 +1193,19 @@ export interface components {
             /** Count */
             count: number;
             status: components["schemas"]["Status"];
+        };
+        /** StatusOut */
+        StatusOut: {
+            /** Ai Enabled */
+            ai_enabled: boolean;
+            /** Chunks */
+            chunks: number;
+            /** Documents */
+            documents: number;
+            /** Embedding Model */
+            embedding_model: string;
+            /** Indexed At */
+            indexed_at: string | null;
         };
         /**
          * StudyKind
@@ -1658,6 +1821,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContactOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    knowledge_ask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AskRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AskOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    knowledge_ingest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    knowledge_search: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    knowledge_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatusOut"];
                 };
             };
             /** @description Validation Error */

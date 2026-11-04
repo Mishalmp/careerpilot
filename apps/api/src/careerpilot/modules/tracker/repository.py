@@ -1,6 +1,4 @@
 import uuid
-from collections.abc import Sequence
-from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any
 
@@ -9,12 +7,8 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
 
-from careerpilot.modules.tracker.enums import (
-    EventType,
-    Region,
-    Status,
-    WorkMode,
-)
+from careerpilot.modules.tracker.enums import EventType, Status
+from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.models import (
     Application,
     ApplicationEvent,
@@ -23,16 +17,6 @@ from careerpilot.modules.tracker.models import (
     Job,
 )
 from careerpilot.modules.tracker.workflow import TERMINAL
-
-
-@dataclass(frozen=True)
-class JobFilters:
-    statuses: Sequence[Status] | None = None
-    query: str | None = None
-    region: Region | None = None
-    work_mode: WorkMode | None = None
-    min_ctc: float | None = None
-    followup_due_on: date | None = None
 
 
 async def get_or_create_company(

@@ -12,6 +12,7 @@ const NAV = [
   { href: "/jobs", label: "Jobs" },
   { href: "/prep", label: "Prep" },
   { href: "/practice", label: "Practice" },
+  { href: "/ask", label: "Ask" },
 ];
 
 /** Signed-in frame: redirects to /login without a session and shows the main navigation. */

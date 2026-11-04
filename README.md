@@ -2,7 +2,7 @@
 
 Job application tracker, interview prep, an in-browser practice editor, and a place to learn how RAG and MCP are built. Local-first, single user. The full design is in [plan.md](plan.md); decisions are in [docs/adr](docs/adr).
 
-Status: Phase 2. Track jobs, follow the 45-day prep plan, and practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL) that opens from guide links. RAG and MCP come in later phases.
+Status: Phase 3. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Learn how the last two are built in [docs/learn](docs/learn).
 
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
@@ -16,6 +16,13 @@ uv sync
 uv run alembic upgrade head
 uv run python -m careerpilot.cli create-user --email you@example.com
 uv run python -m careerpilot.cli seed-prep        # optional: the Prep page also has a Load button
+```
+
+Optional: index your notes for search (the first run downloads a ~130 MB model; see [docs/learn/rag.md](docs/learn/rag.md)).
+Written answers need an Anthropic API key in `.env` (`ANTHROPIC_API_KEY=...`); without one you still get the matching passages.
+```bash
+uv run python -m careerpilot.cli ingest
+uv run python -m careerpilot.cli eval-rag      # retrieval quality on 45 fixed questions
 ```
 
 Optional: import jobs from your tracker workbook (safe to repeat; existing jobs are skipped and
@@ -43,9 +50,13 @@ cd apps/web && npm run typecheck && npm run lint && npm test && npm run build
 ```
 Tests use a separate `careerpilot_test` database that they create themselves.
 
+## Claude Desktop / Claude Code (MCP)
+`uv run python -m careerpilot.mcp_server` starts the MCP server. Setup and what it can and cannot do: [docs/learn/mcp.md](docs/learn/mcp.md).
+
 ## Content
 - `content/curriculum.yaml`: the 45-day plan and its 159 topics. Edit it, then run `seed-prep` again (your progress is kept; topic `key`s are the stable ids).
 - `content/guides/`: study guides shown in the Prep tab. A link written `[text](practice:two-sum)` opens that problem in the editor.
+- `content/eval/`: the golden questions and the quality floors for notes search.
 - `content/problems/`: one YAML file per practice problem (see [ADR 0007](docs/adr/0007-practice-runner.md)). Add a file, add a reference solution in `apps/api/tests/problem_solutions.py`, and the content tests check it.
 - `content/private/` (git-ignored): guides that describe an employer's systems. They appear in the Prep tab but never enter git.
 

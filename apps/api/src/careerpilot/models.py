@@ -1,7 +1,10 @@
 """Registers every module's tables on one metadata (used by Alembic and the drift test)."""
 
+from careerpilot.core.audit import AuditEvent
 from careerpilot.core.db import Base
+from careerpilot.core.llm import LlmCall
 from careerpilot.modules.auth.models import AuthSession, User
+from careerpilot.modules.knowledge.models import Chunk, Document
 from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
 from careerpilot.modules.tracker.models import (
@@ -26,6 +29,10 @@ REGISTERED_MODELS = (
     PrepPlan,
     StudySession,
     Submission,
+    Document,
+    Chunk,
+    LlmCall,
+    AuditEvent,
 )
 
 metadata = Base.metadata
