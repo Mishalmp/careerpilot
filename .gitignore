@@ -1,0 +1,21 @@
+# secrets and local state
+.env
+*.pem
+backups/
+
+# personal source material, migrated into content/ in Phase 1 and never committed
+resume-kit/
+
+# python
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# node
+node_modules/
+.next/
+coverage/
+*.tsbuildinfo
+next-env.d.ts

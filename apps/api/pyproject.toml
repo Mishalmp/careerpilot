@@ -1,0 +1,74 @@
+[project]
+name = "careerpilot"
+version = "0.1.0"
+description = "CareerPilot API"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "sqlalchemy[asyncio]>=2.0.36",
+  "asyncpg>=0.30",
+  "alembic>=1.14",
+  "pydantic[email]>=2.9",
+  "pydantic-settings>=2.6",
+  "argon2-cffi>=23.1",
+  "structlog>=24.4",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "pytest-asyncio>=0.24",
+  "httpx>=0.27",
+  "ruff>=0.8",
+  "pyright>=1.1.390",
+  "import-linter>=2.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/careerpilot"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "S", "RUF"]
+
+[tool.ruff.lint.isort]
+# The migrations folder is also called "alembic"; keep the library sorted as third-party.
+known-third-party = ["alembic"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.pyright]
+include = ["src", "tests", "alembic"]
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+
+[tool.importlinter]
+root_package = "careerpilot"
+
+[[tool.importlinter.contracts]]
+name = "core does not depend on modules"
+type = "forbidden"
+source_modules = ["careerpilot.core"]
+forbidden_modules = ["careerpilot.modules"]
+
+[[tool.importlinter.contracts]]
+name = "module layers (router > dependencies > service > repository)"
+type = "layers"
+containers = ["careerpilot.modules.auth"]
+layers = ["router", "dependencies", "service", "repository"]
