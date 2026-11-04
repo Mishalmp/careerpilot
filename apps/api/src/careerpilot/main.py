@@ -12,6 +12,9 @@ from careerpilot.core.logging import configure_logging
 from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
 from careerpilot.modules.auth.router import router as auth_router
 from careerpilot.modules.auth.throttle import LoginThrottle
+from careerpilot.modules.prep.router import router as prep_router
+from careerpilot.modules.today.router import router as today_router
+from careerpilot.modules.tracker.router import router as tracker_router
 
 API_PREFIX = "/api/v1"
 
@@ -44,6 +47,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(auth_router, prefix=API_PREFIX)
+    app.include_router(tracker_router, prefix=API_PREFIX)
+    app.include_router(prep_router, prefix=API_PREFIX)
+    app.include_router(today_router, prefix=API_PREFIX)
     return app
 
 

@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     login_max_failures: int = Field(default=5, ge=1)
     login_window_seconds: int = Field(default=900, ge=1)
     log_level: str = "INFO"
+    timezone: str = "Asia/Kolkata"
+    # Committed guides live in content/guides; private ones (employer-specific) in content/private.
+    content_dir: Path = REPO_ROOT / "content"
 
     @field_validator("database_url")
     @classmethod

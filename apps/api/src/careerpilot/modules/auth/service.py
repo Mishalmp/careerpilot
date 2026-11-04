@@ -46,6 +46,14 @@ async def create_user(db: AsyncSession, email: str, password: str) -> User:
     return user
 
 
+async def sole_user(db: AsyncSession) -> User:
+    """The one local user, for command-line tools. Refuses to guess if there are several."""
+    users = await repository.list_users(db, limit=2)
+    if len(users) != 1:
+        raise LookupError("Expected exactly one user. Run `create-user` first.")
+    return users[0]
+
+
 async def authenticate(
     db: AsyncSession,
     throttle: LoginThrottle,

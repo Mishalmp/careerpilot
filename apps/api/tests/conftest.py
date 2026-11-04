@@ -1,5 +1,6 @@
 import asyncio
 import os
+import uuid
 from collections.abc import AsyncIterator
 
 import pytest
@@ -82,3 +83,36 @@ async def client(app: FastAPI) -> AsyncIterator[AsyncClient]:
 async def user(app: FastAPI) -> None:
     async with app.state.sessionmaker() as db:
         await service.create_user(db, EMAIL, PASSWORD)
+
+
+async def sign_in(app: FastAPI, email: str, password: str) -> AsyncClient:
+    """A client already signed in: cookie and CSRF header are sent on every request."""
+    http = AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost")
+    response = await http.post("/api/v1/auth/login", json={"email": email, "password": password})
+    assert response.status_code == 200, response.text
+    http.headers["Cookie"] = f"cp_session={response.cookies['cp_session']}"
+    http.headers["X-CSRF-Token"] = response.json()["csrf_token"]
+    return http
+
+
+@pytest_asyncio.fixture
+async def api(app: FastAPI, user: None) -> AsyncIterator[AsyncClient]:
+    http = await sign_in(app, EMAIL, PASSWORD)
+    yield http
+    await http.aclose()
+
+
+@pytest_asyncio.fixture
+async def other_api(app: FastAPI, user: None) -> AsyncIterator[AsyncClient]:
+    """A second, separate user, for tests that prove one owner cannot see another's data."""
+    async with app.state.sessionmaker() as db:
+        await service.create_user(db, "other@example.com", PASSWORD)
+    http = await sign_in(app, "other@example.com", PASSWORD)
+    yield http
+    await http.aclose()
+
+
+@pytest_asyncio.fixture
+async def owner_id(app: FastAPI, user: None) -> uuid.UUID:
+    async with app.state.sessionmaker() as db:
+        return (await service.sole_user(db)).id

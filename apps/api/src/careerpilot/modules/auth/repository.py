@@ -11,6 +11,10 @@ async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
     return await db.scalar(select(User).where(User.email == email))
 
 
+async def list_users(db: AsyncSession, limit: int) -> list[User]:
+    return list((await db.scalars(select(User).order_by(User.created_at).limit(limit))).all())
+
+
 async def add_user(db: AsyncSession, email: str, password_hash: str) -> User:
     user = User(email=email, password_hash=password_hash)
     db.add(user)

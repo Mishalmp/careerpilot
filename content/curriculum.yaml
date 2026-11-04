@@ -1,0 +1,867 @@
+# Single source for the prep curriculum. Edit here, then run `careerpilot seed-prep`.
+# Topic keys are stable ids: keep a key when you reword a title so progress is kept.
+areas:
+- name: Python
+  topics:
+  - key: python-data-model-objects-mutability-identity-vs-equality-hashing
+    title: 'Data model: objects, mutability, identity vs equality, hashing'
+    priority: High
+  - key: python-scope-closures-late-binding-legb-global-and-nonlocal
+    title: Scope, closures, late binding, LEGB, global and nonlocal
+    priority: High
+  - key: python-iterators-generators-yield-from-lazy-evaluation
+    title: Iterators, generators, yield from, lazy evaluation
+    priority: High
+  - key: python-decorators-with-arguments-functools-wraps-context-managers
+    title: Decorators (with arguments, functools.wraps), context managers
+    priority: High
+  - key: python-oop-inheritance-mro-dunder-methods-dataclasses-properties-slots
+    title: 'OOP: inheritance, MRO, dunder methods, dataclasses, properties, slots'
+    priority: High
+  - key: python-typing-type-hints-protocol-generics-pydantic-validation
+    title: 'Typing: type hints, Protocol, generics, Pydantic validation'
+    priority: High
+  - key: python-concurrency-gil-threading-vs-multiprocessing-vs-asyncio
+    title: 'Concurrency: GIL, threading vs multiprocessing vs asyncio'
+    priority: Medium
+  - key: python-asyncio-event-loop-tasks-gather-cancellation-blocking-calls
+    title: 'asyncio: event loop, tasks, gather, cancellation, blocking calls'
+    priority: Medium
+  - key: python-memory-reference-counting-garbage-collector-copy-vs-deepcopy
+    title: 'Memory: reference counting, garbage collector, copy vs deepcopy'
+    priority: Medium
+  - key: python-exceptions-error-handling-patterns-logging
+    title: Exceptions, error handling patterns, logging
+    priority: Medium
+  - key: python-collections-and-complexity-list-dict-set-deque-heapq-counter
+    title: 'Collections and complexity: list, dict, set, deque, heapq, Counter'
+    priority: Medium
+  - key: python-packaging-virtual-environments-dependency-pinning
+    title: Packaging, virtual environments, dependency pinning
+    priority: Low
+  - key: python-testing-pytest-fixtures-mocking-parametrize-coverage
+    title: 'Testing: pytest, fixtures, mocking, parametrize, coverage'
+    priority: Low
+  - key: python-performance-profiling-vectorisation-caching-lru-cache
+    title: 'Performance: profiling, vectorisation, caching (lru_cache)'
+    priority: Low
+  - key: python-pythonic-idioms-comprehensions-unpacking-walrus-f-strings
+    title: 'Pythonic idioms: comprehensions, unpacking, walrus, f-strings'
+    priority: Low
+- name: JavaScript and TypeScript
+  topics:
+  - key: javascript-and-typescript-event-loop-call-stack-microtasks-vs-macrotasks
+    title: Event loop, call stack, microtasks vs macrotasks
+    priority: High
+  - key: javascript-and-typescript-closures-scope-hoisting-this-binding-call-apply-bind
+    title: Closures, scope, hoisting, this binding, call/apply/bind
+    priority: High
+  - key: javascript-and-typescript-prototypes-and-classes
+    title: Prototypes and classes
+    priority: High
+  - key: javascript-and-typescript-promises-async-await-error-handling-promise-all-allsettled
+    title: Promises, async/await, error handling, Promise.all/allSettled
+    priority: High
+  - key: javascript-and-typescript-es6-features-destructuring-modules-spread-optional-chaining
+    title: 'ES6+ features: destructuring, modules, spread, optional chaining'
+    priority: Medium
+  - key: javascript-and-typescript-equality-type-coercion-falsy-values
+    title: Equality, type coercion, falsy values
+    priority: Medium
+  - key: javascript-and-typescript-debounce-throttle-memoisation-implementations
+    title: Debounce, throttle, memoisation implementations
+    priority: Medium
+  - key: javascript-and-typescript-typescript-types-vs-interfaces-unions-generics-narrowing
+    title: 'TypeScript: types vs interfaces, unions, generics, narrowing'
+    priority: Medium
+  - key: javascript-and-typescript-typescript-utility-types-partial-pick-omit-record-returntype
+    title: 'TypeScript utility types: Partial, Pick, Omit, Record, ReturnType'
+    priority: Low
+  - key: javascript-and-typescript-browser-basics-dom-events-bubbling-storage-cors
+    title: 'Browser basics: DOM events, bubbling, storage, CORS'
+    priority: Low
+  - key: javascript-and-typescript-module-systems-and-bundling-basics
+    title: Module systems and bundling basics
+    priority: Low
+- name: React and Next.js
+  topics:
+  - key: react-and-next-js-rendering-and-reconciliation-keys-virtual-dom
+    title: Rendering and reconciliation, keys, virtual DOM
+    priority: High
+  - key: react-and-next-js-hooks-usestate-useeffect-usememo-usecallback-useref-custom-hooks
+    title: 'Hooks: useState, useEffect, useMemo, useCallback, useRef, custom hooks'
+    priority: High
+  - key: react-and-next-js-effect-pitfalls-dependencies-stale-closures-cleanup
+    title: 'Effect pitfalls: dependencies, stale closures, cleanup'
+    priority: High
+  - key: react-and-next-js-state-management-context-vs-redux-toolkit-vs-server-state
+    title: 'State management: context vs Redux Toolkit vs server state'
+    priority: High
+  - key: react-and-next-js-performance-memo-code-splitting-lazy-loading-list-virtualisation
+    title: 'Performance: memo, code splitting, lazy loading, list virtualisation'
+    priority: Medium
+  - key: react-and-next-js-forms-and-validation-formik-yup
+    title: Forms and validation (Formik, Yup)
+    priority: Medium
+  - key: react-and-next-js-next-js-ssr-ssg-isr-client-vs-server-components-app-router
+    title: 'Next.js: SSR, SSG, ISR, client vs server components, app router'
+    priority: Medium
+  - key: react-and-next-js-next-js-data-fetching-caching-middleware-route-handlers
+    title: 'Next.js: data fetching, caching, middleware, route handlers'
+    priority: Medium
+  - key: react-and-next-js-internationalisation-next-intl-and-accessibility-basics
+    title: Internationalisation (next-intl) and accessibility basics
+    priority: Low
+  - key: react-and-next-js-testing-vitest-react-testing-library
+    title: 'Testing: Vitest, React Testing Library'
+    priority: Low
+  - key: react-and-next-js-data-grids-and-charts-at-scale-ag-grid-ag-charts
+    title: Data grids and charts at scale (AG Grid, AG Charts)
+    priority: Low
+- name: SQL and PostgreSQL
+  topics:
+  - key: sql-and-postgresql-joins-all-types-set-operations-null-semantics
+    title: Joins (all types), set operations, NULL semantics
+    priority: High
+  - key: sql-and-postgresql-aggregation-group-by-having-conditional-aggregation
+    title: Aggregation, GROUP BY, HAVING, conditional aggregation
+    priority: High
+  - key: sql-and-postgresql-window-functions-row-number-rank-lag-lead-running-totals
+    title: 'Window functions: ROW_NUMBER, RANK, LAG/LEAD, running totals'
+    priority: High
+  - key: sql-and-postgresql-ctes-recursive-ctes-subqueries-exists-vs-in
+    title: CTEs, recursive CTEs, subqueries, EXISTS vs IN
+    priority: High
+  - key: sql-and-postgresql-indexes-b-tree-composite-partial-covering-when-not-used
+    title: 'Indexes: B-tree, composite, partial, covering; when not used'
+    priority: High
+  - key: sql-and-postgresql-explain-explain-analyze-and-query-tuning
+    title: EXPLAIN / EXPLAIN ANALYZE and query tuning
+    priority: Medium
+  - key: sql-and-postgresql-transactions-acid-isolation-levels-mvcc-deadlocks
+    title: Transactions, ACID, isolation levels, MVCC, deadlocks
+    priority: Medium
+  - key: sql-and-postgresql-normalisation-denormalisation-schema-design-trade-offs
+    title: Normalisation, denormalisation, schema design trade-offs
+    priority: Medium
+  - key: sql-and-postgresql-constraints-foreign-keys-migrations-without-downtime
+    title: Constraints, foreign keys, migrations without downtime
+    priority: Medium
+  - key: sql-and-postgresql-pagination-offset-vs-keyset
+    title: 'Pagination: offset vs keyset'
+    priority: Medium
+  - key: sql-and-postgresql-locks-concurrency-control-select-for-update-idempotent-upserts
+    title: Locks, concurrency control, SELECT FOR UPDATE, idempotent upserts
+    priority: Low
+  - key: sql-and-postgresql-jsonb-full-text-search-partitioning
+    title: JSONB, full-text search, partitioning
+    priority: Low
+  - key: sql-and-postgresql-classic-query-problems-second-highest-duplicates-gaps-and-islands-sess
+    title: 'Classic query problems: second highest, duplicates, gaps and islands, sessionisation'
+    priority: Low
+- name: Django and DRF
+  topics:
+  - key: django-and-drf-request-lifecycle-middleware-url-routing-mtv
+    title: Request lifecycle, middleware, URL routing, MTV
+    priority: High
+  - key: django-and-drf-orm-querysets-are-lazy-select-related-vs-prefetch-related-n-1
+    title: 'ORM: querysets are lazy, select_related vs prefetch_related, N+1'
+    priority: High
+  - key: django-and-drf-orm-f-and-q-objects-annotations-aggregation-transactions
+    title: 'ORM: F and Q objects, annotations, aggregation, transactions'
+    priority: High
+  - key: django-and-drf-migrations-and-zero-downtime-schema-changes
+    title: Migrations and zero-downtime schema changes
+    priority: High
+  - key: django-and-drf-drf-serializers-validation-nested-writes-viewsets-routers
+    title: 'DRF: serializers, validation, nested writes, viewsets, routers'
+    priority: Medium
+  - key: django-and-drf-drf-authentication-permissions-throttling-pagination-filtering
+    title: 'DRF: authentication, permissions, throttling, pagination, filtering'
+    priority: Medium
+  - key: django-and-drf-signals-custom-managers-model-design
+    title: Signals, custom managers, model design
+    priority: Medium
+  - key: django-and-drf-caching-sessions-celery-tasks-retries-and-idempotency
+    title: Caching, sessions, Celery tasks, retries and idempotency
+    priority: Medium
+  - key: django-and-drf-security-csrf-xss-sql-injection-cors-secrets
+    title: 'Security: CSRF, XSS, SQL injection, CORS, secrets'
+    priority: Low
+  - key: django-and-drf-testing-django-and-drf-apis
+    title: Testing Django and DRF APIs
+    priority: Low
+  - key: django-and-drf-django-vs-fastapi-when-to-choose-which
+    title: 'Django vs FastAPI: when to choose which'
+    priority: Low
+- name: FastAPI and Async Backend
+  topics:
+  - key: fastapi-and-async-backend-asgi-vs-wsgi-starlette-uvicorn-workers
+    title: ASGI vs WSGI, Starlette, uvicorn workers
+    priority: High
+  - key: fastapi-and-async-backend-pydantic-v2-models-validation-response-models
+    title: Pydantic v2 models, validation, response models
+    priority: High
+  - key: fastapi-and-async-backend-dependency-injection-lifespan-events-settings-management
+    title: Dependency injection, lifespan events, settings management
+    priority: High
+  - key: fastapi-and-async-backend-async-sqlalchemy-2-asyncpg-connection-pooling-sessions-per-reque
+    title: Async SQLAlchemy 2, asyncpg, connection pooling, sessions per request
+    priority: High
+  - key: fastapi-and-async-backend-background-tasks-vs-celery-vs-queues-when-each-is-right
+    title: Background tasks vs Celery vs queues; when each is right
+    priority: Medium
+  - key: fastapi-and-async-backend-auth-jwt-access-and-refresh-oauth2-flows-rbac
+    title: 'Auth: JWT access and refresh, OAuth2 flows, RBAC'
+    priority: Medium
+  - key: fastapi-and-async-backend-middleware-request-ids-structured-logging-error-handlers
+    title: Middleware, request IDs, structured logging, error handlers
+    priority: Medium
+  - key: fastapi-and-async-backend-rate-limiting-caching-with-redis-idempotency-keys
+    title: Rate limiting, caching with Redis, idempotency keys
+    priority: Medium
+  - key: fastapi-and-async-backend-testing-testclient-dependency-overrides-async-tests
+    title: 'Testing: TestClient, dependency overrides, async tests'
+    priority: Low
+  - key: fastapi-and-async-backend-blocking-calls-inside-async-endpoints-and-thread-pools
+    title: Blocking calls inside async endpoints and thread pools
+    priority: Low
+- name: API Design and Security
+  topics:
+  - key: api-design-and-security-rest-principles-resource-design-status-codes-idempotency
+    title: REST principles, resource design, status codes, idempotency
+    priority: High
+  - key: api-design-and-security-pagination-filtering-versioning-error-format
+    title: Pagination, filtering, versioning, error format
+    priority: High
+  - key: api-design-and-security-authentication-vs-authorisation-sessions-vs-tokens-oauth2-oidc
+    title: Authentication vs authorisation, sessions vs tokens, OAuth2, OIDC
+    priority: High
+  - key: api-design-and-security-owasp-top-10-with-fixes
+    title: OWASP Top 10 with fixes
+    priority: High
+  - key: api-design-and-security-secrets-encryption-at-rest-and-in-transit-kms
+    title: Secrets, encryption at rest and in transit, KMS
+    priority: Medium
+  - key: api-design-and-security-webhooks-signature-verification-retries-replay-protection
+    title: 'Webhooks: signature verification, retries, replay protection'
+    priority: Medium
+  - key: api-design-and-security-rate-limiting-and-abuse-protection
+    title: Rate limiting and abuse protection
+    priority: Medium
+  - key: api-design-and-security-multi-tenant-isolation-patterns-and-tenant-leakage-risks
+    title: Multi-tenant isolation patterns and tenant leakage risks
+    priority: Medium
+  - key: api-design-and-security-graphql-vs-rest-vs-grpc-basics
+    title: GraphQL vs REST vs gRPC basics
+    priority: Low
+  - key: api-design-and-security-contracts-between-services-schema-versioning-backward-compatibilit
+    title: 'Contracts between services: schema, versioning, backward compatibility'
+    priority: Low
+- name: Data Engineering
+  topics:
+  - key: data-engineering-etl-vs-elt-batch-vs-streaming-when-each
+    title: ETL vs ELT, batch vs streaming, when each
+    priority: High
+  - key: data-engineering-lakehouse-medallion-layers-raw-vs-curated-data-products
+    title: Lakehouse, medallion layers, raw vs curated data products
+    priority: High
+  - key: data-engineering-parquet-columnar-formats-partitioning-small-file-problem
+    title: Parquet, columnar formats, partitioning, small-file problem
+    priority: High
+  - key: data-engineering-delta-lake-transaction-log-acid-merge-upsert-time-travel-compaction
+    title: 'Delta Lake: transaction log, ACID, merge/upsert, time travel, compaction'
+    priority: High
+  - key: data-engineering-duckdb-in-process-olap-reading-parquet-arrow-limits
+    title: 'DuckDB: in-process OLAP, reading Parquet/Arrow, limits'
+    priority: High
+  - key: data-engineering-dbt-models-materialisations-incremental-models-tests-sources
+    title: 'dbt: models, materialisations, incremental models, tests, sources'
+    priority: High
+  - key: data-engineering-idempotency-deduplication-late-arriving-data-backfills
+    title: Idempotency, deduplication, late-arriving data, backfills
+    priority: Medium
+  - key: data-engineering-incremental-loading-watermarks-change-data-capture
+    title: Incremental loading, watermarks, change data capture
+    priority: Medium
+  - key: data-engineering-data-modelling-star-schema-facts-and-dimensions-scds
+    title: 'Data modelling: star schema, facts and dimensions, SCDs'
+    priority: Medium
+  - key: data-engineering-orchestration-kestra-and-airflow-concepts-retries-slas-backfills
+    title: 'Orchestration: Kestra and Airflow concepts, retries, SLAs, backfills'
+    priority: Medium
+  - key: data-engineering-data-quality-contracts-tests-freshness-lineage-observability
+    title: 'Data quality: contracts, tests, freshness, lineage, observability'
+    priority: Low
+  - key: data-engineering-failure-handling-retries-backoff-dead-letter-queues-checkpointing
+    title: 'Failure handling: retries, backoff, dead-letter queues, checkpointing'
+    priority: Low
+  - key: data-engineering-pipeline-design-for-multi-tenant-data
+    title: Pipeline design for multi-tenant data
+    priority: Low
+  - key: data-engineering-cost-and-performance-tuning-for-analytical-queries
+    title: Cost and performance tuning for analytical queries
+    priority: Low
+- name: System Design
+  topics:
+  - key: system-design-framework-requirements-estimation-api-data-model-architecture-scaling
+    title: 'Framework: requirements, estimation, API, data model, architecture, scaling, trade-offs'
+    priority: High
+  - key: system-design-back-of-envelope-estimation-qps-storage-bandwidth
+    title: 'Back-of-envelope estimation: QPS, storage, bandwidth'
+    priority: High
+  - key: system-design-design-url-shortener
+    title: 'Design: URL shortener'
+    priority: High
+  - key: system-design-design-rate-limiter
+    title: 'Design: rate limiter'
+    priority: High
+  - key: system-design-design-notification-system-job-scheduler-with-retries
+    title: 'Design: notification system / job scheduler with retries'
+    priority: High
+  - key: system-design-design-multi-tenant-saas-platform-your-elphi
+    title: 'Design: multi-tenant SaaS platform (your Elphi)'
+    priority: High
+  - key: system-design-design-data-ingestion-and-analytics-pipeline
+    title: 'Design: data ingestion and analytics pipeline'
+    priority: Medium
+  - key: system-design-design-file-upload-and-processing-service
+    title: 'Design: file upload and processing service'
+    priority: Medium
+  - key: system-design-design-chat-or-feed-system-fan-out
+    title: 'Design: chat or feed system (fan-out)'
+    priority: Medium
+  - key: system-design-caching-strategies-invalidation-stampede-cdn
+    title: 'Caching: strategies, invalidation, stampede, CDN'
+    priority: Medium
+  - key: system-design-queues-and-streams-delivery-semantics-ordering-backpressure
+    title: 'Queues and streams: delivery semantics, ordering, backpressure'
+    priority: Medium
+  - key: system-design-databases-at-scale-replication-sharding-consistency-cap
+    title: 'Databases at scale: replication, sharding, consistency, CAP'
+    priority: Medium
+  - key: system-design-consistency-patterns-sagas-outbox-idempotent-consumers
+    title: 'Consistency patterns: sagas, outbox, idempotent consumers'
+    priority: Low
+  - key: system-design-observability-logs-metrics-traces-slos-alerting
+    title: 'Observability: logs, metrics, traces, SLOs, alerting'
+    priority: Low
+  - key: system-design-reliability-timeouts-retries-with-jitter-circuit-breakers-graceful-deg
+    title: 'Reliability: timeouts, retries with jitter, circuit breakers, graceful degradation'
+    priority: Low
+  - key: system-design-security-and-tenancy-in-architecture-reviews
+    title: Security and tenancy in architecture reviews
+    priority: Low
+- name: AWS, Docker and CI/CD
+  topics:
+  - key: aws-docker-and-ci-cd-ec2-ecs-ecr-fargate-vs-ec2-launch-type
+    title: EC2, ECS, ECR, Fargate vs EC2 launch type
+    priority: High
+  - key: aws-docker-and-ci-cd-s3-storage-classes-consistency-presigned-urls-lifecycle
+    title: 'S3: storage classes, consistency, presigned URLs, lifecycle'
+    priority: High
+  - key: aws-docker-and-ci-cd-rds-backups-multi-az-read-replicas-parameter-groups
+    title: 'RDS: backups, Multi-AZ, read replicas, parameter groups'
+    priority: High
+  - key: aws-docker-and-ci-cd-iam-roles-policies-least-privilege-task-roles
+    title: 'IAM: roles, policies, least privilege, task roles'
+    priority: High
+  - key: aws-docker-and-ci-cd-vpc-subnets-security-groups-nat-load-balancers
+    title: 'VPC: subnets, security groups, NAT, load balancers'
+    priority: High
+  - key: aws-docker-and-ci-cd-kms-secrets-manager-ses-cloudwatch
+    title: KMS, Secrets Manager, SES, CloudWatch
+    priority: Medium
+  - key: aws-docker-and-ci-cd-docker-layers-multi-stage-builds-networking-volumes-compose
+    title: 'Docker: layers, multi-stage builds, networking, volumes, Compose'
+    priority: Medium
+  - key: aws-docker-and-ci-cd-nginx-reverse-proxy-tls-load-balancing-timeouts
+    title: 'Nginx: reverse proxy, TLS, load balancing, timeouts'
+    priority: Medium
+  - key: aws-docker-and-ci-cd-gitlab-ci-cd-stages-runners-caching-artifacts-environments
+    title: 'GitLab CI/CD: stages, runners, caching, artifacts, environments'
+    priority: Medium
+  - key: aws-docker-and-ci-cd-deploy-strategies-rolling-blue-green-canary-rollback
+    title: 'Deploy strategies: rolling, blue/green, canary, rollback'
+    priority: Low
+  - key: aws-docker-and-ci-cd-linux-and-networking-basics-processes-ports-dns-http-tls-handshake
+    title: 'Linux and networking basics: processes, ports, DNS, HTTP, TLS handshake'
+    priority: Low
+  - key: aws-docker-and-ci-cd-infrastructure-as-code-basics-terraform-concepts
+    title: Infrastructure as code basics (Terraform concepts)
+    priority: Low
+- name: DSA and Coding Rounds
+  topics:
+  - key: dsa-and-coding-rounds-arrays-strings-hashing
+    title: Arrays, strings, hashing
+    priority: High
+  - key: dsa-and-coding-rounds-two-pointers-and-sliding-window
+    title: Two pointers and sliding window
+    priority: High
+  - key: dsa-and-coding-rounds-stacks-queues-monotonic-stack
+    title: Stacks, queues, monotonic stack
+    priority: High
+  - key: dsa-and-coding-rounds-linked-lists
+    title: Linked lists
+    priority: High
+  - key: dsa-and-coding-rounds-binary-search-and-variants
+    title: Binary search and variants
+    priority: High
+  - key: dsa-and-coding-rounds-trees-traversals-bst-recursion
+    title: 'Trees: traversals, BST, recursion'
+    priority: Medium
+  - key: dsa-and-coding-rounds-graphs-bfs-dfs-topological-sort
+    title: 'Graphs: BFS, DFS, topological sort'
+    priority: Medium
+  - key: dsa-and-coding-rounds-heaps-and-top-k
+    title: Heaps and top-K
+    priority: Medium
+  - key: dsa-and-coding-rounds-intervals-and-sorting-patterns
+    title: Intervals and sorting patterns
+    priority: Medium
+  - key: dsa-and-coding-rounds-dynamic-programming-1d-2d-knapsack-basics
+    title: 'Dynamic programming: 1D, 2D, knapsack basics'
+    priority: Medium
+  - key: dsa-and-coding-rounds-backtracking
+    title: Backtracking
+    priority: Low
+  - key: dsa-and-coding-rounds-complexity-analysis-explaining-trade-offs-aloud
+    title: Complexity analysis, explaining trade-offs aloud
+    priority: Low
+  - key: dsa-and-coding-rounds-writing-clean-testable-code-under-time-pressure
+    title: Writing clean, testable code under time pressure
+    priority: Low
+- name: Behavioural and Communication
+  topics:
+  - key: behavioural-and-communication-self-introduction-60-seconds-and-3-minutes
+    title: Self-introduction (60 seconds and 3 minutes)
+    priority: High
+  - key: behavioural-and-communication-star-stories-bank-ownership-conflict-failure-ambiguity-leade
+    title: 'STAR stories bank: ownership, conflict, failure, ambiguity, leadership'
+    priority: High
+  - key: behavioural-and-communication-explaining-technical-ideas-simply-audience-switching
+    title: Explaining technical ideas simply (audience switching)
+    priority: High
+  - key: behavioural-and-communication-structuring-answers-prep-and-star-avoiding-rambling
+    title: 'Structuring answers: PREP and STAR, avoiding rambling'
+    priority: High
+  - key: behavioural-and-communication-thinking-aloud-while-coding-and-designing
+    title: Thinking aloud while coding and designing
+    priority: Medium
+  - key: behavioural-and-communication-why-are-you-leaving-gaps-freelance-apprenticeship-story
+    title: Why are you leaving, gaps, freelance, apprenticeship story
+    priority: Medium
+  - key: behavioural-and-communication-salary-expectations-and-negotiation-offer-comparison
+    title: Salary expectations and negotiation, offer comparison
+    priority: Medium
+  - key: behavioural-and-communication-notice-period-and-joining-date-conversations
+    title: Notice period and joining date conversations
+    priority: Medium
+  - key: behavioural-and-communication-questions-to-ask-the-interviewer
+    title: Questions to ask the interviewer
+    priority: Low
+  - key: behavioural-and-communication-remote-communication-async-updates-time-zones-written-clarit
+    title: 'Remote communication: async updates, time zones, written clarity'
+    priority: Low
+  - key: behavioural-and-communication-spoken-english-fluency-drills-and-mock-calls
+    title: Spoken English fluency drills and mock calls
+    priority: Low
+- name: Project Defense (Elphi)
+  topics:
+  - key: project-defense-elphi-30-second-2-minute-and-10-minute-project-explanations
+    title: 30-second, 2-minute and 10-minute project explanations
+    priority: High
+  - key: project-defense-elphi-architecture-four-services-and-why
+    title: 'Architecture: four services and why'
+    priority: High
+  - key: project-defense-elphi-multi-tenancy-database-per-tenant-trade-offs-migrations-at-scale
+    title: 'Multi-tenancy: database per tenant, trade-offs, migrations at scale'
+    priority: High
+  - key: project-defense-elphi-transformation-engine-yaml-contracts-dbt-per-run-idempotent-upserts
+    title: 'Transformation engine: YAML contracts, dbt per run, idempotent upserts'
+    priority: High
+  - key: project-defense-elphi-reliability-retries-queues-single-flight-locking-dedup-known-limits
+    title: 'Reliability: retries, queues, single-flight locking, dedup, known limits'
+    priority: High
+  - key: project-defense-elphi-failure-scenarios-worker-dies-mid-run-callback-lost-duplicate-trigge
+    title: 'Failure scenarios: worker dies mid-run, callback lost, duplicate trigger'
+    priority: Medium
+  - key: project-defense-elphi-data-correctness-late-data-backfills-schema-drift-versioned-contract
+    title: 'Data correctness: late data, backfills, schema drift, versioned contracts'
+    priority: Medium
+  - key: project-defense-elphi-security-kms-encrypted-credentials-rbac-jwt-tenant-isolation
+    title: 'Security: KMS-encrypted credentials, RBAC, JWT, tenant isolation'
+    priority: Medium
+  - key: project-defense-elphi-scaling-what-breaks-at-10x-and-100x-tenants
+    title: 'Scaling: what breaks at 10x and 100x tenants'
+    priority: Medium
+  - key: project-defense-elphi-ci-cd-and-operations-deploys-rollbacks-monitoring-incident-story
+    title: 'CI/CD and operations: deploys, rollbacks, monitoring, incident story'
+    priority: Low
+  - key: project-defense-elphi-what-you-owned-vs-the-team-and-how-to-say-it-precisely
+    title: What you owned vs the team, and how to say it precisely
+    priority: Low
+  - key: project-defense-elphi-what-you-would-redesign-today-and-why
+    title: What you would redesign today and why
+    priority: Low
+days:
+- day: 1
+  phase: W1 Ready fast
+  focus: Story + Python core
+  core_topics: Python data model, scope, closures
+  practice: 10 easy array/hash problems
+  speaking: 60-second and 3-minute self-intro; record and replay
+  hours: 5
+  deliverable: Intro script v1
+- day: 2
+  phase: W1 Ready fast
+  focus: Python iterators + SQL refresh
+  core_topics: Generators, decorators, context managers; SQL joins and GROUP BY
+  practice: 8 SQL joins/aggregation problems
+  speaking: Explain Elphi in 2 minutes
+  hours: 5
+  deliverable: Python cheat sheet 1
+- day: 3
+  phase: W1 Ready fast
+  focus: SQL windows + Elphi architecture
+  core_topics: Window functions, CTEs
+  practice: 10 window-function problems
+  speaking: 'Project defense set 1: architecture'
+  hours: 5
+  deliverable: Elphi diagram from memory
+- day: 4
+  phase: W1 Ready fast
+  focus: Python OOP/typing + hashing
+  core_topics: OOP, dunders, dataclasses, typing
+  practice: Hash map patterns, 8 problems
+  speaking: Explain one design choice per service
+  hours: 5
+  deliverable: OOP notes
+- day: 5
+  phase: W1 Ready fast
+  focus: SQL indexes/transactions + tenancy
+  core_topics: Indexes, EXPLAIN, isolation levels
+  practice: 5 query-tuning exercises
+  speaking: 'Project defense set 2: multi-tenancy and security'
+  hours: 5
+  deliverable: Index cheat sheet
+- day: 6
+  phase: W1 Ready fast
+  focus: Concurrency + sliding window
+  core_topics: GIL, threads, processes, asyncio
+  practice: 8 two-pointer/window problems
+  speaking: Explain async vs threads aloud
+  hours: 5
+  deliverable: Concurrency notes
+- day: 7
+  phase: W1 Ready fast
+  focus: Mock 1 + retro
+  core_topics: Review weak spots from week
+  practice: Timed 45-minute screen
+  speaking: 'Mock 1: HR + technical screen'
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 8
+  phase: W2 Backend
+  focus: FastAPI I
+  core_topics: ASGI, routing, Pydantic v2, dependency injection
+  practice: Build a small CRUD API with tests
+  speaking: Why FastAPI at Elphi
+  hours: 5
+  deliverable: Mini API repo
+- day: 9
+  phase: W2 Backend
+  focus: FastAPI II
+  core_topics: Async DB, background tasks, middleware, JWT
+  practice: Add auth + async DB
+  speaking: Explain auth flow end to end
+  hours: 5
+  deliverable: Auth notes
+- day: 10
+  phase: W2 Backend
+  focus: Django I
+  core_topics: MTV, ORM laziness, N+1, migrations
+  practice: Reproduce and fix an N+1
+  speaking: Django vs FastAPI answer
+  hours: 5
+  deliverable: ORM notes
+- day: 11
+  phase: W2 Backend
+  focus: Django II / DRF
+  core_topics: Serializers, viewsets, permissions, throttling, Celery
+  practice: Write a DRF endpoint with permissions
+  speaking: Explain Celery retry design
+  hours: 5
+  deliverable: DRF cheat sheet
+- day: 12
+  phase: W2 Backend
+  focus: API design + security
+  core_topics: REST, idempotency, pagination, OAuth2, OWASP
+  practice: Design 3 APIs on paper
+  speaking: Explain webhook security
+  hours: 5
+  deliverable: API checklist
+- day: 13
+  phase: W2 Backend
+  focus: Stacks/queues + SQL set
+  core_topics: Monotonic stack, queues, linked lists
+  practice: 8 problems + 6 SQL
+  speaking: Defend one trade-off
+  hours: 5
+  deliverable: Problem log
+- day: 14
+  phase: W2 Backend
+  focus: Mock 2 + project set 3
+  core_topics: Backend deep dive
+  practice: Timed API design
+  speaking: 'Project defense set 3: pipeline'
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 15
+  phase: W3 Data + JS
+  focus: Data engineering I
+  core_topics: ELT, lakehouse, Parquet, Delta Lake ACID
+  practice: Delta merge exercise
+  speaking: Explain lakehouse choice at Elphi
+  hours: 5
+  deliverable: Lakehouse notes
+- day: 16
+  phase: W3 Data + JS
+  focus: Data engineering II
+  core_topics: dbt, DuckDB, idempotency, dedup, watermarks, orchestration
+  practice: Write an incremental dbt model
+  speaking: Explain idempotent upserts
+  hours: 5
+  deliverable: Pipeline cheat sheet
+- day: 17
+  phase: W3 Data + JS
+  focus: JavaScript I
+  core_topics: Event loop, closures, this, promises
+  practice: 10 JS output-prediction questions
+  speaking: Explain the event loop aloud
+  hours: 5
+  deliverable: JS notes 1
+- day: 18
+  phase: W3 Data + JS
+  focus: JavaScript II + TypeScript
+  core_topics: TS generics, utility types, narrowing
+  practice: Implement debounce, throttle, memoise
+  speaking: TypeScript at Elphi
+  hours: 5
+  deliverable: TS notes
+- day: 19
+  phase: W3 Data + JS
+  focus: React I
+  core_topics: Hooks, rendering, effects, state
+  practice: Build a hooks exercise
+  speaking: Explain a re-render bug
+  hours: 5
+  deliverable: React notes 1
+- day: 20
+  phase: W3 Data + JS
+  focus: React II + Next.js
+  core_topics: SSR/SSG/ISR, server components, performance
+  practice: Next.js data-fetching exercise
+  speaking: Explain dashboard performance
+  hours: 5
+  deliverable: Next.js notes
+- day: 21
+  phase: W3 Data + JS
+  focus: Mock 3 + trees
+  core_topics: Full-stack round
+  practice: Tree and BFS problems
+  speaking: 'Mock 3: full-stack'
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 22
+  phase: W4 System design
+  focus: Framework + URL shortener
+  core_topics: Requirements to trade-offs
+  practice: Design on paper, 45 min
+  speaking: Narrate the design aloud
+  hours: 5
+  deliverable: Design 1
+- day: 23
+  phase: W4 System design
+  focus: Rate limiter + caching
+  core_topics: Token bucket, Redis, invalidation
+  practice: Design on paper
+  speaking: Defend consistency choices
+  hours: 5
+  deliverable: Design 2
+- day: 24
+  phase: W4 System design
+  focus: Queues, retries, scheduler
+  core_topics: Retries with jitter, DLQ, idempotency, outbox
+  practice: Design a job scheduler
+  speaking: Link to your Celery/Kestra work
+  hours: 5
+  deliverable: Design 3
+- day: 25
+  phase: W4 System design
+  focus: Multi-tenant SaaS
+  core_topics: Tenancy models, RBAC, billing, migrations
+  practice: Redesign Elphi on paper
+  speaking: Defend database per tenant
+  hours: 5
+  deliverable: Design 4
+- day: 26
+  phase: W4 System design
+  focus: Data platform design
+  core_topics: Ingest to lake to serve, SLAs, cost
+  practice: Design analytics pipeline
+  speaking: Explain failure modes
+  hours: 5
+  deliverable: Design 5
+- day: 27
+  phase: W4 System design
+  focus: Scaling databases
+  core_topics: Replication, sharding, CAP, search, feed
+  practice: Estimation drills
+  speaking: Explain trade-offs aloud
+  hours: 5
+  deliverable: Design 6
+- day: 28
+  phase: W4 System design
+  focus: 'Mock 4: system design'
+  core_topics: 60-minute design
+  practice: Mock design interview
+  speaking: Mock 4
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 29
+  phase: W5 Infra + depth
+  focus: AWS core
+  core_topics: ECS, ECR, S3, RDS, IAM, KMS, VPC
+  practice: Draw your Elphi AWS layout
+  speaking: Explain IAM task roles
+  hours: 5
+  deliverable: AWS cheat sheet
+- day: 30
+  phase: W5 Infra + depth
+  focus: Docker, Nginx, networking
+  core_topics: Layers, Compose, reverse proxy, TLS, DNS
+  practice: Debug a broken compose file
+  speaking: Explain a request end to end
+  hours: 5
+  deliverable: Networking notes
+- day: 31
+  phase: W5 Infra + depth
+  focus: CI/CD + observability
+  core_topics: GitLab pipelines, deploy strategies, logs/metrics/traces
+  practice: Design a pipeline
+  speaking: Explain your release flow
+  hours: 5
+  deliverable: CI/CD notes
+- day: 32
+  phase: W5 Infra + depth
+  focus: DP intro + graphs
+  core_topics: 1D/2D DP, graph patterns
+  practice: 8 problems
+  speaking: Think aloud practice
+  hours: 5
+  deliverable: Problem log
+- day: 33
+  phase: W5 Infra + depth
+  focus: Mixed timed set
+  core_topics: Heap, greedy, backtracking
+  practice: 3 timed mediums
+  speaking: Explain complexity aloud
+  hours: 5
+  deliverable: Problem log
+- day: 34
+  phase: W5 Infra + depth
+  focus: Security + testing
+  core_topics: OWASP, secrets, pytest, mocking, test pyramid
+  practice: Write tests for a module
+  speaking: Explain how you test pipelines
+  hours: 5
+  deliverable: Testing notes
+- day: 35
+  phase: W5 Infra + depth
+  focus: 'Mock 5: coding'
+  core_topics: 60-minute coding round
+  practice: Mock coding interview
+  speaking: Mock 5
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 36
+  phase: W6 Behavioural
+  focus: Behavioural bank
+  core_topics: 'STAR stories: ownership, conflict, failure, ambiguity'
+  practice: Write 8 stories
+  speaking: Say each aloud, 2 minutes
+  hours: 4
+  deliverable: Story bank
+- day: 37
+  phase: W6 Behavioural
+  focus: Communication craft
+  core_topics: PREP/STAR, simple explanations, thinking aloud
+  practice: Record 5 answers and review
+  speaking: English fluency drill
+  hours: 4
+  deliverable: Answer recordings
+- day: 38
+  phase: W6 Behavioural
+  focus: Negotiation and logistics
+  core_topics: Salary, notice, why leaving, gaps, visa questions
+  practice: Role-play negotiation
+  speaking: Role-play with friend
+  hours: 4
+  deliverable: Negotiation script
+- day: 39
+  phase: W6 Behavioural
+  focus: Company sprint
+  core_topics: Interview Intel rows for top 3 companies
+  practice: Company-specific practice
+  speaking: Tailored 'why us' answers
+  hours: 5
+  deliverable: Three company briefs
+- day: 40
+  phase: W6 Behavioural
+  focus: Hostile project defense
+  core_topics: All Elphi edge questions
+  practice: Whiteboard failure scenarios
+  speaking: Hostile interviewer mock
+  hours: 5
+  deliverable: Defense notes final
+- day: 41
+  phase: W6 Behavioural
+  focus: 'Mock 6: HR + managerial'
+  core_topics: Behavioural and managerial
+  practice: Mock interview
+  speaking: Mock 6
+  hours: 4
+  deliverable: Retro and fixes list
+- day: 42
+  phase: W6 Behavioural
+  focus: Weak-area day
+  core_topics: Topics with confidence 2 or lower
+  practice: Targeted drills
+  speaking: Explain each weak topic aloud
+  hours: 5
+  deliverable: Updated confidence scores
+- day: 43
+  phase: W7 Polish
+  focus: Full loop simulation
+  core_topics: Coding + design + behavioural, 3 hours
+  practice: Full simulation
+  speaking: Full simulation
+  hours: 4
+  deliverable: Loop feedback
+- day: 44
+  phase: W7 Polish
+  focus: Revision + questions for them
+  core_topics: Cheat sheets, smart interviewer questions
+  practice: Light problems
+  speaking: Rehearse closing and questions
+  hours: 3
+  deliverable: One-page revision sheet
+- day: 45
+  phase: W7 Polish
+  focus: Rest + plan
+  core_topics: Light review only
+  practice: None
+  speaking: Plan next iteration
+  hours: 2
+  deliverable: Next-iteration plan

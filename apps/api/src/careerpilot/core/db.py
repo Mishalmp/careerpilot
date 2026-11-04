@@ -1,4 +1,6 @@
-from sqlalchemy import MetaData
+from enum import StrEnum
+
+from sqlalchemy import Enum, MetaData
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -18,6 +20,22 @@ NAMING_CONVENTION = {
 
 class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING_CONVENTION)
+
+
+def _enum_values(enum_cls: type[StrEnum]) -> list[str]:
+    return [member.value for member in enum_cls]
+
+
+def str_enum(enum_cls: type[StrEnum], name: str) -> Enum:
+    """Store a StrEnum as text with a CHECK constraint (native PG enums are painful to migrate)."""
+    return Enum(
+        enum_cls,
+        name=name,
+        native_enum=False,
+        create_constraint=True,
+        validate_strings=True,
+        values_callable=_enum_values,
+    )
 
 
 def create_engine(url: str) -> AsyncEngine:

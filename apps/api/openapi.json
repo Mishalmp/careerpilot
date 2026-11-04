@@ -1,6 +1,623 @@
 {
   "components": {
     "schemas": {
+      "ApplicationOut": {
+        "properties": {
+          "applied_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied On"
+          },
+          "email_mode": {
+            "$ref": "#/components/schemas/EmailMode"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "next_followup_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Followup On"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "portal_mode": {
+            "$ref": "#/components/schemas/PortalMode"
+          },
+          "resume_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resume Version"
+          },
+          "site_mode": {
+            "$ref": "#/components/schemas/PortalMode"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "version",
+          "applied_on",
+          "next_followup_on",
+          "portal_mode",
+          "site_mode",
+          "email_mode",
+          "resume_version",
+          "notes",
+          "updated_at"
+        ],
+        "title": "ApplicationOut",
+        "type": "object"
+      },
+      "ApplicationUpdate": {
+        "properties": {
+          "applied_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applied On"
+          },
+          "email_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmailMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "next_followup_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Followup On"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "portal_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PortalMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "resume_version": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resume Version"
+          },
+          "site_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PortalMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "ApplicationUpdate",
+        "type": "object"
+      },
+      "CompanyOut": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "website",
+          "country"
+        ],
+        "title": "CompanyOut",
+        "type": "object"
+      },
+      "ContactCreate": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ContactKind"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "ContactCreate",
+        "type": "object"
+      },
+      "ContactKind": {
+        "enum": [
+          "published_business",
+          "recruiter",
+          "referral"
+        ],
+        "title": "ContactKind",
+        "type": "string"
+      },
+      "ContactOut": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ContactKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "email",
+          "phone",
+          "kind",
+          "source_url"
+        ],
+        "title": "ContactOut",
+        "type": "object"
+      },
+      "Currency": {
+        "enum": [
+          "INR",
+          "USD",
+          "EUR",
+          "GBP",
+          "AED",
+          "CAD",
+          "AUD",
+          "SGD",
+          "Other"
+        ],
+        "title": "Currency",
+        "type": "string"
+      },
+      "DayOut": {
+        "properties": {
+          "core_topics": {
+            "title": "Core Topics",
+            "type": "string"
+          },
+          "day": {
+            "title": "Day",
+            "type": "integer"
+          },
+          "deliverable": {
+            "title": "Deliverable",
+            "type": "string"
+          },
+          "focus": {
+            "title": "Focus",
+            "type": "string"
+          },
+          "hours": {
+            "title": "Hours",
+            "type": "integer"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "phase": {
+            "title": "Phase",
+            "type": "string"
+          },
+          "practice": {
+            "title": "Practice",
+            "type": "string"
+          },
+          "scheduled_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled On"
+          },
+          "speaking": {
+            "title": "Speaking",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DayStatus"
+          }
+        },
+        "required": [
+          "day",
+          "phase",
+          "focus",
+          "core_topics",
+          "practice",
+          "speaking",
+          "hours",
+          "deliverable",
+          "status",
+          "notes"
+        ],
+        "title": "DayOut",
+        "type": "object"
+      },
+      "DayStatus": {
+        "enum": [
+          "Planned",
+          "Done",
+          "Skipped",
+          "Moved"
+        ],
+        "title": "DayStatus",
+        "type": "string"
+      },
+      "DayUpdate": {
+        "properties": {
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DayStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "DayUpdate",
+        "type": "object"
+      },
+      "EmailMode": {
+        "enum": [
+          "Not yet",
+          "Draft ready",
+          "Sent",
+          "No email found"
+        ],
+        "title": "EmailMode",
+        "type": "string"
+      },
+      "EventOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "from_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "to_status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "from_status",
+          "to_status",
+          "note",
+          "at"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "EventType": {
+        "enum": [
+          "created",
+          "status_changed",
+          "reopened"
+        ],
+        "title": "EventType",
+        "type": "string"
+      },
+      "GuideInfoOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "private": {
+            "title": "Private",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "title",
+          "private"
+        ],
+        "title": "GuideInfoOut",
+        "type": "object"
+      },
+      "GuideOut": {
+        "properties": {
+          "markdown": {
+            "title": "Markdown",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "private": {
+            "title": "Private",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "title",
+          "private",
+          "markdown"
+        ],
+        "title": "GuideOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -12,6 +629,948 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HiringFromIndia": {
+        "enum": [
+          "Yes",
+          "India only",
+          "No",
+          "Unknown"
+        ],
+        "title": "HiringFromIndia",
+        "type": "string"
+      },
+      "JobCreate": {
+        "properties": {
+          "apply_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apply Url"
+          },
+          "careers_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Careers Url"
+          },
+          "company_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Company Name",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "est_ctc_lpa": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Est Ctc Lpa"
+          },
+          "found_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found On"
+          },
+          "hiring_from_india": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HiringFromIndia"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jd_summary": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Summary"
+          },
+          "jd_text": {
+            "anyOf": [
+              {
+                "maxLength": 50000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Text"
+          },
+          "jd_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Url"
+          },
+          "job_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Text"
+          },
+          "posted_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted On"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Region"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "salary_text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Text"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Portal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "visa": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Visa"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "work_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "company_name",
+          "title"
+        ],
+        "title": "JobCreate",
+        "type": "object"
+      },
+      "JobDetail": {
+        "properties": {
+          "application": {
+            "$ref": "#/components/schemas/ApplicationOut"
+          },
+          "apply_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apply Url"
+          },
+          "careers_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Careers Url"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyOut"
+          },
+          "contacts": {
+            "items": {
+              "$ref": "#/components/schemas/ContactOut"
+            },
+            "title": "Contacts",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "est_ctc_lpa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Est Ctc Lpa"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "found_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found On"
+          },
+          "hiring_from_india": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HiringFromIndia"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "jd_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Summary"
+          },
+          "jd_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Text"
+          },
+          "jd_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Url"
+          },
+          "job_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Text"
+          },
+          "posted_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted On"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Region"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "salary_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Text"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Portal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visa": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Visa"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "work_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "company",
+          "application",
+          "source",
+          "region",
+          "location_text",
+          "work_mode",
+          "job_type",
+          "hiring_from_india",
+          "currency",
+          "salary_text",
+          "est_ctc_lpa",
+          "visa",
+          "found_on",
+          "posted_on",
+          "jd_url",
+          "apply_url",
+          "careers_url",
+          "created_at",
+          "updated_at",
+          "jd_text",
+          "jd_summary",
+          "events",
+          "contacts"
+        ],
+        "title": "JobDetail",
+        "type": "object"
+      },
+      "JobPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/JobSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "JobPage",
+        "type": "object"
+      },
+      "JobSummary": {
+        "properties": {
+          "application": {
+            "$ref": "#/components/schemas/ApplicationOut"
+          },
+          "apply_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apply Url"
+          },
+          "careers_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Careers Url"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyOut"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "est_ctc_lpa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Est Ctc Lpa"
+          },
+          "found_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found On"
+          },
+          "hiring_from_india": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HiringFromIndia"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "jd_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Url"
+          },
+          "job_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Text"
+          },
+          "posted_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted On"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Region"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "salary_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Text"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Portal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visa": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Visa"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "work_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "company",
+          "application",
+          "source",
+          "region",
+          "location_text",
+          "work_mode",
+          "job_type",
+          "hiring_from_india",
+          "currency",
+          "salary_text",
+          "est_ctc_lpa",
+          "visa",
+          "found_on",
+          "posted_on",
+          "jd_url",
+          "apply_url",
+          "careers_url",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "JobSummary",
+        "type": "object"
+      },
+      "JobType": {
+        "enum": [
+          "Permanent Full-time",
+          "Contract",
+          "Contract-to-Hire"
+        ],
+        "title": "JobType",
+        "type": "string"
+      },
+      "JobUpdate": {
+        "properties": {
+          "apply_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apply Url"
+          },
+          "careers_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Careers Url"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Currency"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "est_ctc_lpa": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Est Ctc Lpa"
+          },
+          "found_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found On"
+          },
+          "hiring_from_india": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HiringFromIndia"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jd_summary": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Summary"
+          },
+          "jd_text": {
+            "anyOf": [
+              {
+                "maxLength": 50000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Text"
+          },
+          "jd_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Url"
+          },
+          "job_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Text"
+          },
+          "posted_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted On"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Region"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "salary_text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Text"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Portal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "visa": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Visa"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "work_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "JobUpdate",
         "type": "object"
       },
       "LoginRequest": {
@@ -37,21 +1596,502 @@
         "title": "LoginRequest",
         "type": "object"
       },
-      "SessionOut": {
+      "PlanOut": {
         "properties": {
-          "csrf_token": {
-            "title": "Csrf Token",
-            "type": "string"
-          },
-          "user": {
-            "$ref": "#/components/schemas/UserOut"
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
           }
         },
         "required": [
-          "user",
-          "csrf_token"
+          "start_date"
         ],
-        "title": "SessionOut",
+        "title": "PlanOut",
+        "type": "object"
+      },
+      "PlanPhase": {
+        "enum": [
+          "not_configured",
+          "upcoming",
+          "active",
+          "finished"
+        ],
+        "title": "PlanPhase",
+        "type": "string"
+      },
+      "PlanUpdate": {
+        "properties": {
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_date"
+        ],
+        "title": "PlanUpdate",
+        "type": "object"
+      },
+      "Portal": {
+        "enum": [
+          "LinkedIn",
+          "Indeed",
+          "Naukri",
+          "Glassdoor",
+          "Wellfound",
+          "Instahyre",
+          "Bayt",
+          "NaukriGulf",
+          "GulfTalent",
+          "We Work Remotely",
+          "Himalayas",
+          "Remote.com",
+          "Other"
+        ],
+        "title": "Portal",
+        "type": "string"
+      },
+      "PortalMode": {
+        "description": "Used for both the job-portal mode and the company-site mode.",
+        "enum": [
+          "Not yet",
+          "Done",
+          "Not available"
+        ],
+        "title": "PortalMode",
+        "type": "string"
+      },
+      "Priority": {
+        "enum": [
+          "High",
+          "Medium",
+          "Low"
+        ],
+        "title": "Priority",
+        "type": "string"
+      },
+      "Region": {
+        "enum": [
+          "India",
+          "Europe",
+          "USA",
+          "UAE / Middle East",
+          "Remote (Global)"
+        ],
+        "title": "Region",
+        "type": "string"
+      },
+      "SeedResult": {
+        "properties": {
+          "days_added": {
+            "title": "Days Added",
+            "type": "integer"
+          },
+          "days_updated": {
+            "title": "Days Updated",
+            "type": "integer"
+          },
+          "topics_added": {
+            "title": "Topics Added",
+            "type": "integer"
+          },
+          "topics_updated": {
+            "title": "Topics Updated",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "topics_added",
+          "topics_updated",
+          "days_added",
+          "days_updated"
+        ],
+        "title": "SeedResult",
+        "type": "object"
+      },
+      "SessionCreate": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/StudyKind"
+          },
+          "minutes": {
+            "maximum": 720.0,
+            "minimum": 1.0,
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "studied_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Studied On"
+          }
+        },
+        "required": [
+          "minutes",
+          "kind"
+        ],
+        "title": "SessionCreate",
+        "type": "object"
+      },
+      "Status": {
+        "enum": [
+          "New",
+          "Shortlisted",
+          "Applied - Pending",
+          "Follow-up Sent",
+          "Interview Confirmed",
+          "Technical Round",
+          "Next Round",
+          "HR Round",
+          "Manager Round",
+          "Offer Received",
+          "Offer Accepted",
+          "Rejected",
+          "No Response",
+          "On Hold",
+          "Withdrawn",
+          "Job Closed"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "StatusChange": {
+        "properties": {
+          "expected_version": {
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "next_followup_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Followup On"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reopen": {
+            "default": false,
+            "title": "Reopen",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        },
+        "required": [
+          "status",
+          "expected_version"
+        ],
+        "title": "StatusChange",
+        "type": "object"
+      },
+      "StatusCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        },
+        "required": [
+          "status",
+          "count"
+        ],
+        "title": "StatusCount",
+        "type": "object"
+      },
+      "StudyKind": {
+        "enum": [
+          "learn",
+          "practice",
+          "review",
+          "mock"
+        ],
+        "title": "StudyKind",
+        "type": "string"
+      },
+      "TodayOut": {
+        "properties": {
+          "due_followups": {
+            "items": {
+              "$ref": "#/components/schemas/JobSummary"
+            },
+            "title": "Due Followups",
+            "type": "array"
+          },
+          "pipeline": {
+            "items": {
+              "$ref": "#/components/schemas/StatusCount"
+            },
+            "title": "Pipeline",
+            "type": "array"
+          },
+          "prep": {
+            "$ref": "#/components/schemas/TodayPrep"
+          }
+        },
+        "required": [
+          "pipeline",
+          "due_followups",
+          "prep"
+        ],
+        "title": "TodayOut",
+        "type": "object"
+      },
+      "TodayPrep": {
+        "properties": {
+          "day": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DayOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "day_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Number"
+          },
+          "due_reviews": {
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Due Reviews",
+            "type": "array"
+          },
+          "minutes_today": {
+            "title": "Minutes Today",
+            "type": "integer"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/PlanPhase"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "total_days": {
+            "title": "Total Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "phase",
+          "start_date",
+          "day_number",
+          "total_days",
+          "day",
+          "due_reviews",
+          "minutes_today"
+        ],
+        "title": "TodayPrep",
+        "type": "object"
+      },
+      "TopicOut": {
+        "properties": {
+          "area": {
+            "title": "Area",
+            "type": "string"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "last_reviewed_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Reviewed On"
+          },
+          "next_review_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Review On"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "sort_order": {
+            "title": "Sort Order",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TopicStatus"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "area",
+          "title",
+          "priority",
+          "sort_order",
+          "confidence",
+          "status",
+          "last_reviewed_on",
+          "next_review_on",
+          "notes"
+        ],
+        "title": "TopicOut",
+        "type": "object"
+      },
+      "TopicStatus": {
+        "enum": [
+          "Not started",
+          "Learning",
+          "Revised",
+          "Mock-tested"
+        ],
+        "title": "TopicStatus",
+        "type": "string"
+      },
+      "TopicUpdate": {
+        "properties": {
+          "confidence": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TopicStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "TopicUpdate",
         "type": "object"
       },
       "UserOut": {
@@ -112,6 +2152,89 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "Visa": {
+        "enum": [
+          "Not needed",
+          "Sponsorship offered",
+          "Not offered",
+          "Unknown"
+        ],
+        "title": "Visa",
+        "type": "string"
+      },
+      "WorkMode": {
+        "enum": [
+          "Remote",
+          "Hybrid",
+          "Onsite"
+        ],
+        "title": "WorkMode",
+        "type": "string"
+      },
+      "careerpilot__modules__auth__schemas__SessionOut": {
+        "properties": {
+          "csrf_token": {
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "required": [
+          "user",
+          "csrf_token"
+        ],
+        "title": "SessionOut",
+        "type": "object"
+      },
+      "careerpilot__modules__prep__schemas__SessionOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/StudyKind"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "studied_on": {
+            "format": "date",
+            "title": "Studied On",
+            "type": "string"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "topic_id",
+          "minutes",
+          "kind",
+          "studied_on",
+          "notes"
+        ],
+        "title": "SessionOut",
+        "type": "object"
       }
     }
   },
@@ -121,6 +2244,144 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/applications/{application_id}": {
+      "patch": {
+        "operationId": "update_application",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Application Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Application",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/applications/{application_id}/status": {
+      "post": {
+        "operationId": "change_status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Application Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Status",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "operationId": "login",
@@ -139,7 +2400,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SessionOut"
+                  "$ref": "#/components/schemas/careerpilot__modules__auth__schemas__SessionOut"
                 }
               }
             },
@@ -230,7 +2491,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SessionOut"
+                  "$ref": "#/components/schemas/careerpilot__modules__auth__schemas__SessionOut"
                 }
               }
             },
@@ -250,6 +2511,1312 @@
         "summary": "Me",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/contacts/{contact_id}": {
+      "delete": {
+        "operationId": "delete_contact",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Contact",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs": {
+      "get": {
+        "operationId": "list_jobs",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/Status"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "region",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Region"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "in": "query",
+            "name": "work_mode",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/WorkMode"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Work Mode"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_ctc",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Ctc"
+            }
+          },
+          {
+            "in": "query",
+            "name": "followup_due",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Followup Due",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Jobs",
+        "tags": [
+          "tracker"
+        ]
+      },
+      "post": {
+        "operationId": "create_job",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobSummary"
+                }
+              }
+            },
+            "description": "The job already existed"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Job",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/export.csv": {
+      "get": {
+        "operationId": "export_jobs_csv",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Jobs",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "delete": {
+        "operationId": "delete_job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Job",
+        "tags": [
+          "tracker"
+        ]
+      },
+      "get": {
+        "operationId": "get_job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Job",
+        "tags": [
+          "tracker"
+        ]
+      },
+      "patch": {
+        "operationId": "update_job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Job",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/contacts": {
+      "post": {
+        "operationId": "add_contact",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Contact",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/prep/days": {
+      "get": {
+        "operationId": "list_days",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DayOut"
+                  },
+                  "title": "Response List Days",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Days",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/days/{number}": {
+      "patch": {
+        "operationId": "update_day",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DayUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DayOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Day",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/guides": {
+      "get": {
+        "operationId": "list_guides",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GuideInfoOut"
+                  },
+                  "title": "Response List Guides",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Guides",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/guides/{name}": {
+      "get": {
+        "operationId": "get_guide",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuideOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Guide",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/plan": {
+      "get": {
+        "operationId": "get_plan",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Plan",
+        "tags": [
+          "prep"
+        ]
+      },
+      "put": {
+        "operationId": "set_plan",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Plan",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/seed": {
+      "post": {
+        "description": "Load or refresh the curriculum from content/curriculum.yaml. Safe to repeat.",
+        "operationId": "seed_prep",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Seed Prep",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/today": {
+      "get": {
+        "operationId": "get_prep_today",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayPrep"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Prep Today",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/topics": {
+      "get": {
+        "operationId": "list_topics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Area"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/TopicStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "due",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Due",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TopicOut"
+                  },
+                  "title": "Response List Topics",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Topics",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/topics/{topic_id}": {
+      "patch": {
+        "operationId": "update_topic",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopicUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Topic",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/prep/topics/{topic_id}/sessions": {
+      "post": {
+        "operationId": "log_session",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/careerpilot__modules__prep__schemas__SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Log Session",
+        "tags": [
+          "prep"
+        ]
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "operationId": "get_today",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Today",
+        "tags": [
+          "today"
         ]
       }
     },

@@ -13,6 +13,9 @@ dependencies = [
   "pydantic-settings>=2.6",
   "argon2-cffi>=23.1",
   "structlog>=24.4",
+  "pyyaml>=6.0.3",
+  "openpyxl>=3.1.5",
+  "tzdata>=2026.6",
 ]
 
 [dependency-groups]
@@ -23,6 +26,7 @@ dev = [
   "ruff>=0.8",
   "pyright>=1.1.390",
   "import-linter>=2.1",
+  "types-pyyaml>=6.0.12.20261103",
 ]
 
 [build-system]
@@ -44,7 +48,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "S", "RUF"]
 known-third-party = ["alembic"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "S105", "S106"]
+"tests/**" = ["S101", "S105", "S106", "E501"]
+"alembic/versions/*" = ["E501"]  # generated enum lists are long
 
 [tool.pyright]
 include = ["src", "tests", "alembic"]
@@ -64,11 +69,46 @@ root_package = "careerpilot"
 [[tool.importlinter.contracts]]
 name = "core does not depend on modules"
 type = "forbidden"
+allow_indirect_imports = true
 source_modules = ["careerpilot.core"]
 forbidden_modules = ["careerpilot.modules"]
 
 [[tool.importlinter.contracts]]
 name = "module layers (router > dependencies > service > repository)"
 type = "layers"
-containers = ["careerpilot.modules.auth"]
-layers = ["router", "dependencies", "service", "repository"]
+containers = [
+  "careerpilot.modules.auth",
+  "careerpilot.modules.tracker",
+  "careerpilot.modules.prep",
+  "careerpilot.modules.today",
+]
+layers = ["router", "(dependencies)", "(service)", "(repository)"]
+
+# Modules talk to each other through public service functions and schemas only.
+[[tool.importlinter.contracts]]
+name = "tracker keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.prep", "careerpilot.modules.today", "careerpilot.modules.auth"]
+forbidden_modules = ["careerpilot.modules.tracker.models", "careerpilot.modules.tracker.repository"]
+
+[[tool.importlinter.contracts]]
+name = "prep keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.today", "careerpilot.modules.auth"]
+forbidden_modules = ["careerpilot.modules.prep.models", "careerpilot.modules.prep.repository"]
+
+[[tool.importlinter.contracts]]
+name = "auth keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.today"]
+forbidden_modules = ["careerpilot.modules.auth.models", "careerpilot.modules.auth.repository", "careerpilot.modules.auth.service"]
+
+[[tool.importlinter.contracts]]
+name = "nothing depends on the today aggregator"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.auth"]
+forbidden_modules = ["careerpilot.modules.today"]

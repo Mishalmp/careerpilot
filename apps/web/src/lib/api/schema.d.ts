@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/api/v1/applications/{application_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Application */
+        patch: operations["update_application"];
+        trace?: never;
+    };
+    "/api/v1/applications/{application_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Status */
+        post: operations["change_status"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -55,6 +89,285 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contacts/{contact_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Contact */
+        delete: operations["delete_contact"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Jobs */
+        get: operations["list_jobs"];
+        put?: never;
+        /** Create Job */
+        post: operations["create_job"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/export.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Jobs */
+        get: operations["export_jobs_csv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Job */
+        get: operations["get_job"];
+        put?: never;
+        post?: never;
+        /** Delete Job */
+        delete: operations["delete_job"];
+        options?: never;
+        head?: never;
+        /** Update Job */
+        patch: operations["update_job"];
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Contact */
+        post: operations["add_contact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/days": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Days */
+        get: operations["list_days"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/days/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Day */
+        patch: operations["update_day"];
+        trace?: never;
+    };
+    "/api/v1/prep/guides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Guides */
+        get: operations["list_guides"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/guides/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Guide */
+        get: operations["get_guide"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Plan */
+        get: operations["get_plan"];
+        /** Set Plan */
+        put: operations["set_plan"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/seed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Seed Prep
+         * @description Load or refresh the curriculum from content/curriculum.yaml. Safe to repeat.
+         */
+        post: operations["seed_prep"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Prep Today */
+        get: operations["get_prep_today"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Topics */
+        get: operations["list_topics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prep/topics/{topic_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Topic */
+        patch: operations["update_topic"];
+        trace?: never;
+    };
+    "/api/v1/prep/topics/{topic_id}/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Log Session */
+        post: operations["log_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Today */
+        get: operations["get_today"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/healthz": {
         parameters: {
             query?: never;
@@ -93,10 +406,372 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ApplicationOut */
+        ApplicationOut: {
+            /** Applied On */
+            applied_on: string | null;
+            email_mode: components["schemas"]["EmailMode"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Next Followup On */
+            next_followup_on: string | null;
+            /** Notes */
+            notes: string | null;
+            portal_mode: components["schemas"]["PortalMode"];
+            /** Resume Version */
+            resume_version: string | null;
+            site_mode: components["schemas"]["PortalMode"];
+            status: components["schemas"]["Status"];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Version */
+            version: number;
+        };
+        /** ApplicationUpdate */
+        ApplicationUpdate: {
+            /** Applied On */
+            applied_on?: string | null;
+            email_mode?: components["schemas"]["EmailMode"] | null;
+            /** Next Followup On */
+            next_followup_on?: string | null;
+            /** Notes */
+            notes?: string | null;
+            portal_mode?: components["schemas"]["PortalMode"] | null;
+            /** Resume Version */
+            resume_version?: string | null;
+            site_mode?: components["schemas"]["PortalMode"] | null;
+        };
+        /** CompanyOut */
+        CompanyOut: {
+            /** Country */
+            country: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Website */
+            website: string | null;
+        };
+        /** ContactCreate */
+        ContactCreate: {
+            /** Email */
+            email?: string | null;
+            kind: components["schemas"]["ContactKind"];
+            /** Name */
+            name: string;
+            /** Phone */
+            phone?: string | null;
+            /** Role */
+            role?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+        };
+        /**
+         * ContactKind
+         * @enum {string}
+         */
+        ContactKind: "published_business" | "recruiter" | "referral";
+        /** ContactOut */
+        ContactOut: {
+            /** Email */
+            email: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["ContactKind"];
+            /** Name */
+            name: string;
+            /** Phone */
+            phone: string | null;
+            /** Role */
+            role: string | null;
+            /** Source Url */
+            source_url: string | null;
+        };
+        /**
+         * Currency
+         * @enum {string}
+         */
+        Currency: "INR" | "USD" | "EUR" | "GBP" | "AED" | "CAD" | "AUD" | "SGD" | "Other";
+        /** DayOut */
+        DayOut: {
+            /** Core Topics */
+            core_topics: string;
+            /** Day */
+            day: number;
+            /** Deliverable */
+            deliverable: string;
+            /** Focus */
+            focus: string;
+            /** Hours */
+            hours: number;
+            /** Notes */
+            notes: string | null;
+            /** Phase */
+            phase: string;
+            /** Practice */
+            practice: string;
+            /** Scheduled On */
+            scheduled_on?: string | null;
+            /** Speaking */
+            speaking: string;
+            status: components["schemas"]["DayStatus"];
+        };
+        /**
+         * DayStatus
+         * @enum {string}
+         */
+        DayStatus: "Planned" | "Done" | "Skipped" | "Moved";
+        /** DayUpdate */
+        DayUpdate: {
+            /** Notes */
+            notes?: string | null;
+            status?: components["schemas"]["DayStatus"] | null;
+        };
+        /**
+         * EmailMode
+         * @enum {string}
+         */
+        EmailMode: "Not yet" | "Draft ready" | "Sent" | "No email found";
+        /** EventOut */
+        EventOut: {
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            from_status: components["schemas"]["Status"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string | null;
+            to_status: components["schemas"]["Status"];
+            type: components["schemas"]["EventType"];
+        };
+        /**
+         * EventType
+         * @enum {string}
+         */
+        EventType: "created" | "status_changed" | "reopened";
+        /** GuideInfoOut */
+        GuideInfoOut: {
+            /** Name */
+            name: string;
+            /** Private */
+            private: boolean;
+            /** Title */
+            title: string;
+        };
+        /** GuideOut */
+        GuideOut: {
+            /** Markdown */
+            markdown: string;
+            /** Name */
+            name: string;
+            /** Private */
+            private: boolean;
+            /** Title */
+            title: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * HiringFromIndia
+         * @enum {string}
+         */
+        HiringFromIndia: "Yes" | "India only" | "No" | "Unknown";
+        /** JobCreate */
+        JobCreate: {
+            /** Apply Url */
+            apply_url?: string | null;
+            /** Careers Url */
+            careers_url?: string | null;
+            /** Company Name */
+            company_name: string;
+            currency?: components["schemas"]["Currency"] | null;
+            /** Est Ctc Lpa */
+            est_ctc_lpa?: number | null;
+            /** Found On */
+            found_on?: string | null;
+            hiring_from_india?: components["schemas"]["HiringFromIndia"] | null;
+            /** Jd Summary */
+            jd_summary?: string | null;
+            /** Jd Text */
+            jd_text?: string | null;
+            /** Jd Url */
+            jd_url?: string | null;
+            job_type?: components["schemas"]["JobType"] | null;
+            /** Location Text */
+            location_text?: string | null;
+            /** Posted On */
+            posted_on?: string | null;
+            region?: components["schemas"]["Region"] | null;
+            /** Salary Text */
+            salary_text?: string | null;
+            source?: components["schemas"]["Portal"] | null;
+            /** Title */
+            title: string;
+            visa?: components["schemas"]["Visa"] | null;
+            work_mode?: components["schemas"]["WorkMode"] | null;
+        };
+        /** JobDetail */
+        JobDetail: {
+            application: components["schemas"]["ApplicationOut"];
+            /** Apply Url */
+            apply_url: string | null;
+            /** Careers Url */
+            careers_url: string | null;
+            company: components["schemas"]["CompanyOut"];
+            /** Contacts */
+            contacts: components["schemas"]["ContactOut"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            currency: components["schemas"]["Currency"] | null;
+            /** Est Ctc Lpa */
+            est_ctc_lpa: number | null;
+            /** Events */
+            events: components["schemas"]["EventOut"][];
+            /** Found On */
+            found_on: string | null;
+            hiring_from_india: components["schemas"]["HiringFromIndia"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Jd Summary */
+            jd_summary: string | null;
+            /** Jd Text */
+            jd_text: string | null;
+            /** Jd Url */
+            jd_url: string | null;
+            job_type: components["schemas"]["JobType"] | null;
+            /** Location Text */
+            location_text: string | null;
+            /** Posted On */
+            posted_on: string | null;
+            region: components["schemas"]["Region"] | null;
+            /** Salary Text */
+            salary_text: string | null;
+            source: components["schemas"]["Portal"] | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            visa: components["schemas"]["Visa"] | null;
+            work_mode: components["schemas"]["WorkMode"] | null;
+        };
+        /** JobPage */
+        JobPage: {
+            /** Items */
+            items: components["schemas"]["JobSummary"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** JobSummary */
+        JobSummary: {
+            application: components["schemas"]["ApplicationOut"];
+            /** Apply Url */
+            apply_url: string | null;
+            /** Careers Url */
+            careers_url: string | null;
+            company: components["schemas"]["CompanyOut"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            currency: components["schemas"]["Currency"] | null;
+            /** Est Ctc Lpa */
+            est_ctc_lpa: number | null;
+            /** Found On */
+            found_on: string | null;
+            hiring_from_india: components["schemas"]["HiringFromIndia"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Jd Url */
+            jd_url: string | null;
+            job_type: components["schemas"]["JobType"] | null;
+            /** Location Text */
+            location_text: string | null;
+            /** Posted On */
+            posted_on: string | null;
+            region: components["schemas"]["Region"] | null;
+            /** Salary Text */
+            salary_text: string | null;
+            source: components["schemas"]["Portal"] | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            visa: components["schemas"]["Visa"] | null;
+            work_mode: components["schemas"]["WorkMode"] | null;
+        };
+        /**
+         * JobType
+         * @enum {string}
+         */
+        JobType: "Permanent Full-time" | "Contract" | "Contract-to-Hire";
+        /** JobUpdate */
+        JobUpdate: {
+            /** Apply Url */
+            apply_url?: string | null;
+            /** Careers Url */
+            careers_url?: string | null;
+            currency?: components["schemas"]["Currency"] | null;
+            /** Est Ctc Lpa */
+            est_ctc_lpa?: number | null;
+            /** Found On */
+            found_on?: string | null;
+            hiring_from_india?: components["schemas"]["HiringFromIndia"] | null;
+            /** Jd Summary */
+            jd_summary?: string | null;
+            /** Jd Text */
+            jd_text?: string | null;
+            /** Jd Url */
+            jd_url?: string | null;
+            job_type?: components["schemas"]["JobType"] | null;
+            /** Location Text */
+            location_text?: string | null;
+            /** Posted On */
+            posted_on?: string | null;
+            region?: components["schemas"]["Region"] | null;
+            /** Salary Text */
+            salary_text?: string | null;
+            source?: components["schemas"]["Portal"] | null;
+            /** Title */
+            title?: string | null;
+            visa?: components["schemas"]["Visa"] | null;
+            work_mode?: components["schemas"]["WorkMode"] | null;
         };
         /** LoginRequest */
         LoginRequest: {
@@ -111,11 +786,158 @@ export interface components {
              */
             password: string;
         };
-        /** SessionOut */
-        SessionOut: {
-            /** Csrf Token */
-            csrf_token: string;
-            user: components["schemas"]["UserOut"];
+        /** PlanOut */
+        PlanOut: {
+            /** Start Date */
+            start_date: string | null;
+        };
+        /**
+         * PlanPhase
+         * @enum {string}
+         */
+        PlanPhase: "not_configured" | "upcoming" | "active" | "finished";
+        /** PlanUpdate */
+        PlanUpdate: {
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /**
+         * Portal
+         * @enum {string}
+         */
+        Portal: "LinkedIn" | "Indeed" | "Naukri" | "Glassdoor" | "Wellfound" | "Instahyre" | "Bayt" | "NaukriGulf" | "GulfTalent" | "We Work Remotely" | "Himalayas" | "Remote.com" | "Other";
+        /**
+         * PortalMode
+         * @description Used for both the job-portal mode and the company-site mode.
+         * @enum {string}
+         */
+        PortalMode: "Not yet" | "Done" | "Not available";
+        /**
+         * Priority
+         * @enum {string}
+         */
+        Priority: "High" | "Medium" | "Low";
+        /**
+         * Region
+         * @enum {string}
+         */
+        Region: "India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)";
+        /** SeedResult */
+        SeedResult: {
+            /** Days Added */
+            days_added: number;
+            /** Days Updated */
+            days_updated: number;
+            /** Topics Added */
+            topics_added: number;
+            /** Topics Updated */
+            topics_updated: number;
+        };
+        /** SessionCreate */
+        SessionCreate: {
+            kind: components["schemas"]["StudyKind"];
+            /** Minutes */
+            minutes: number;
+            /** Notes */
+            notes?: string | null;
+            /** Studied On */
+            studied_on?: string | null;
+        };
+        /**
+         * Status
+         * @enum {string}
+         */
+        Status: "New" | "Shortlisted" | "Applied - Pending" | "Follow-up Sent" | "Interview Confirmed" | "Technical Round" | "Next Round" | "HR Round" | "Manager Round" | "Offer Received" | "Offer Accepted" | "Rejected" | "No Response" | "On Hold" | "Withdrawn" | "Job Closed";
+        /** StatusChange */
+        StatusChange: {
+            /** Expected Version */
+            expected_version: number;
+            /** Next Followup On */
+            next_followup_on?: string | null;
+            /** Note */
+            note?: string | null;
+            /**
+             * Reopen
+             * @default false
+             */
+            reopen: boolean;
+            status: components["schemas"]["Status"];
+        };
+        /** StatusCount */
+        StatusCount: {
+            /** Count */
+            count: number;
+            status: components["schemas"]["Status"];
+        };
+        /**
+         * StudyKind
+         * @enum {string}
+         */
+        StudyKind: "learn" | "practice" | "review" | "mock";
+        /** TodayOut */
+        TodayOut: {
+            /** Due Followups */
+            due_followups: components["schemas"]["JobSummary"][];
+            /** Pipeline */
+            pipeline: components["schemas"]["StatusCount"][];
+            prep: components["schemas"]["TodayPrep"];
+        };
+        /** TodayPrep */
+        TodayPrep: {
+            day: components["schemas"]["DayOut"] | null;
+            /** Day Number */
+            day_number: number | null;
+            /** Due Reviews */
+            due_reviews: components["schemas"]["TopicOut"][];
+            /** Minutes Today */
+            minutes_today: number;
+            phase: components["schemas"]["PlanPhase"];
+            /** Start Date */
+            start_date: string | null;
+            /** Total Days */
+            total_days: number;
+        };
+        /** TopicOut */
+        TopicOut: {
+            /** Area */
+            area: string;
+            /** Confidence */
+            confidence: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Key */
+            key: string;
+            /** Last Reviewed On */
+            last_reviewed_on: string | null;
+            /** Next Review On */
+            next_review_on: string | null;
+            /** Notes */
+            notes: string | null;
+            priority: components["schemas"]["Priority"];
+            /** Sort Order */
+            sort_order: number;
+            status: components["schemas"]["TopicStatus"];
+            /** Title */
+            title: string;
+        };
+        /**
+         * TopicStatus
+         * @enum {string}
+         */
+        TopicStatus: "Not started" | "Learning" | "Revised" | "Mock-tested";
+        /** TopicUpdate */
+        TopicUpdate: {
+            /** Confidence */
+            confidence?: number | null;
+            /** Notes */
+            notes?: string | null;
+            status?: components["schemas"]["TopicStatus"] | null;
         };
         /** UserOut */
         UserOut: {
@@ -140,6 +962,45 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * Visa
+         * @enum {string}
+         */
+        Visa: "Not needed" | "Sponsorship offered" | "Not offered" | "Unknown";
+        /**
+         * WorkMode
+         * @enum {string}
+         */
+        WorkMode: "Remote" | "Hybrid" | "Onsite";
+        /** SessionOut */
+        careerpilot__modules__auth__schemas__SessionOut: {
+            /** Csrf Token */
+            csrf_token: string;
+            user: components["schemas"]["UserOut"];
+        };
+        /** SessionOut */
+        careerpilot__modules__prep__schemas__SessionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["StudyKind"];
+            /** Minutes */
+            minutes: number;
+            /** Notes */
+            notes: string | null;
+            /**
+             * Studied On
+             * Format: date
+             */
+            studied_on: string;
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -149,6 +1010,80 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    update_application: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatusChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     login: {
         parameters: {
             query?: never;
@@ -168,7 +1103,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SessionOut"];
+                    "application/json": components["schemas"]["careerpilot__modules__auth__schemas__SessionOut"];
                 };
             };
             /** @description Validation Error */
@@ -228,7 +1163,691 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SessionOut"];
+                    "application/json": components["schemas"]["careerpilot__modules__auth__schemas__SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_contact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                contact_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_jobs: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["Status"][] | null;
+                q?: string | null;
+                region?: components["schemas"]["Region"] | null;
+                work_mode?: components["schemas"]["WorkMode"] | null;
+                min_ctc?: number | null;
+                followup_due?: boolean;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_job: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobCreate"];
+            };
+        };
+        responses: {
+            /** @description The job already existed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobSummary"];
+                };
+            };
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_jobs_csv: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_job: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_job: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_job: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_contact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContactCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContactOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_days: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DayOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_day: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: number;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DayUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DayOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_guides: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GuideInfoOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_guide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GuideOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_plan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_plan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    seed_prep: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_prep_today: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TodayPrep"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_topics: {
+        parameters: {
+            query?: {
+                area?: string | null;
+                status?: components["schemas"]["TopicStatus"] | null;
+                due?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_topic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    log_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SessionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["careerpilot__modules__prep__schemas__SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_today: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TodayOut"];
                 };
             };
             /** @description Validation Error */
