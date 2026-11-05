@@ -5,40 +5,21 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
 
 from careerpilot.core.config import REPO_ROOT
 from careerpilot.core.prompts import load_prompt
+from tests.conftest import PROFILE
 from tests.fakes import FakeLlm
 from tests.test_verification_api import add_job, genuine_site
 
 JOBS = "/api/v1/jobs"
 
-PROFILE = """\
-years_experience: 2
-target_levels: [junior, mid]
-skills: [Python, SQL, Postgres, Docker, FastAPI, React]
-regions: [India, Remote (Global)]
-needs_visa_sponsorship: false
-salary_floor_lpa: 10
-salary_target_lpa: 20
-"""
 JD = (
     "Backend Engineer. We need 2+ years of experience with Python, FastAPI, PostgreSQL and "
     "Docker. Kafka and Kubernetes are a plus. You will own services end to end and mentor interns."
 )
-
-
-@pytest.fixture
-def content(app: FastAPI, tmp_path: Path) -> Path:
-    """A content folder with the real vocabulary and a test profile."""
-    shutil.copy(REPO_ROOT / "content" / "skills.yaml", tmp_path / "skills.yaml")
-    (tmp_path / "private").mkdir()
-    (tmp_path / "private" / "profile.yaml").write_text(PROFILE, encoding="utf-8")
-    app.state.settings = app.state.settings.model_copy(update={"content_dir": tmp_path})
-    return tmp_path
 
 
 async def new_job(api: AsyncClient, **fields: Any) -> dict[str, Any]:

@@ -9,9 +9,6 @@ type Schemas = components["schemas"];
 export type DiscoverySource = Schemas["DiscoverySourceOut"];
 export type NewSource = Schemas["DiscoverySourceCreate"];
 export type Candidate = Schemas["CandidateOut"];
-export type Digest = Schemas["DigestOut"];
-export type TaskList = Schemas["TaskList"];
-export type Task = Schemas["TaskOut"];
 export type TaskStatus = Schemas["TaskStatus"];
 export type CandidateStatus = Schemas["CandidateStatus"];
 

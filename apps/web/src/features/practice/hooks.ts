@@ -6,10 +6,8 @@ import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 
 type Schemas = components["schemas"];
-export type ProblemSummary = Schemas["ProblemSummary"];
 export type ProblemDetail = Schemas["ProblemDetail"];
 export type SubmissionCreate = Schemas["SubmissionCreate"];
-export type Submission = Schemas["SubmissionOut"];
 
 export type ProblemFilters = {
   difficulty?: Schemas["Difficulty"];

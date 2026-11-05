@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +17,7 @@ from careerpilot.modules.tracker.enums import EventType, Status
 from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.identity import job_fingerprint, normalize_company
 from careerpilot.modules.tracker.models import Application, Contact, Job
+from careerpilot.modules.tracker.progress import Progress, progress_of
 from careerpilot.modules.tracker.schemas import (
     ApplicationInit,
     ApplicationUpdate,
@@ -298,3 +300,12 @@ async def export_csv(db: AsyncSession, owner_id: uuid.UUID) -> str:
             )
         if cursor is None:
             return out.getvalue()
+
+
+async def progress(db: AsyncSession, owner_id: uuid.UUID, timezone: str) -> list[Progress]:
+    """How far every application got, for analytics. Days are in your time zone."""
+    rows = await repository.progress_inputs(db, owner_id, ZoneInfo(timezone))
+    return [
+        progress_of(job_id, status, applied_on, history)
+        for job_id, status, applied_on, history in rows
+    ]

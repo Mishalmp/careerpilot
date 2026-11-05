@@ -8,8 +8,8 @@ import type { JobSummary, Status } from "@/lib/api/types";
 import { StatusSelect } from "./StatusChanger";
 import { STATUSES } from "./status";
 import { StatusBadge } from "./StatusBadge";
+import { todayLocal } from "@/lib/dates";
 
-export const todayLocal = () => new Date().toLocaleDateString("en-CA");
 
 export function FollowUp({ job }: { job: JobSummary }) {
   const date = job.application.next_followup_on;

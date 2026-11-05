@@ -1,6 +1,7 @@
 import uuid
 from datetime import date, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import ColumnElement, delete, func, select, tuple_, update
 from sqlalchemy.dialects.postgresql import insert
@@ -175,14 +176,6 @@ async def delete_job(db: AsyncSession, owner_id: uuid.UUID, job_id: uuid.UUID) -
     return result.first() is not None
 
 
-async def get_company(
-    db: AsyncSession, owner_id: uuid.UUID, company_id: uuid.UUID
-) -> Company | None:
-    return await db.scalar(
-        select(Company).where(Company.id == company_id, Company.owner_id == owner_id)
-    )
-
-
 def add_contact(
     db: AsyncSession, owner_id: uuid.UUID, company_id: uuid.UUID, **fields: Any
 ) -> Contact:
@@ -227,3 +220,28 @@ async def due_followups(
         .execution_options(populate_existing=True)
     )
     return list((await db.scalars(stmt)).unique())
+
+
+async def progress_inputs(
+    db: AsyncSession, owner_id: uuid.UUID, zone: ZoneInfo
+) -> list[tuple[uuid.UUID, Status, date | None, list[tuple[Status, date]]]]:
+    """(job, current status, applied on, every status change with its local day) per application."""
+    applications = (
+        await db.execute(
+            select(
+                Application.id, Application.job_id, Application.status, Application.applied_on
+            ).where(Application.owner_id == owner_id)
+        )
+    ).all()
+    history: dict[uuid.UUID, list[tuple[Status, date]]] = {}
+    events = await db.execute(
+        select(ApplicationEvent.application_id, ApplicationEvent.to_status, ApplicationEvent.at)
+        .join(Application, Application.id == ApplicationEvent.application_id)
+        .where(Application.owner_id == owner_id)
+    )
+    for application_id, to_status, at in events:
+        history.setdefault(application_id, []).append((to_status, at.astimezone(zone).date()))
+    return [
+        (job_id, status, applied_on, history.get(application_id, []))
+        for application_id, job_id, status, applied_on in applications
+    ]

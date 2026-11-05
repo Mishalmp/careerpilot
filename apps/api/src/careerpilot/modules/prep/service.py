@@ -1,5 +1,6 @@
 import uuid
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import date, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -194,3 +195,15 @@ async def today_view(db: AsyncSession, owner_id: uuid.UUID, today: date) -> Toda
         due_reviews=due,
         minutes_today=minutes,
     )
+
+
+@dataclass(frozen=True)
+class PrepProgress:
+    topics: dict[TopicStatus, int]
+    average_confidence: float | None
+    minutes_by_day: dict[date, int]  # only days with study; the caller fills the gaps
+
+
+async def progress(db: AsyncSession, owner_id: uuid.UUID, since: date) -> PrepProgress:
+    topics, average = await repository.topic_stats(db, owner_id)
+    return PrepProgress(topics, average, await repository.minutes_by_day(db, owner_id, since))

@@ -2,7 +2,7 @@
 
 Job application tracker, interview prep, an in-browser practice editor, and a place to learn how RAG and MCP are built. Local-first, single user. The full design is in [plan.md](plan.md); decisions are in [docs/adr](docs/adr).
 
-Status: Phase 5. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Follow companies' public job boards (Greenhouse, Lever, Ashby): new listings wait in an inbox until you add them to the tracker, and a daily digest summarises the day. Learn how the last two are built in [docs/learn](docs/learn).
+Status: Phase 6. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Follow companies' public job boards (Greenhouse, Lever, Ashby): new listings wait in an inbox until you add them to the tracker, and a daily digest summarises the day. Insights show your funnel and prep progress, an offer calculator compares offers in rupees, a story bank holds interview stories, and encrypted nightly backups can be restored into a fresh database. Learn how the last two are built in [docs/learn](docs/learn).
 
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
@@ -51,6 +51,19 @@ cd apps/api && uv run ruff check . && uv run ruff format --check . && uv run pyr
 cd apps/web && npm run typecheck && npm run lint && npm test && npm run build
 ```
 Tests use a separate `careerpilot_test` database that they create themselves.
+
+## Backups
+Your data is in one Postgres database. Back it up with a key only you hold:
+```bash
+cd apps/api
+uv run python -m careerpilot.cli backup-key        # prints a key: keep it in a password manager
+```
+Put it in `.env` as `CAREERPILOT_BACKUP_KEY=...`. If Postgres runs in Docker, also set `CAREERPILOT_PG_CONTAINER=careerpilot-postgres-1` so the right `pg_dump` version is used. Then:
+```bash
+uv run python -m careerpilot.cli backup                                  # writes backups/careerpilot-<time>.cpbk
+uv run python -m careerpilot.cli restore backups/FILE.cpbk --into careerpilot_restored
+```
+While the app runs, a backup is made every night (14 are kept). Restore always creates a **new** database and never touches the live one; point `CAREERPILOT_DATABASE_URL` at it to use it. Backups are encrypted, but copy `backups/` to another disk or cloud folder yourself: a backup on the same disk does not survive that disk.
 
 ## Claude Desktop / Claude Code (MCP)
 `uv run python -m careerpilot.mcp_server` starts the MCP server. Setup and what it can and cannot do: [docs/learn/mcp.md](docs/learn/mcp.md).

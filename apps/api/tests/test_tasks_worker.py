@@ -380,3 +380,33 @@ async def test_the_worker_starts_with_the_app_and_stops_cleanly(
             if (await api.get("/api/v1/digest/latest")).json() is not None:
                 break
     assert (await api.get("/api/v1/digest/latest")).json() is not None
+
+
+async def test_the_nightly_backup_is_queued_only_when_a_key_is_set_and_the_hour_has_come(
+    app: FastAPI, api: AsyncClient
+) -> None:
+    from careerpilot.core.backup import generate_key
+
+    sm = app.state.sessionmaker
+    after_2am_ist = datetime(2026, 11, 6, 21, 0, tzinfo=UTC)  # 02:30 the next day in India
+    settings = settings_at(app, backup_hour=2, discovery_hour=23, digest_hour=23, backup_key=None)
+    assert await schedule_due(sm, settings, after_2am_ist) == 0  # no key: no backups
+
+    settings = settings_at(app, backup_key=generate_key())
+    assert await schedule_due(sm, settings, datetime(2026, 11, 6, 19, 0, tzinfo=UTC)) == 0  # 00:30
+    assert await schedule_due(sm, settings, after_2am_ist) == 1
+    assert await schedule_due(sm, settings, after_2am_ist) == 0  # once a day
+    (task,) = [t for t in await listing(api) if t["kind"] == "backup"]
+    assert task["key"] == "backup:2026-11-07"
+
+
+async def test_a_backup_task_without_a_key_fails_with_advice(
+    app: FastAPI, api: AsyncClient, owner_id: uuid.UUID
+) -> None:
+    settings = settings_at(app, backup_key=None)
+    async with app.state.sessionmaker() as db:
+        await tasks.enqueue(db, owner_id, TaskKind.BACKUP, "backup:x", {}, max_attempts=1)
+        await db.commit()
+    await tasks.run_next(app.state.sessionmaker, make_handlers(app.state.fetcher, settings))
+    (task,) = [t for t in await listing(api) if t["kind"] == "backup"]
+    assert task["status"] == "failed" and "backup-key" in task["error"]

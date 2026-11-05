@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 import structlog
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from careerpilot.core.backup import BackupError, backup_tools, create_backup, prune
 from careerpilot.core.clock import today_in
 from careerpilot.core.config import Settings
 from careerpilot.core.fetcher import Fetcher
@@ -42,7 +43,30 @@ def make_handlers(fetcher: Fetcher, settings: Settings) -> Mapping[TaskKind, Han
     async def daily_digest(db: AsyncSession, task: Task) -> None:
         await digest_service.build(db, task.owner_id, today_in(settings.timezone))
 
-    return {TaskKind.DISCOVER: discover, TaskKind.DAILY_DIGEST: daily_digest}
+    async def backup(db: AsyncSession, task: Task) -> None:
+        if settings.backup_key is None:
+            raise TaskFailure("No backup key is set. Run `careerpilot backup-key` and set it.")
+        try:
+            await asyncio.to_thread(_backup_now, settings)
+        except BackupError as exc:
+            raise TaskFailure(str(exc)) from exc
+
+    return {
+        TaskKind.DISCOVER: discover,
+        TaskKind.DAILY_DIGEST: daily_digest,
+        TaskKind.BACKUP: backup,
+    }
+
+
+def _backup_now(settings: Settings) -> None:
+    assert settings.backup_key is not None  # noqa: S101 - checked by the caller
+    create_backup(
+        settings.database_url,
+        settings.backup_dir,
+        settings.backup_key.get_secret_value(),
+        tools=backup_tools(settings),
+    )
+    prune(settings.backup_dir, settings.backup_keep)
 
 
 async def schedule_due(
@@ -70,6 +94,18 @@ async def schedule_due(
                     owner_id,
                     TaskKind.DAILY_DIGEST,
                     f"daily_digest:{day}",
+                    {},
+                    max_attempts=settings.task_max_attempts,
+                )
+        if local.hour >= settings.backup_hour and settings.backup_key is not None:
+            # One dump covers every user, so it is queued once, under the first user.
+            owners = await auth_service.user_ids(db)
+            if owners:
+                queued += await tasks_service.enqueue(
+                    db,
+                    owners[0],
+                    TaskKind.BACKUP,
+                    f"backup:{day}",
                     {},
                     max_attempts=settings.task_max_attempts,
                 )

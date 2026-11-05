@@ -168,3 +168,10 @@ async def score_job(
     stored = await repository.upsert_score(db, owner_id=owner_id, job_id=job_id, **values)
     await db.commit()
     return _out(stored, _profile_hash(profile))
+
+
+async def scored_jobs(
+    db: AsyncSession, owner_id: uuid.UUID
+) -> list[tuple[uuid.UUID, str, int | None]]:
+    """(job, chance label, score) for every scored job, for the calibration view."""
+    return await repository.scored(db, owner_id)

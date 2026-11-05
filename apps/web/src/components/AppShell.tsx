@@ -16,6 +16,9 @@ const NAV = [
   { href: "/ask", label: "Ask" },
   { href: "/mock", label: "Mock" },
   { href: "/tasks", label: "Tasks" },
+  { href: "/insights", label: "Insights" },
+  { href: "/offers", label: "Offers" },
+  { href: "/stories", label: "Stories" },
 ];
 
 /** Signed-in frame: redirects to /login without a session and shows the main navigation. */
@@ -43,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex flex-1 flex-col">
       <header className="flex flex-wrap items-center gap-6 border-b border-black/10 px-6 py-3 dark:border-white/15">
         <span className="font-semibold">CareerPilot</span>
-        <nav aria-label="Main" className="flex gap-4 text-sm">
+        <nav aria-label="Main" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           {NAV.map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (

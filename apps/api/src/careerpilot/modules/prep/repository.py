@@ -107,3 +107,31 @@ async def due_topics(
             .limit(limit)
         )
     ).all()
+
+
+async def topic_stats(
+    db: AsyncSession, owner_id: uuid.UUID
+) -> tuple[dict[TopicStatus, int], float | None]:
+    """Topics per status, and the average confidence of the topics you have rated."""
+    rows = await db.execute(
+        select(PrepTopic.status, func.count())
+        .where(PrepTopic.owner_id == owner_id)
+        .group_by(PrepTopic.status)
+    )
+    average = await db.scalar(
+        select(func.avg(PrepTopic.confidence)).where(
+            PrepTopic.owner_id == owner_id, PrepTopic.confidence.is_not(None)
+        )
+    )
+    return {status: count for status, count in rows}, float(
+        average
+    ) if average is not None else None
+
+
+async def minutes_by_day(db: AsyncSession, owner_id: uuid.UUID, since: date) -> dict[date, int]:
+    rows = await db.execute(
+        select(StudySession.studied_on, func.sum(StudySession.minutes))
+        .where(StudySession.owner_id == owner_id, StudySession.studied_on >= since)
+        .group_by(StudySession.studied_on)
+    )
+    return {day: int(total) for day, total in rows}

@@ -29,3 +29,25 @@ def test_log_redaction_hides_sensitive_keys_only() -> None:
 async def test_short_passwords_are_refused() -> None:
     with pytest.raises(ValueError, match="at least"):
         await create_user(None, "a@example.com", "short")  # pyright: ignore[reportArgumentType]
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["create-user", "--email", "me@example.com"],
+        ["seed-prep"],
+        ["import-tracker", "tracker.xlsx"],
+        ["ingest"],
+        ["worker"],
+        ["backup-key"],
+        ["backup"],
+        ["restore", "file.cpbk", "--into", "copy"],
+        ["search", "closures"],
+        ["eval-rag"],
+    ],
+)
+def test_every_cli_command_is_wired_to_a_function(argv: list[str]) -> None:
+    """A command registered without a handler only fails when someone runs it (one once did)."""
+    from careerpilot.cli import build_parser
+
+    assert callable(build_parser().parse_args(argv).run)

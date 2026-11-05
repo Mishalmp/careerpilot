@@ -34,6 +34,8 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run pyright
       - run: uv run lint-imports
+      - name: PostgreSQL 16 client tools (the backup restore test needs a matching pg_dump)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client-16
       - run: uv run pytest
       - name: Notes search quality (downloads the embedding model, cached between runs)
         uses: actions/cache@v4

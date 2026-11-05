@@ -20,6 +20,47 @@
         "title": "AcceptOut",
         "type": "object"
       },
+      "AnalyticsOut": {
+        "properties": {
+          "calibration": {
+            "$ref": "#/components/schemas/CalibrationOut"
+          },
+          "funnel": {
+            "$ref": "#/components/schemas/FunnelOut"
+          },
+          "mocks": {
+            "items": {
+              "$ref": "#/components/schemas/MockPoint"
+            },
+            "title": "Mocks",
+            "type": "array"
+          },
+          "note": {
+            "default": "Counts come from your status history. With few applications the rates swing a lot: treat them as a diary of what happened, not a forecast.",
+            "title": "Note",
+            "type": "string"
+          },
+          "prep": {
+            "$ref": "#/components/schemas/PrepOut"
+          },
+          "weekly_applications": {
+            "items": {
+              "$ref": "#/components/schemas/WeekOut"
+            },
+            "title": "Weekly Applications",
+            "type": "array"
+          }
+        },
+        "required": [
+          "funnel",
+          "weekly_applications",
+          "prep",
+          "mocks",
+          "calibration"
+        ],
+        "title": "AnalyticsOut",
+        "type": "object"
+      },
       "AnswerMockRequest": {
         "properties": {
           "answer": {
@@ -338,6 +379,82 @@
           "needs_more_sources"
         ],
         "title": "BriefOut",
+        "type": "object"
+      },
+      "CalibrationGroupOut": {
+        "properties": {
+          "chance": {
+            "title": "Chance",
+            "type": "string"
+          },
+          "decided": {
+            "title": "Decided",
+            "type": "integer"
+          },
+          "interview_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interview Rate"
+          },
+          "interviewed": {
+            "title": "Interviewed",
+            "type": "integer"
+          },
+          "scored": {
+            "title": "Scored",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "chance",
+          "scored",
+          "decided",
+          "interviewed",
+          "interview_rate"
+        ],
+        "title": "CalibrationGroupOut",
+        "type": "object"
+      },
+      "CalibrationOut": {
+        "properties": {
+          "decided": {
+            "title": "Decided",
+            "type": "integer"
+          },
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/CalibrationGroupOut"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "needed": {
+            "title": "Needed",
+            "type": "integer"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "decided",
+          "needed",
+          "ready",
+          "groups",
+          "explanation"
+        ],
+        "title": "CalibrationOut",
         "type": "object"
       },
       "CandidateList": {
@@ -772,6 +889,45 @@
         "title": "Compare",
         "type": "string"
       },
+      "CompareOut": {
+        "properties": {
+          "note": {
+            "default": "All figures are before tax; tax differs by country and is not modelled. Variable pay counts at the share you expect, and equity is your own estimate kept apart from cash.",
+            "title": "Note",
+            "type": "string"
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/OfferOut"
+            },
+            "title": "Offers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "offers"
+        ],
+        "title": "CompareOut",
+        "type": "object"
+      },
+      "CompareRequest": {
+        "properties": {
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/OfferIn"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Offers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "offers"
+        ],
+        "title": "CompareRequest",
+        "type": "object"
+      },
       "ComponentOut": {
         "properties": {
           "detail": {
@@ -977,6 +1133,25 @@
         ],
         "title": "Currency",
         "type": "string"
+      },
+      "DayMinutes": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "minutes"
+        ],
+        "title": "DayMinutes",
+        "type": "object"
       },
       "DayOut": {
         "properties": {
@@ -1773,6 +1948,90 @@
           "compare"
         ],
         "title": "FunctionTestOut",
+        "type": "object"
+      },
+      "FunnelOut": {
+        "properties": {
+          "applied": {
+            "title": "Applied",
+            "type": "integer"
+          },
+          "interview_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interview Rate"
+          },
+          "interviewed": {
+            "title": "Interviewed",
+            "type": "integer"
+          },
+          "no_response": {
+            "title": "No Response",
+            "type": "integer"
+          },
+          "offer_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offer Rate"
+          },
+          "offered": {
+            "title": "Offered",
+            "type": "integer"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          },
+          "responded": {
+            "title": "Responded",
+            "type": "integer"
+          },
+          "response_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Rate"
+          },
+          "small_sample": {
+            "title": "Small Sample",
+            "type": "boolean"
+          },
+          "tracked": {
+            "title": "Tracked",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tracked",
+          "applied",
+          "responded",
+          "interviewed",
+          "offered",
+          "rejected",
+          "no_response",
+          "response_rate",
+          "interview_rate",
+          "offer_rate",
+          "small_sample"
+        ],
+        "title": "FunnelOut",
         "type": "object"
       },
       "GenerateRequest": {
@@ -3191,6 +3450,30 @@
         "title": "LoginRequest",
         "type": "object"
       },
+      "MockPoint": {
+        "properties": {
+          "average": {
+            "title": "Average",
+            "type": "number"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "title",
+          "average"
+        ],
+        "title": "MockPoint",
+        "type": "object"
+      },
       "MockSessionItem": {
         "properties": {
           "answered": {
@@ -3467,6 +3750,250 @@
         "title": "Move",
         "type": "object"
       },
+      "OfferIn": {
+        "properties": {
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "equity_annual_value": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Equity Annual Value"
+          },
+          "fixed_annual": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Fixed Annual"
+          },
+          "joining_bonus": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Joining Bonus"
+          },
+          "joining_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joining Date"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notice_days": {
+            "default": 0,
+            "maximum": 365.0,
+            "minimum": 0.0,
+            "title": "Notice Days",
+            "type": "integer"
+          },
+          "variable_payout_pct": {
+            "anyOf": [
+              {
+                "maximum": 200.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "100",
+            "title": "Variable Payout Pct"
+          },
+          "variable_target_annual": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Variable Target Annual"
+          }
+        },
+        "required": [
+          "name",
+          "currency",
+          "fixed_annual"
+        ],
+        "title": "OfferIn",
+        "type": "object"
+      },
+      "OfferOut": {
+        "properties": {
+          "behind_best_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Behind Best Pct"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "earliest_start": {
+            "format": "date",
+            "title": "Earliest Start",
+            "type": "string"
+          },
+          "equity_annual": {
+            "title": "Equity Annual",
+            "type": "string"
+          },
+          "equity_annual_inr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equity Annual Inr"
+          },
+          "first_year_cash": {
+            "title": "First Year Cash",
+            "type": "string"
+          },
+          "first_year_cash_inr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Year Cash Inr"
+          },
+          "guaranteed_cash": {
+            "title": "Guaranteed Cash",
+            "type": "string"
+          },
+          "guaranteed_cash_inr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guaranteed Cash Inr"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "steady_cash": {
+            "title": "Steady Cash",
+            "type": "string"
+          },
+          "steady_cash_inr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Steady Cash Inr"
+          },
+          "variable_share_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variable Share Pct"
+          }
+        },
+        "required": [
+          "name",
+          "currency",
+          "steady_cash",
+          "first_year_cash",
+          "guaranteed_cash",
+          "equity_annual",
+          "steady_cash_inr",
+          "first_year_cash_inr",
+          "guaranteed_cash_inr",
+          "equity_annual_inr",
+          "variable_share_pct",
+          "earliest_start",
+          "rank",
+          "behind_best_pct",
+          "notes"
+        ],
+        "title": "OfferOut",
+        "type": "object"
+      },
       "OutreachList": {
         "properties": {
           "approved_today": {
@@ -3620,6 +4147,52 @@
         ],
         "title": "PortalMode",
         "type": "string"
+      },
+      "PrepOut": {
+        "properties": {
+          "average_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Confidence"
+          },
+          "minutes_by_day": {
+            "items": {
+              "$ref": "#/components/schemas/DayMinutes"
+            },
+            "title": "Minutes By Day",
+            "type": "array"
+          },
+          "study_days": {
+            "title": "Study Days",
+            "type": "integer"
+          },
+          "topics": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Topics",
+            "type": "object"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "topics",
+          "average_confidence",
+          "minutes_by_day",
+          "study_days",
+          "total_minutes"
+        ],
+        "title": "PrepOut",
+        "type": "object"
       },
       "Priority": {
         "enum": [
@@ -3807,6 +4380,72 @@
           "questions"
         ],
         "title": "QuestionsOut",
+        "type": "object"
+      },
+      "RateIn": {
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "to_inr": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 100000.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "To Inr"
+          }
+        },
+        "required": [
+          "currency",
+          "to_inr",
+          "as_of"
+        ],
+        "title": "RateIn",
+        "type": "object"
+      },
+      "RateOut": {
+        "properties": {
+          "age_days": {
+            "title": "Age Days",
+            "type": "integer"
+          },
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "stale": {
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "to_inr": {
+            "title": "To Inr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "to_inr",
+          "as_of",
+          "age_days",
+          "stale"
+        ],
+        "title": "RateOut",
         "type": "object"
       },
       "ReadingOut": {
@@ -4485,6 +5124,259 @@
         "title": "StatusOut",
         "type": "object"
       },
+      "StoryCreate": {
+        "properties": {
+          "action": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Action",
+            "type": "string"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "result": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Result",
+            "type": "string"
+          },
+          "situation": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Situation",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Tags",
+            "type": "array"
+          },
+          "task": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Task",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "situation",
+          "task",
+          "action",
+          "result"
+        ],
+        "title": "StoryCreate",
+        "type": "object"
+      },
+      "StoryOut": {
+        "properties": {
+          "action": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Action",
+            "type": "string"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "hints": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hints",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "result": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Result",
+            "type": "string"
+          },
+          "situation": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Situation",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Tags",
+            "type": "array"
+          },
+          "task": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Task",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "situation",
+          "task",
+          "action",
+          "result",
+          "id",
+          "hints",
+          "updated_at"
+        ],
+        "title": "StoryOut",
+        "type": "object"
+      },
+      "StoryUpdate": {
+        "description": "Only the fields you send change.",
+        "properties": {
+          "action": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "situation": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Situation"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 30,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          },
+          "task": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "StoryUpdate",
+        "type": "object"
+      },
       "StudyKind": {
         "enum": [
           "learn",
@@ -4626,7 +5518,8 @@
       "TaskKind": {
         "enum": [
           "discover",
-          "daily_digest"
+          "daily_digest",
+          "backup"
         ],
         "title": "TaskKind",
         "type": "string"
@@ -5140,6 +6033,25 @@
         "title": "Visa",
         "type": "string"
       },
+      "WeekOut": {
+        "properties": {
+          "applications": {
+            "title": "Applications",
+            "type": "integer"
+          },
+          "week_start": {
+            "format": "date",
+            "title": "Week Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "week_start",
+          "applications"
+        ],
+        "title": "WeekOut",
+        "type": "object"
+      },
       "WorkMode": {
         "enum": [
           "Remote",
@@ -5221,6 +6133,56 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/analytics": {
+      "get": {
+        "description": "The application funnel, weekly pace, prep progress, mock scores and score calibration.",
+        "operationId": "get_analytics",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Analytics",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
     "/api/v1/applications/{application_id}": {
       "patch": {
         "operationId": "update_application",
@@ -8246,6 +9208,228 @@
         ]
       }
     },
+    "/api/v1/offers/compare": {
+      "post": {
+        "description": "Compare up to six offers in rupees using your stored rates. Nothing is saved.",
+        "operationId": "compare_offers",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compare Offers",
+        "tags": [
+          "offers"
+        ]
+      }
+    },
+    "/api/v1/offers/rates": {
+      "get": {
+        "operationId": "list_fx_rates",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RateOut"
+                  },
+                  "title": "Response List Fx Rates",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Rates",
+        "tags": [
+          "offers"
+        ]
+      },
+      "put": {
+        "description": "Store the rate you want to use for a currency, with the date it is from.",
+        "operationId": "set_fx_rate",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Rate",
+        "tags": [
+          "offers"
+        ]
+      }
+    },
+    "/api/v1/offers/rates/{currency}": {
+      "delete": {
+        "operationId": "delete_fx_rate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "currency",
+            "required": true,
+            "schema": {
+              "title": "Currency",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Rate",
+        "tags": [
+          "offers"
+        ]
+      }
+    },
     "/api/v1/outreach/{draft_id}": {
       "delete": {
         "operationId": "delete_outreach",
@@ -9457,6 +10641,269 @@
         "summary": "Log Session",
         "tags": [
           "prep"
+        ]
+      }
+    },
+    "/api/v1/stories": {
+      "get": {
+        "operationId": "list_stories",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 30,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tag"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StoryOut"
+                  },
+                  "title": "Response List Stories",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Stories",
+        "tags": [
+          "stories"
+        ]
+      },
+      "post": {
+        "operationId": "create_story",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoryCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Story",
+        "tags": [
+          "stories"
+        ]
+      }
+    },
+    "/api/v1/stories/{story_id}": {
+      "delete": {
+        "operationId": "delete_story",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "story_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Story Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Story",
+        "tags": [
+          "stories"
+        ]
+      },
+      "patch": {
+        "operationId": "update_story",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "story_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Story Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoryUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Story",
+        "tags": [
+          "stories"
         ]
       }
     },

@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v1/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Analytics
+         * @description The application funnel, weekly pace, prep progress, mock scores and score calibration.
+         */
+        get: operations["get_analytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/applications/{application_id}": {
         parameters: {
             query?: never;
@@ -709,6 +729,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/offers/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare Offers
+         * @description Compare up to six offers in rupees using your stored rates. Nothing is saved.
+         */
+        post: operations["compare_offers"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/offers/rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Rates */
+        get: operations["list_fx_rates"];
+        /**
+         * Set Rate
+         * @description Store the rate you want to use for a currency, with the date it is from.
+         */
+        put: operations["set_fx_rate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/offers/rates/{currency}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Rate */
+        delete: operations["delete_fx_rate"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/outreach/{draft_id}": {
         parameters: {
             query?: never;
@@ -973,6 +1051,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Stories */
+        get: operations["list_stories"];
+        put?: never;
+        /** Create Story */
+        post: operations["create_story"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stories/{story_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Story */
+        delete: operations["delete_story"];
+        options?: never;
+        head?: never;
+        /** Update Story */
+        patch: operations["update_story"];
+        trace?: never;
+    };
     "/api/v1/tasks": {
         parameters: {
             query?: never;
@@ -1095,6 +1209,21 @@ export interface components {
              */
             job_id: string;
         };
+        /** AnalyticsOut */
+        AnalyticsOut: {
+            calibration: components["schemas"]["CalibrationOut"];
+            funnel: components["schemas"]["FunnelOut"];
+            /** Mocks */
+            mocks: components["schemas"]["MockPoint"][];
+            /**
+             * Note
+             * @default Counts come from your status history. With few applications the rates swing a lot: treat them as a diary of what happened, not a forecast.
+             */
+            note: string;
+            prep: components["schemas"]["PrepOut"];
+            /** Weekly Applications */
+            weekly_applications: components["schemas"]["WeekOut"][];
+        };
         /** AnswerMockRequest */
         AnswerMockRequest: {
             /** Answer */
@@ -1187,6 +1316,32 @@ export interface components {
             tips: components["schemas"]["ItemOut"][];
             /** Topics */
             topics: components["schemas"]["IntelTopicOut"][];
+        };
+        /** CalibrationGroupOut */
+        CalibrationGroupOut: {
+            /** Chance */
+            chance: string;
+            /** Decided */
+            decided: number;
+            /** Interview Rate */
+            interview_rate: number | null;
+            /** Interviewed */
+            interviewed: number;
+            /** Scored */
+            scored: number;
+        };
+        /** CalibrationOut */
+        CalibrationOut: {
+            /** Decided */
+            decided: number;
+            /** Explanation */
+            explanation: string;
+            /** Groups */
+            groups: components["schemas"]["CalibrationGroupOut"][];
+            /** Needed */
+            needed: number;
+            /** Ready */
+            ready: boolean;
         };
         /** CandidateList */
         CandidateList: {
@@ -1333,6 +1488,21 @@ export interface components {
          * @enum {string}
          */
         Compare: "exact" | "unordered" | "unordered_nested" | "float";
+        /** CompareOut */
+        CompareOut: {
+            /**
+             * Note
+             * @default All figures are before tax; tax differs by country and is not modelled. Variable pay counts at the share you expect, and equity is your own estimate kept apart from cash.
+             */
+            note: string;
+            /** Offers */
+            offers: components["schemas"]["OfferOut"][];
+        };
+        /** CompareRequest */
+        CompareRequest: {
+            /** Offers */
+            offers: components["schemas"]["OfferIn"][];
+        };
         /** ComponentOut */
         ComponentOut: {
             /** Detail */
@@ -1390,6 +1560,16 @@ export interface components {
          * @enum {string}
          */
         Currency: "INR" | "USD" | "EUR" | "GBP" | "AED" | "CAD" | "AUD" | "SGD" | "Other";
+        /** DayMinutes */
+        DayMinutes: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Minutes */
+            minutes: number;
+        };
         /** DayOut */
         DayOut: {
             /** Core Topics */
@@ -1662,6 +1842,31 @@ export interface components {
             hidden: boolean;
             /** Name */
             name: string;
+        };
+        /** FunnelOut */
+        FunnelOut: {
+            /** Applied */
+            applied: number;
+            /** Interview Rate */
+            interview_rate: number | null;
+            /** Interviewed */
+            interviewed: number;
+            /** No Response */
+            no_response: number;
+            /** Offer Rate */
+            offer_rate: number | null;
+            /** Offered */
+            offered: number;
+            /** Rejected */
+            rejected: number;
+            /** Responded */
+            responded: number;
+            /** Response Rate */
+            response_rate: number | null;
+            /** Small Sample */
+            small_sample: boolean;
+            /** Tracked */
+            tracked: number;
         };
         /** GenerateRequest */
         GenerateRequest: {
@@ -2024,6 +2229,18 @@ export interface components {
              */
             password: string;
         };
+        /** MockPoint */
+        MockPoint: {
+            /** Average */
+            average: number;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Title */
+            title: string;
+        };
         /** MockSessionItem */
         MockSessionItem: {
             /** Answered */
@@ -2122,6 +2339,77 @@ export interface components {
             acknowledge_flags: boolean;
             status: components["schemas"]["OutreachStatus"];
         };
+        /** OfferIn */
+        OfferIn: {
+            currency: components["schemas"]["Currency"];
+            /**
+             * Equity Annual Value
+             * @default 0
+             */
+            equity_annual_value: number | string;
+            /** Fixed Annual */
+            fixed_annual: number | string;
+            /**
+             * Joining Bonus
+             * @default 0
+             */
+            joining_bonus: number | string;
+            /** Joining Date */
+            joining_date?: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Notice Days
+             * @default 0
+             */
+            notice_days: number;
+            /**
+             * Variable Payout Pct
+             * @default 100
+             */
+            variable_payout_pct: number | string;
+            /**
+             * Variable Target Annual
+             * @default 0
+             */
+            variable_target_annual: number | string;
+        };
+        /** OfferOut */
+        OfferOut: {
+            /** Behind Best Pct */
+            behind_best_pct: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * Earliest Start
+             * Format: date
+             */
+            earliest_start: string;
+            /** Equity Annual */
+            equity_annual: string;
+            /** Equity Annual Inr */
+            equity_annual_inr: string | null;
+            /** First Year Cash */
+            first_year_cash: string;
+            /** First Year Cash Inr */
+            first_year_cash_inr: string | null;
+            /** Guaranteed Cash */
+            guaranteed_cash: string;
+            /** Guaranteed Cash Inr */
+            guaranteed_cash_inr: string | null;
+            /** Name */
+            name: string;
+            /** Notes */
+            notes: string[];
+            /** Rank */
+            rank: number | null;
+            /** Steady Cash */
+            steady_cash: string;
+            /** Steady Cash Inr */
+            steady_cash_inr: string | null;
+            /** Variable Share Pct */
+            variable_share_pct: string | null;
+        };
         /** OutreachList */
         OutreachList: {
             /** Approved Today */
@@ -2187,6 +2475,21 @@ export interface components {
          * @enum {string}
          */
         PortalMode: "Not yet" | "Done" | "Not available";
+        /** PrepOut */
+        PrepOut: {
+            /** Average Confidence */
+            average_confidence: number | null;
+            /** Minutes By Day */
+            minutes_by_day: components["schemas"]["DayMinutes"][];
+            /** Study Days */
+            study_days: number;
+            /** Topics */
+            topics: {
+                [key: string]: number;
+            };
+            /** Total Minutes */
+            total_minutes: number;
+        };
         /**
          * Priority
          * @enum {string}
@@ -2248,6 +2551,33 @@ export interface components {
             note: string;
             /** Questions */
             questions: string[];
+        };
+        /** RateIn */
+        RateIn: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            currency: components["schemas"]["Currency"];
+            /** To Inr */
+            to_inr: number | string;
+        };
+        /** RateOut */
+        RateOut: {
+            /** Age Days */
+            age_days: number;
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Currency */
+            currency: string;
+            /** Stale */
+            stale: boolean;
+            /** To Inr */
+            to_inr: string;
         };
         /** ReadingOut */
         ReadingOut: {
@@ -2467,6 +2797,78 @@ export interface components {
             /** Indexed At */
             indexed_at: string | null;
         };
+        /** StoryCreate */
+        StoryCreate: {
+            /** Action */
+            action: string;
+            /** Evidence */
+            evidence?: string | null;
+            /** Result */
+            result: string;
+            /** Situation */
+            situation: string;
+            /**
+             * Tags
+             * @default []
+             */
+            tags: string[];
+            /** Task */
+            task: string;
+            /** Title */
+            title: string;
+        };
+        /** StoryOut */
+        StoryOut: {
+            /** Action */
+            action: string;
+            /** Evidence */
+            evidence?: string | null;
+            /** Hints */
+            hints: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Result */
+            result: string;
+            /** Situation */
+            situation: string;
+            /**
+             * Tags
+             * @default []
+             */
+            tags: string[];
+            /** Task */
+            task: string;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * StoryUpdate
+         * @description Only the fields you send change.
+         */
+        StoryUpdate: {
+            /** Action */
+            action?: string | null;
+            /** Evidence */
+            evidence?: string | null;
+            /** Result */
+            result?: string | null;
+            /** Situation */
+            situation?: string | null;
+            /** Tags */
+            tags?: string[] | null;
+            /** Task */
+            task?: string | null;
+            /** Title */
+            title?: string | null;
+        };
         /**
          * StudyKind
          * @enum {string}
@@ -2525,7 +2927,7 @@ export interface components {
          * TaskKind
          * @enum {string}
          */
-        TaskKind: "discover" | "daily_digest";
+        TaskKind: "discover" | "daily_digest" | "backup";
         /** TaskList */
         TaskList: {
             counts: components["schemas"]["TaskCounts"];
@@ -2691,6 +3093,16 @@ export interface components {
          * @enum {string}
          */
         Visa: "Not needed" | "Sponsorship offered" | "Not offered" | "Unknown";
+        /** WeekOut */
+        WeekOut: {
+            /** Applications */
+            applications: number;
+            /**
+             * Week Start
+             * Format: date
+             */
+            week_start: string;
+        };
         /**
          * WorkMode
          * @enum {string}
@@ -2734,6 +3146,37 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get_analytics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     update_application: {
         parameters: {
             query?: never;
@@ -4366,6 +4809,138 @@ export interface operations {
             };
         };
     };
+    compare_offers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompareRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompareOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_fx_rates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RateOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_fx_rate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_fx_rate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                currency: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     delete_outreach: {
         parameters: {
             query?: never;
@@ -4970,6 +5545,143 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["careerpilot__modules__prep__schemas__SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_stories: {
+        parameters: {
+            query?: {
+                tag?: string | null;
+                q?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_story: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoryCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_story: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                story_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_story: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                story_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoryUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoryOut"];
                 };
             };
             /** @description Validation Error */

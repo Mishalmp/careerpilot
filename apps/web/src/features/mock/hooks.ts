@@ -6,8 +6,6 @@ import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 
 type Schemas = components["schemas"];
-export type MockSession = Schemas["MockSessionOut"];
-export type MockItem = Schemas["MockSessionItem"];
 export type StartMock = Schemas["StartMockRequest"];
 
 const LIST = ["mock", "sessions"] as const;

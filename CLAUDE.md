@@ -23,6 +23,7 @@ Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [R
 - Research code fetches pages only through `core/fetcher.Fetcher` (SSRF guard, blocked sites). Anything a model quotes must pass `core/evidence.quote_appears` against the fetched text before it is stored.
 - Verdicts, scores and states are computed by code (`rules.py`, `workflow.py`), never by the model. Outreach has no send action and must not get one; approval guards are in `modules/outreach/service.py`.
 - Background work is a `tasks` row with an idempotent key, claimed with SKIP LOCKED, handled in `worker.py`. Handlers raise `TaskFailure` with a message written for the user. A new job source is an adapter in `modules/discovery/adapters.py` (pure parser plus a board address on the provider's own host) and goes through the safe fetcher; never add a source whose terms forbid automation.
+- Backups are encrypted with a key that lives only in the environment; restore creates a new database and never writes into the live one (`core/backup.py`). Never store the key in the repo or beside the backups. Money: no exchange rate is fetched; rates are typed in with a date.
 - Your profile for scoring is `content/private/profile.yaml` (see `content/profile.example.yaml`); skills live once in `content/skills.yaml`.
 - Anything that leaves the machine (email, applications) needs explicit user approval; there is no send action.
 

@@ -20,13 +20,6 @@ export const STATUSES: Status[] = [
   "Job Closed",
 ];
 
-export const FINAL: ReadonlySet<Status> = new Set([
-  "Offer Accepted",
-  "Rejected",
-  "Withdrawn",
-  "Job Closed",
-]);
-
 // Colour by meaning, as in the workbook: blue = early, amber = waiting, purple = interviewing,
 // green = good outcome, red = bad outcome, grey = parked.
 const TONE: Record<Status, string> = {

@@ -12,7 +12,6 @@ export type ContactCreate = Schemas["ContactCreate"];
 export type Topic = Schemas["TopicOut"];
 export type Day = Schemas["DayOut"];
 export type TodayPrep = Schemas["TodayPrep"];
-export type TodayOut = Schemas["TodayOut"];
 export type TopicStatus = Schemas["TopicStatus"];
 export type DayStatus = Schemas["DayStatus"];
 export type StudyKind = Schemas["StudyKind"];

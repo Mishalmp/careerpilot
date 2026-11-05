@@ -13,6 +13,7 @@ from careerpilot.core.fetcher import Fetcher
 from careerpilot.core.llm import make_llm
 from careerpilot.core.logging import configure_logging
 from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
+from careerpilot.modules.analytics.router import router as analytics_router
 from careerpilot.modules.auth.router import router as auth_router
 from careerpilot.modules.auth.throttle import LoginThrottle
 from careerpilot.modules.digest.router import router as digest_router
@@ -21,10 +22,12 @@ from careerpilot.modules.intel.router import router as intel_router
 from careerpilot.modules.knowledge.embeddings import make_embedder
 from careerpilot.modules.knowledge.router import router as knowledge_router
 from careerpilot.modules.mock.router import router as mock_router
+from careerpilot.modules.offers.router import router as offers_router
 from careerpilot.modules.outreach.router import router as outreach_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
 from careerpilot.modules.scoring.router import router as scoring_router
+from careerpilot.modules.stories.router import router as stories_router
 from careerpilot.modules.tasks.router import router as tasks_router
 from careerpilot.modules.today.router import router as today_router
 from careerpilot.modules.tracker.router import router as tracker_router
@@ -88,6 +91,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(discovery_router, prefix=API_PREFIX)
     app.include_router(tasks_router, prefix=API_PREFIX)
     app.include_router(digest_router, prefix=API_PREFIX)
+    app.include_router(analytics_router, prefix=API_PREFIX)
+    app.include_router(offers_router, prefix=API_PREFIX)
+    app.include_router(stories_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

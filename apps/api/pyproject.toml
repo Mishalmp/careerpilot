@@ -21,6 +21,7 @@ dependencies = [
   "mcp>=1.0",
   "anthropic>=2.5.0",
   "httpx>=0.28.1",
+  "cryptography>=46",
 ]
 
 [dependency-groups]
@@ -96,6 +97,9 @@ containers = [
   "careerpilot.modules.discovery",
   "careerpilot.modules.tasks",
   "careerpilot.modules.digest",
+  "careerpilot.modules.analytics",
+  "careerpilot.modules.offers",
+  "careerpilot.modules.stories",
   "careerpilot.modules.today",
 ]
 layers = ["router", "(dependencies)", "(service)", "(repository)"]
@@ -105,35 +109,35 @@ layers = ["router", "(dependencies)", "(service)", "(repository)"]
 name = "tracker keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.tracker.models", "careerpilot.modules.tracker.repository"]
 
 [[tool.importlinter.contracts]]
 name = "prep keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.prep.models", "careerpilot.modules.prep.repository"]
 
 [[tool.importlinter.contracts]]
 name = "practice keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.practice.models", "careerpilot.modules.practice.repository"]
 
 [[tool.importlinter.contracts]]
 name = "knowledge keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.knowledge.models", "careerpilot.modules.knowledge.repository"]
 
 [[tool.importlinter.contracts]]
 name = "auth keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.auth.models", "careerpilot.modules.auth.repository", "careerpilot.modules.auth.service"]
 
 [[tool.importlinter.contracts]]
@@ -141,7 +145,7 @@ name = "nothing depends on the today aggregator"
 type = "forbidden"
 allow_indirect_imports = true
 source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
-forbidden_modules = ["careerpilot.modules.today"]
+forbidden_modules = ["careerpilot.modules.today", "careerpilot.modules.analytics"]
 
 [[tool.importlinter.contracts]]
 name = "verification keeps its internals private"
@@ -182,14 +186,14 @@ forbidden_modules = ["careerpilot.modules.mock.models", "careerpilot.modules.moc
 name = "discovery keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.tasks", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.discovery.models", "careerpilot.modules.discovery.repository"]
 
 [[tool.importlinter.contracts]]
 name = "tasks keeps its internals private"
 type = "forbidden"
 allow_indirect_imports = true
-source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.digest"]
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.digest", "careerpilot.modules.offers", "careerpilot.modules.stories"]
 forbidden_modules = ["careerpilot.modules.tasks.models", "careerpilot.modules.tasks.repository"]
 
 [[tool.importlinter.contracts]]
@@ -198,3 +202,17 @@ type = "forbidden"
 allow_indirect_imports = true
 source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks"]
 forbidden_modules = ["careerpilot.modules.digest.models", "careerpilot.modules.digest.repository"]
+
+[[tool.importlinter.contracts]]
+name = "offers keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.analytics", "careerpilot.modules.stories"]
+forbidden_modules = ["careerpilot.modules.offers.models", "careerpilot.modules.offers.repository"]
+
+[[tool.importlinter.contracts]]
+name = "stories keeps its internals private"
+type = "forbidden"
+allow_indirect_imports = true
+source_modules = ["careerpilot.modules.tracker", "careerpilot.modules.prep", "careerpilot.modules.practice", "careerpilot.modules.knowledge", "careerpilot.modules.today", "careerpilot.modules.auth", "careerpilot.modules.verification", "careerpilot.modules.scoring", "careerpilot.modules.outreach", "careerpilot.modules.intel", "careerpilot.modules.mock", "careerpilot.modules.discovery", "careerpilot.modules.tasks", "careerpilot.modules.digest", "careerpilot.modules.analytics", "careerpilot.modules.offers"]
+forbidden_modules = ["careerpilot.modules.stories.models", "careerpilot.modules.stories.repository"]

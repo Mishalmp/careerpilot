@@ -7,9 +7,9 @@ import type { Day, DayStatus } from "@/lib/api/types";
 
 import { useDays, useSeedPrep, useSetStartDate, useUpdateDay } from "./hooks";
 import { PrepNav } from "./PrepNav";
+import { todayLocal } from "@/lib/dates";
 
 const DAY_STATUSES: DayStatus[] = ["Planned", "Done", "Skipped", "Moved"];
-const todayLocal = () => new Date().toLocaleDateString("en-CA");
 
 export function RoadmapPage() {
   const days = useDays();

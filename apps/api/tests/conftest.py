@@ -1,7 +1,9 @@
 import asyncio
 import os
+import shutil
 import uuid
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 import pytest
 import pytest_asyncio
@@ -120,3 +122,24 @@ async def other_api(app: FastAPI, user: None) -> AsyncIterator[AsyncClient]:
 async def owner_id(app: FastAPI, user: None) -> uuid.UUID:
     async with app.state.sessionmaker() as db:
         return (await service.sole_user(db)).id
+
+
+PROFILE = """\
+years_experience: 2
+target_levels: [junior, mid]
+skills: [Python, SQL, Postgres, Docker, FastAPI, React]
+regions: [India, Remote (Global)]
+needs_visa_sponsorship: false
+salary_floor_lpa: 10
+salary_target_lpa: 20
+"""
+
+
+@pytest.fixture
+def content(app: FastAPI, tmp_path: Path) -> Path:
+    """A content folder with the real vocabulary and a test profile (for scoring)."""
+    shutil.copy(REPO_ROOT / "content" / "skills.yaml", tmp_path / "skills.yaml")
+    (tmp_path / "private").mkdir()
+    (tmp_path / "private" / "profile.yaml").write_text(PROFILE, encoding="utf-8")
+    app.state.settings = app.state.settings.model_copy(update={"content_dir": tmp_path})
+    return tmp_path

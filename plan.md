@@ -439,6 +439,8 @@ Time-box: building takes at most **2 hours a day** in the first three weeks; int
 
 **Phase 5 as built (see [ADR 0010](docs/adr/0010-discovery-and-background-tasks.md)):** Greenhouse, Lever and Ashby adapters feeding an inbox (you accept what reaches the tracker), a small Postgres task queue with retries, a watchdog and a Tasks screen, and a daily digest. Differences from the plan: a hand-written queue instead of procrastinate (spike S3 not run); no separate `domain_policies` table (the fetcher's blocked list plus per-adapter hosts do the job); the Gmail alert parser is not built.
 
+**Phase 6 as built (see [ADR 0011](docs/adr/0011-hardening-backups-insights.md)):** encrypted nightly backups with a tested restore into a new database, an Insights screen (funnel, pace, prep progress, mock scores, score calibration that waits for 50 outcomes), the offer calculator with stored dated exchange rates, a STAR story bank, and the deletion pass. Not built: Google Sheets sync, a referral CRM beyond the contact kind, the server-side code runner (needs its own security review).
+
 **Technical spikes before committing (each about 1 to 2 hours, done at the start of the phase that needs it):**
 - S1 Pyodide in a Web Worker with strict CSP and self-hosted assets.
 - S2 PGlite with fixtures and result-set comparison.

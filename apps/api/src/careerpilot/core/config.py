@@ -60,7 +60,17 @@ class Settings(BaseSettings):
     task_max_attempts: int = Field(default=3, ge=1, le=10)
     task_stuck_minutes: int = Field(default=15, ge=1)
 
-    @field_validator("anthropic_api_key", mode="before")
+    # Nightly encrypted backups (core/backup.py). Without a key nothing is backed up.
+    backup_key: SecretStr | None = None  # make one with `careerpilot backup-key`
+    backup_dir: Path = REPO_ROOT / "backups"
+    backup_keep: int = Field(default=14, ge=1)
+    backup_hour: int = Field(default=2, ge=0, le=23)  # local time
+    pg_dump_path: str = "pg_dump"
+    pg_restore_path: str = "pg_restore"
+    # Name of the Docker container running Postgres: run the tools inside it (right version).
+    pg_container: str | None = None
+
+    @field_validator("anthropic_api_key", "backup_key", mode="before")
     @classmethod
     def _blank_key_means_none(cls, value: object) -> object:
         return None if isinstance(value, str) and not value.strip() else value

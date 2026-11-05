@@ -23,3 +23,13 @@ async def upsert_score(
     ).returning(JobScore)
     row = (await db.execute(statement, execution_options={"populate_existing": True})).scalar_one()
     return row
+
+
+async def scored(db: AsyncSession, owner_id: uuid.UUID) -> list[tuple[uuid.UUID, str, int | None]]:
+    """(job, chance label, score) for every scored job."""
+    rows = await db.execute(
+        select(JobScore.job_id, JobScore.chance, JobScore.score).where(
+            JobScore.owner_id == owner_id
+        )
+    )
+    return [(job_id, chance, score) for job_id, chance, score in rows]

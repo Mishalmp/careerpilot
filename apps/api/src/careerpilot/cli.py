@@ -168,6 +168,69 @@ def _worker(_: argparse.Namespace) -> int:
     return 0
 
 
+def _backup_key(_: argparse.Namespace) -> int:
+    from careerpilot.core.backup import generate_key
+
+    print(generate_key())
+    print(
+        "Keep this key somewhere safe (a password manager), and set CAREERPILOT_BACKUP_KEY.",
+        file=sys.stderr,
+    )
+    print("Without it, backups cannot be read. It is not stored anywhere else.", file=sys.stderr)
+    return 0
+
+
+def _backup(_: argparse.Namespace) -> int:
+    from careerpilot.core.backup import BackupError, backup_tools, create_backup, prune
+    from careerpilot.core.config import get_settings
+
+    settings = get_settings()
+    if settings.backup_key is None:
+        print("Set CAREERPILOT_BACKUP_KEY first (make one with `backup-key`).", file=sys.stderr)
+        return 1
+    try:
+        file = create_backup(
+            settings.database_url,
+            settings.backup_dir,
+            settings.backup_key.get_secret_value(),
+            tools=backup_tools(settings),
+        )
+    except BackupError as exc:
+        print(exc, file=sys.stderr)
+        return 1
+    removed = prune(settings.backup_dir, settings.backup_keep)
+    print(f"Wrote {file} ({file.stat().st_size:,} bytes); removed {len(removed)} old backup(s).")
+    return 0
+
+
+def _restore(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from careerpilot.core.backup import BackupError, backup_tools, restore_backup
+    from careerpilot.core.config import get_settings
+
+    settings = get_settings()
+    if settings.backup_key is None:
+        print("Set CAREERPILOT_BACKUP_KEY to the key the backup was made with.", file=sys.stderr)
+        return 1
+    try:
+        name = restore_backup(
+            settings.database_url,
+            Path(args.file),
+            settings.backup_key.get_secret_value(),
+            args.into,
+            tools=backup_tools(settings),
+        )
+    except BackupError as exc:
+        print(exc, file=sys.stderr)
+        return 1
+    print(
+        f"Restored into a new database named {name}. "
+        "Point CAREERPILOT_DATABASE_URL at it to use it."
+    )
+    return 0
+
+
 def _guarded(action: Callable[[AsyncSession], Awaitable[None]]) -> int:
     try:
         asyncio.run(_run(action))
@@ -177,7 +240,7 @@ def _guarded(action: Callable[[AsyncSession], Awaitable[None]]) -> int:
     return 0
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="careerpilot")
     commands = parser.add_subparsers(dest="command", required=True)
     create = commands.add_parser("create-user", help="create the single local user")
@@ -193,7 +256,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     commands.add_parser(
         "worker", help="run the background worker (job boards, daily digest)"
-    ).set_defaults(func=_worker)
+    ).set_defaults(run=_worker)
+    commands.add_parser("backup-key", help="make a new backup key").set_defaults(run=_backup_key)
+    commands.add_parser("backup", help="write an encrypted backup now").set_defaults(run=_backup)
+    restore = commands.add_parser("restore", help="restore a backup into a NEW database")
+    restore.add_argument("file")
+    restore.add_argument("--into", required=True, help="name for the new database")
+    restore.set_defaults(run=_restore)
     find = commands.add_parser("search", help="search your notes")
     find.add_argument("query")
     find.add_argument("--limit", type=int, default=5)
@@ -205,7 +274,11 @@ def main(argv: list[str] | None = None) -> int:
     measure.add_argument("--details", action="store_true")
     measure.add_argument("--mode", choices=["hybrid", "vector", "text"], default="hybrid")
     measure.set_defaults(run=_eval_rag)
-    args = parser.parse_args(argv)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
     return args.run(args)
 
 

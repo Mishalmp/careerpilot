@@ -9,10 +9,12 @@ from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
 from careerpilot.modules.intel.models import IntelItem, IntelSource
 from careerpilot.modules.knowledge.models import Chunk, Document
 from careerpilot.modules.mock.models import MockSession
+from careerpilot.modules.offers.models import FxRate
 from careerpilot.modules.outreach.models import OutreachDraft
 from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
 from careerpilot.modules.scoring.models import JobScore
+from careerpilot.modules.stories.models import StarStory
 from careerpilot.modules.tasks.models import Task
 from careerpilot.modules.tracker.models import (
     Application,
@@ -46,6 +48,8 @@ REGISTERED_MODELS = (
     DiscoveredJob,
     Task,
     Digest,
+    FxRate,
+    StarStory,
     Submission,
     Document,
     Chunk,

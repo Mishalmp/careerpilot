@@ -11,6 +11,7 @@ import { useLogSession, useTopics, useUpdateTopic } from "./hooks";
 import { useProblems } from "@/features/practice/hooks";
 
 import { PrepNav } from "./PrepNav";
+import { todayLocal } from "@/lib/dates";
 
 const STATUSES: TopicStatus[] = ["Not started", "Learning", "Revised", "Mock-tested"];
 const KINDS: StudyKind[] = ["learn", "practice", "review", "mock"];
@@ -38,7 +39,7 @@ export function TopicsPage() {
   for (const topic of topics.data ?? []) {
     grouped.set(topic.area, [...(grouped.get(topic.area) ?? []), topic]);
   }
-  const today = new Date().toLocaleDateString("en-CA");
+  const today = todayLocal();
 
   return (
     <div className="space-y-4">

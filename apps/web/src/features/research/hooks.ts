@@ -6,15 +6,11 @@ import { api, unwrap } from "@/lib/api/client";
 import type { components } from "@/lib/api/schema";
 
 type Schemas = components["schemas"];
-export type Verification = Schemas["VerificationOut"];
 export type CheckOut = Schemas["CheckOut"];
 export type CheckUpdate = Schemas["CheckUpdate"];
-export type ScoreOut = Schemas["ScoreOut"];
-export type OutreachList = Schemas["OutreachList"];
 export type OutreachDraft = Schemas["DraftOut"];
 export type GenerateRequest = Schemas["GenerateRequest"];
 export type OutreachStatus = Schemas["OutreachStatus"];
-export type IntelOut = Schemas["IntelOut"];
 export type IntelItem = Schemas["ItemOut"];
 export type SourceCreate = Schemas["SourceCreate"];
 
