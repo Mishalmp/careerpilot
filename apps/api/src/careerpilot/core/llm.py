@@ -248,3 +248,39 @@ async def call_llm_json[T: BaseModel](
             max_tokens=prompt.max_tokens,
         )
     raise AssertionError("unreachable")  # pragma: no cover
+
+
+class _Pong(BaseModel):
+    ok: bool
+
+
+@dataclass(frozen=True)
+class LlmCheck:
+    model: str
+    tokens: int
+    milliseconds: int
+
+
+async def check_llm(
+    db: AsyncSession, owner_id: uuid.UUID, llm: LlmClient, settings: Settings
+) -> LlmCheck:
+    """One tiny real request through the same door every feature uses, asking for JSON.
+
+    It proves the key, the model name, the request shape and the JSON path work together. Raises
+    ProblemError (with the provider's message) if any of that is wrong.
+    """
+    prompt = Prompt(
+        name="llm-check",
+        version=1,
+        description="A connection test.",
+        max_tokens=50,
+        system='Reply with exactly this JSON object and nothing else: {"ok": true}',
+    )
+    before = await tokens_used_today(db, owner_id)
+    started = time.perf_counter()
+    await call_llm_json(db, owner_id, llm, settings, prompt=prompt, user="ping", schema=_Pong)
+    return LlmCheck(
+        model=llm.model,
+        tokens=await tokens_used_today(db, owner_id) - before,
+        milliseconds=int((time.perf_counter() - started) * 1000),
+    )

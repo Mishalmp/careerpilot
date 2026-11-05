@@ -151,3 +151,24 @@ async def test_the_daily_cap_stops_a_runaway_job(
     with pytest.raises(ProblemError) as blocked:
         await run(app, capped, owner_id, llm)
     assert blocked.value.status == 429 and len(llm.calls) == 2
+
+
+async def test_the_connection_check_reports_model_tokens_and_time(
+    app: FastAPI, settings: Settings, owner_id: uuid.UUID
+) -> None:
+    from careerpilot.core.llm import check_llm
+
+    async with app.state.sessionmaker() as db:
+        result = await check_llm(db, owner_id, FakeLlm('{"ok": true}'), settings)
+    assert result.model == "fake-model" and result.tokens == 150 and result.milliseconds >= 0
+
+
+async def test_the_connection_check_fails_loudly_when_the_reply_is_unusable(
+    app: FastAPI, settings: Settings, owner_id: uuid.UUID
+) -> None:
+    from careerpilot.core.llm import check_llm
+
+    async with app.state.sessionmaker() as db:
+        with pytest.raises(ProblemError) as caught:
+            await check_llm(db, owner_id, FakeLlm("Hello!"), settings)
+    assert caught.value.status == 502

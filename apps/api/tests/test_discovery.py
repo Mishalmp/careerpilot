@@ -503,3 +503,38 @@ async def test_deleting_a_source_removes_its_unaccepted_listings_but_keeps_track
     await api.post(f"{DISCOVERY}/candidates/{(await inbox(api))[0]['id']}/accept")
     assert (await api.delete(f"{DISCOVERY}/sources/{source['id']}")).status_code == 204
     assert await inbox(api) == [] and len((await api.get("/api/v1/jobs")).json()["items"]) == 1
+
+
+async def test_a_listing_the_tracker_cannot_hold_is_refused_clearly_not_with_a_crash(
+    app: FastAPI, api: AsyncClient
+) -> None:
+    too_long = "https://job-boards.greenhouse.io/acme/jobs/9?x=" + "a" * 2100
+    board = json.dumps({"jobs": [{"id": 9, "title": "Backend Engineer", "absolute_url": too_long}]})
+    serve(app, {GH: (board, JSON)})
+    source = await add_source(api)
+    await api.post(f"{DISCOVERY}/sources/{source['id']}/run")
+    candidate = (await inbox(api))[0]
+
+    response = await api.post(f"{DISCOVERY}/candidates/{candidate['id']}/accept")
+    assert response.status_code == 422
+    assert response.json()["title"] == "This listing cannot be added"
+    assert len((await api.get("/api/v1/jobs")).json()["items"]) == 0
+    assert len(await inbox(api)) == 1  # still waiting; nothing was half-done
+
+
+async def test_one_listing_with_a_nul_character_does_not_break_the_whole_board(
+    app: FastAPI, api: AsyncClient
+) -> None:
+    board = json.dumps(
+        {
+            "jobs": [
+                gh_job(1, "Backend\u0000 Engineer"),
+                gh_job(2, "Data Engineer", location="Pune\u0000"),
+            ]
+        }
+    )
+    serve(app, {GH: (board, JSON)})
+    source = await add_source(api)
+    response = await api.post(f"{DISCOVERY}/sources/{source['id']}/run")
+    assert response.status_code == 200 and response.json()["new"] == 2
+    assert sorted(c["title"] for c in await inbox(api)) == ["Backend Engineer", "Data Engineer"]

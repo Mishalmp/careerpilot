@@ -32,7 +32,7 @@ Each step is a small file you can read in one sitting.
 | 4 Search | `repository.py`, `service.py: search` | Two searches: by meaning (cosine distance) and by words (`ts_rank_cd`). |
 | 5 Fuse | `ranking.py` | Reciprocal rank fusion: each list gives a passage `weight / (60 + rank)`. Only ranks are compared, so the two scoring scales never need converting. |
 | 6 Gate | `service.py: search` | If even the best passage is not close in meaning (cosine similarity below 0.6), say so instead of answering. |
-| 7 Ask | `prompts.py`, `core/llm.py` | The model sees at most six passages, is told they are quoted data, and must cite them. |
+| 7 Ask | `prompts/ask-notes/`, `core/llm.py` | The model sees at most six passages, is told they are quoted data, and must cite them. |
 | 8 Check | `service.py: interpret` | An answer with no valid `[n]` citation is withheld. `NOT_IN_NOTES` is honoured. |
 
 ## What was measured (not assumed)

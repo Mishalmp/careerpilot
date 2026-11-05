@@ -39,6 +39,7 @@ async def test_short_passwords_are_refused() -> None:
         ["import-tracker", "tracker.xlsx"],
         ["ingest"],
         ["worker"],
+        ["llm-check"],
         ["backup-key"],
         ["backup"],
         ["restore", "file.cpbk", "--into", "copy"],

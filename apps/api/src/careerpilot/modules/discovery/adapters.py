@@ -65,7 +65,8 @@ def _get(value: Any, key: str) -> Any:
 
 
 def _text(value: Any) -> str | None:
-    return value.strip() or None if isinstance(value, str) else None
+    # Postgres text cannot hold a NUL character; one bad listing must not fail the whole board.
+    return value.replace("\x00", "").strip() or None if isinstance(value, str) else None
 
 
 def _http(value: Any) -> str | None:

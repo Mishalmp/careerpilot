@@ -385,3 +385,10 @@ async def test_html_comes_back_as_visible_text() -> None:
 def test_unclosed_tags_and_scripts_do_not_break_extraction() -> None:
     assert html_to_text("<div><p>one<p>two<script>x") == "one\ntwo"
     assert html_to_text("") == ""
+
+
+async def test_nul_characters_are_removed_from_fetched_text() -> None:
+    page = await fetcher_for(html("a\u0000b", content_type="text/plain")).fetch(
+        "https://x.example/"
+    )
+    assert page.text == "ab"

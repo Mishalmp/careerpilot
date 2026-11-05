@@ -65,6 +65,26 @@ uv run python -m careerpilot.cli restore backups/FILE.cpbk --into careerpilot_re
 ```
 While the app runs, a backup is made every night (14 are kept). Restore always creates a **new** database and never touches the live one; point `CAREERPILOT_DATABASE_URL` at it to use it. Backups are encrypted, but copy `backups/` to another disk or cloud folder yourself: a backup on the same disk does not survive that disk.
 
+## Checking the connection to Claude
+Features that use the model need `ANTHROPIC_API_KEY` in `.env`. Without a key everything still works except the model steps. Once you have one, run a small real request to prove the key, model name and JSON handling work:
+```bash
+cd apps/api && uv run python -m careerpilot.cli llm-check
+```
+Every model call is capped per day (`CAREERPILOT_LLM_DAILY_TOKEN_CAP`, default 200,000 tokens) and logged in the `llm_calls` table without the prompts. The model calls in this project have only been tested against a scripted stand-in, so treat the first live use as a test.
+
+**What is sent to Claude (only when a key is set, and only when you use that feature):**
+
+| Feature | Sent |
+|---|---|
+| Ask my notes | your question and up to six matching passages from your notes, **including private notes** |
+| Read their pages (company check) | text of the company's own public web pages |
+| Score + read the description | the job description (first 12,000 characters) |
+| Interview intel | the source text you pasted or fetched, and, for suggestions, the company name and job description |
+| Outreach drafts | the job description, the facts you gave, your first name and constraint line, and up to two matching passages from your notes |
+| Mock interview | the topic or job description, collected intel facts, your answers, and matching passages from your notes |
+
+Never sent: passwords, the session cookie, your profile file, exchange rates, backups, or the backup key. Check the data-retention terms of your Anthropic plan before using private notes with it; I did not verify them.
+
 ## Claude Desktop / Claude Code (MCP)
 `uv run python -m careerpilot.mcp_server` starts the MCP server. Setup and what it can and cannot do: [docs/learn/mcp.md](docs/learn/mcp.md).
 
@@ -86,7 +106,9 @@ Commit both generated files; CI fails if they are stale.
 ```
 apps/api   FastAPI backend (src/careerpilot: core/, modules/<feature>/, alembic/)
 apps/web   Next.js app (src/features/<module>, src/lib/api is the generated client)
-content    curriculum and guides (the only copy)
+content    curriculum, guides, problems, skills list (the only copy)
+prompts    versioned prompt files, one folder per prompt
+backups    encrypted database backups (git-ignored)
 docs/adr   one short file per decision
 plan.md    the project plan
 ```

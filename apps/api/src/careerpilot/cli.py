@@ -168,6 +168,34 @@ def _worker(_: argparse.Namespace) -> int:
     return 0
 
 
+def _llm_check(_: argparse.Namespace) -> int:
+    """Make one small real request to Claude, to prove the key and model work."""
+    from careerpilot.core.config import get_settings
+    from careerpilot.core.errors import ProblemError
+    from careerpilot.core.llm import check_llm, make_llm
+
+    settings = get_settings()
+    llm = make_llm(settings)
+    if llm is None:
+        print("Set ANTHROPIC_API_KEY (in .env) first.", file=sys.stderr)
+        return 1
+    status = {"code": 0}
+
+    async def action(db: AsyncSession) -> None:
+        owner = await auth_service.sole_user(db)
+        try:
+            result = await check_llm(db, owner.id, llm, settings)
+        except ProblemError as exc:
+            print(f"Failed: {exc.title}: {exc.detail}", file=sys.stderr)
+            status["code"] = 1
+            return
+        print(
+            f"OK: {result.model} answered in {result.milliseconds} ms using {result.tokens} tokens."
+        )
+
+    return _guarded(action) or status["code"]
+
+
 def _backup_key(_: argparse.Namespace) -> int:
     from careerpilot.core.backup import generate_key
 
@@ -257,6 +285,9 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser(
         "worker", help="run the background worker (job boards, daily digest)"
     ).set_defaults(run=_worker)
+    commands.add_parser("llm-check", help="one small real request to Claude").set_defaults(
+        run=_llm_check
+    )
     commands.add_parser("backup-key", help="make a new backup key").set_defaults(run=_backup_key)
     commands.add_parser("backup", help="write an encrypted backup now").set_defaults(run=_backup)
     restore = commands.add_parser("restore", help="restore a backup into a NEW database")

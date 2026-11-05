@@ -2,6 +2,7 @@ import uuid
 from datetime import UTC, date, datetime
 from typing import Any
 
+from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -218,10 +219,8 @@ async def accept(
             fetcher, source.board, candidate.external_id
         )
 
-    created = await tracker_service.create_job(
-        db,
-        owner_id,
-        JobCreate(
+    try:
+        data = JobCreate(
             company_name=source.company_name,
             title=candidate.title,
             location_text=(candidate.location or "")[:200] or None,
@@ -231,9 +230,17 @@ async def accept(
             source=Portal.OTHER,
             work_mode=WorkMode.REMOTE if candidate.remote else None,
             posted_on=candidate.published_on,
-        ),
-        today=today,
-    )
+        )
+    except ValidationError as exc:
+        # The board sent something the tracker will not hold (for example a very long link).
+        problem = exc.errors()[0]
+        raise ProblemError(
+            422,
+            "This listing cannot be added",
+            f"{'.'.join(str(part) for part in problem['loc'])}: {problem['msg']}. "
+            "Open the listing and add the job by hand instead.",
+        ) from exc
+    created = await tracker_service.create_job(db, owner_id, data, today=today)
     candidate = await repository.get_candidate(db, owner_id, candidate_id, lock=True)
     if candidate is None:
         raise _not_found("Listing")

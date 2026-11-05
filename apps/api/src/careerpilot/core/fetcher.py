@@ -226,9 +226,10 @@ def _parse(value: str) -> httpx.URL:
 
 def _decode(body: bytes, charset: str | None) -> str:
     try:
-        return body.decode(charset or "utf-8", errors="replace")
+        text = body.decode(charset or "utf-8", errors="replace")
     except LookupError:
-        return body.decode("utf-8", errors="replace")
+        text = body.decode("utf-8", errors="replace")
+    return text.replace("\x00", "")  # Postgres text cannot hold NUL
 
 
 _SKIPPED = frozenset({"script", "style", "noscript", "template", "svg"})
