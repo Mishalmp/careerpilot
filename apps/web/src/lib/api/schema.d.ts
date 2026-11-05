@@ -106,6 +106,156 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/digest/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Latest Digest
+         * @description The most recent daily digest, or null before the first one has been built.
+         */
+        get: operations["latest_digest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Candidates */
+        get: operations["list_discovery_candidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/candidates/{candidate_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept
+         * @description Add the listing to your tracker as a new job.
+         */
+        post: operations["accept_discovery_candidate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/candidates/{candidate_id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dismiss */
+        post: operations["dismiss_discovery_candidate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/candidates/{candidate_id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore */
+        post: operations["restore_discovery_candidate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sources */
+        get: operations["list_discovery_sources"];
+        put?: never;
+        /**
+         * Add Source
+         * @description Follow a company's public job board (Greenhouse, Lever or Ashby).
+         */
+        post: operations["add_discovery_source"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/sources/{source_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Source */
+        delete: operations["delete_discovery_source"];
+        options?: never;
+        head?: never;
+        /** Update Source */
+        patch: operations["update_discovery_source"];
+        trace?: never;
+    };
+    "/api/v1/discovery/sources/{source_id}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run Source
+         * @description Read the board now. The daily run does the same through the task queue.
+         */
+        post: operations["run_discovery_source"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/jobs": {
         parameters: {
             query?: never;
@@ -823,6 +973,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Tasks
+         * @description Recent background work, newest first, with a count per status.
+         */
+        get: operations["list_tasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/retry-failed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Failed */
+        post: operations["retry_failed_tasks"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/{task_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry Task
+         * @description Queue a failed task again.
+         */
+        post: operations["retry_task"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/today": {
         parameters: {
             query?: never;
@@ -878,6 +1085,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AcceptOut */
+        AcceptOut: {
+            /** Already Tracked */
+            already_tracked: boolean;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+        };
         /** AnswerMockRequest */
         AnswerMockRequest: {
             /** Answer */
@@ -951,6 +1168,11 @@ export interface components {
             /** Question */
             question: string;
         };
+        /**
+         * BoardKind
+         * @enum {string}
+         */
+        BoardKind: "greenhouse" | "lever" | "ashby";
         /** BriefOut */
         BriefOut: {
             /** Likely Questions */
@@ -966,6 +1188,53 @@ export interface components {
             /** Topics */
             topics: components["schemas"]["IntelTopicOut"][];
         };
+        /** CandidateList */
+        CandidateList: {
+            /** Items */
+            items: components["schemas"]["CandidateOut"][];
+            /** Total */
+            total: number;
+        };
+        /** CandidateOut */
+        CandidateOut: {
+            /** Company Name */
+            company_name: string;
+            /**
+             * First Seen At
+             * Format: date-time
+             */
+            first_seen_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Job Id */
+            job_id: string | null;
+            /** Listed */
+            listed: boolean;
+            /** Location */
+            location: string | null;
+            /** Published On */
+            published_on: string | null;
+            /** Remote */
+            remote: boolean;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            status: components["schemas"]["CandidateStatus"];
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /**
+         * CandidateStatus
+         * @enum {string}
+         */
+        CandidateStatus: "new" | "accepted" | "dismissed";
         /** CaseResult */
         CaseResult: {
             /** Name */
@@ -1161,6 +1430,92 @@ export interface components {
          * @enum {string}
          */
         Difficulty: "Easy" | "Medium" | "Hard";
+        /** DigestOut */
+        DigestOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            payload: components["schemas"]["DigestPayload"];
+        };
+        /** DigestPayload */
+        DigestPayload: {
+            /** Applications */
+            applications: {
+                [key: string]: number;
+            };
+            /** Due Followups */
+            due_followups: components["schemas"]["FollowUp"][];
+            /** Failed Tasks 24H */
+            failed_tasks_24h: number;
+            /** New Listings 24H */
+            new_listings_24h: number;
+            /** Waiting Listings */
+            waiting_listings: number;
+        };
+        /** DiscoverySourceCreate */
+        DiscoverySourceCreate: {
+            /** Board */
+            board: string;
+            /** Company Name */
+            company_name: string;
+            /**
+             * Exclude
+             * @default []
+             */
+            exclude: string[];
+            /**
+             * Include
+             * @default []
+             */
+            include: string[];
+            kind: components["schemas"]["BoardKind"];
+        };
+        /** DiscoverySourceOut */
+        DiscoverySourceOut: {
+            /** Board */
+            board: string;
+            /** Company Name */
+            company_name: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Exclude */
+            exclude: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Include */
+            include: string[];
+            kind: components["schemas"]["BoardKind"];
+            /** Last Error */
+            last_error: string | null;
+            /** Last Listed */
+            last_listed: number | null;
+            /** Last Run At */
+            last_run_at: string | null;
+            /** New Count */
+            new_count: number;
+        };
+        /**
+         * DiscoverySourceUpdate
+         * @description Only the fields you send change.
+         */
+        DiscoverySourceUpdate: {
+            /** Enabled */
+            enabled?: boolean | null;
+            /** Exclude */
+            exclude?: string[] | null;
+            /** Include */
+            include?: string[] | null;
+        };
         /**
          * DocumentKind
          * @enum {string}
@@ -1278,6 +1633,20 @@ export interface components {
             source_url?: string | null;
             /** Text */
             text: string;
+        };
+        /** FollowUp */
+        FollowUp: {
+            /** Company */
+            company: string;
+            /** Due On */
+            due_on: string | null;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Title */
+            title: string;
         };
         /**
          * FunctionTestOut
@@ -1905,6 +2274,20 @@ export interface components {
          * @enum {string}
          */
         Region: "India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)";
+        /** RetryAllOut */
+        RetryAllOut: {
+            /** Requeued */
+            requeued: number;
+        };
+        /** RunOut */
+        RunOut: {
+            /** Kept */
+            kept: number;
+            /** Listed */
+            listed: number;
+            /** New */
+            new: number;
+        };
         /** ScoreOut */
         ScoreOut: {
             /** Blockers */
@@ -2127,6 +2510,65 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** TaskCounts */
+        TaskCounts: {
+            /** Failed */
+            failed: number;
+            /** Queued */
+            queued: number;
+            /** Running */
+            running: number;
+            /** Succeeded */
+            succeeded: number;
+        };
+        /**
+         * TaskKind
+         * @enum {string}
+         */
+        TaskKind: "discover" | "daily_digest";
+        /** TaskList */
+        TaskList: {
+            counts: components["schemas"]["TaskCounts"];
+            /** Items */
+            items: components["schemas"]["TaskOut"][];
+        };
+        /** TaskOut */
+        TaskOut: {
+            /** Attempts */
+            attempts: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Error */
+            error: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Key */
+            key: string;
+            kind: components["schemas"]["TaskKind"];
+            /** Max Attempts */
+            max_attempts: number;
+            /**
+             * Run After
+             * Format: date-time
+             */
+            run_after: string;
+            /** Started At */
+            started_at: string | null;
+            status: components["schemas"]["TaskStatus"];
+        };
+        /**
+         * TaskStatus
+         * @enum {string}
+         */
+        TaskStatus: "queued" | "running" | "succeeded" | "failed";
         /** TodayOut */
         TodayOut: {
             /** Due Followups */
@@ -2478,6 +2920,333 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    latest_digest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DigestOut"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_discovery_candidates: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["CandidateStatus"];
+                source_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidateList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_discovery_candidate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                candidate_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcceptOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dismiss_discovery_candidate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                candidate_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    restore_discovery_candidate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                candidate_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_discovery_sources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscoverySourceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_discovery_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiscoverySourceCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscoverySourceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_discovery_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_discovery_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiscoverySourceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscoverySourceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_discovery_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
             };
             /** @description Validation Error */
             422: {
@@ -4201,6 +4970,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["careerpilot__modules__prep__schemas__SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tasks: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["TaskStatus"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_failed_tasks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetryAllOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_task: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"];
                 };
             };
             /** @description Validation Error */

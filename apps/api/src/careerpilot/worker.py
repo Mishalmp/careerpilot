@@ -1,0 +1,109 @@
+"""The background worker: schedules the daily jobs and runs queued tasks.
+
+It runs inside the API process while the API is up, or on its own with
+`python -m careerpilot.cli worker`. Both can run at once: tasks are claimed with SKIP LOCKED and
+scheduling is idempotent (a task key is unique per day).
+"""
+
+import asyncio
+import contextlib
+import uuid
+from collections.abc import Mapping
+from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+import structlog
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+from careerpilot.core.clock import today_in
+from careerpilot.core.config import Settings
+from careerpilot.core.fetcher import Fetcher
+from careerpilot.modules.auth import service as auth_service
+from careerpilot.modules.digest import service as digest_service
+from careerpilot.modules.discovery import service as discovery_service
+from careerpilot.modules.discovery.adapters import AdapterError
+from careerpilot.modules.tasks import service as tasks_service
+from careerpilot.modules.tasks.enums import TaskKind
+from careerpilot.modules.tasks.models import Task
+from careerpilot.modules.tasks.service import Handler, TaskFailure
+
+log = structlog.get_logger()
+
+
+def make_handlers(fetcher: Fetcher, settings: Settings) -> Mapping[TaskKind, Handler]:
+    async def discover(db: AsyncSession, task: Task) -> None:
+        try:
+            await discovery_service.run_source(
+                db, task.owner_id, uuid.UUID(task.payload["source_id"]), fetcher
+            )
+        except AdapterError as exc:
+            raise TaskFailure(str(exc)) from exc
+
+    async def daily_digest(db: AsyncSession, task: Task) -> None:
+        await digest_service.build(db, task.owner_id, today_in(settings.timezone))
+
+    return {TaskKind.DISCOVER: discover, TaskKind.DAILY_DIGEST: daily_digest}
+
+
+async def schedule_due(
+    sessionmaker: async_sessionmaker[AsyncSession], settings: Settings, now: datetime
+) -> int:
+    """Queue today's runs once the local hour has come. Returns how many tasks were queued."""
+    local = now.astimezone(ZoneInfo(settings.timezone))
+    day = local.date().isoformat()
+    queued = 0
+    async with sessionmaker() as db:
+        if local.hour >= settings.discovery_hour:
+            for owner_id, source_id in await discovery_service.enabled_sources(db):
+                queued += await tasks_service.enqueue(
+                    db,
+                    owner_id,
+                    TaskKind.DISCOVER,
+                    f"discover:{source_id}:{day}",
+                    {"source_id": str(source_id)},
+                    max_attempts=settings.task_max_attempts,
+                )
+        if local.hour >= settings.digest_hour:
+            for owner_id in await auth_service.user_ids(db):
+                queued += await tasks_service.enqueue(
+                    db,
+                    owner_id,
+                    TaskKind.DAILY_DIGEST,
+                    f"daily_digest:{day}",
+                    {},
+                    max_attempts=settings.task_max_attempts,
+                )
+        await db.commit()
+    return queued
+
+
+async def tick(
+    sessionmaker: async_sessionmaker[AsyncSession],
+    handlers: Mapping[TaskKind, Handler],
+    settings: Settings,
+    now: datetime | None = None,
+) -> None:
+    """One pass: schedule what is due, then run every due task."""
+    now = now or datetime.now(UTC)
+    await schedule_due(sessionmaker, settings, now)
+    stuck_after = timedelta(minutes=settings.task_stuck_minutes)
+    while await tasks_service.run_next(sessionmaker, handlers, now=now, stuck_after=stuck_after):
+        pass
+
+
+async def worker_loop(
+    sessionmaker: async_sessionmaker[AsyncSession],
+    fetcher: Fetcher,
+    settings: Settings,
+    stop: asyncio.Event,
+) -> None:
+    handlers = make_handlers(fetcher, settings)
+    log.info("worker_started", poll_seconds=settings.worker_poll_seconds)
+    while not stop.is_set():
+        try:
+            await tick(sessionmaker, handlers, settings)
+        except Exception:
+            log.exception("worker_tick_failed")  # never let one bad pass end the loop
+        with contextlib.suppress(TimeoutError):
+            await asyncio.wait_for(stop.wait(), timeout=settings.worker_poll_seconds)
+    log.info("worker_stopped")

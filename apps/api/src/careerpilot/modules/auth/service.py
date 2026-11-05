@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
@@ -52,6 +53,11 @@ async def sole_user(db: AsyncSession) -> User:
     if len(users) != 1:
         raise LookupError("Expected exactly one user. Run `create-user` first.")
     return users[0]
+
+
+async def user_ids(db: AsyncSession) -> list[uuid.UUID]:
+    """Every user's id, for the scheduler (which works for all owners)."""
+    return [user.id for user in await repository.list_users(db, limit=1000)]
 
 
 async def authenticate(

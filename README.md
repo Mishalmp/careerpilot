@@ -2,7 +2,7 @@
 
 Job application tracker, interview prep, an in-browser practice editor, and a place to learn how RAG and MCP are built. Local-first, single user. The full design is in [plan.md](plan.md); decisions are in [docs/adr](docs/adr).
 
-Status: Phase 4. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Learn how the last two are built in [docs/learn](docs/learn).
+Status: Phase 5. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Follow companies' public job boards (Greenhouse, Lever, Ashby): new listings wait in an inbox until you add them to the tracker, and a daily digest summarises the day. Learn how the last two are built in [docs/learn](docs/learn).
 
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
@@ -41,7 +41,9 @@ cd apps/api && uv run uvicorn careerpilot.main:app_factory --factory --reload
 ```bash
 cd apps/web && npm install && npm run dev
 ```
-Open http://localhost:3100. The web app forwards `/api` to the backend on port 8000. Postgres is on host port 5433.
+Open http://localhost:3100. The web app forwards `/api` to the backend on port 8000 (set `API_ORIGIN` to use another). Postgres is on host port 5433.
+
+While the API is up it also runs the background worker (daily job-board reads and digest; see the Tasks screen). To run the worker alone: `uv run python -m careerpilot.cli worker`. Set `CAREERPILOT_WORKER_ENABLED=false` to turn it off.
 
 ## Checks (what CI runs)
 ```bash

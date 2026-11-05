@@ -30,6 +30,7 @@ os.environ["CAREERPILOT_DATABASE_URL"] = TEST_URL
 # Tests never download the embedding model or call the AI provider.
 os.environ["CAREERPILOT_EMBEDDER"] = "hash"
 os.environ["ANTHROPIC_API_KEY"] = ""
+os.environ["CAREERPILOT_WORKER_ENABLED"] = "false"  # tests run tasks by hand
 
 
 def alembic_config() -> Config:

@@ -136,14 +136,15 @@ class Fetcher:
         self._max_bytes = max_bytes
         self._timeout = timeout_seconds
 
-    async def fetch(self, url: str) -> FetchedPage:
+    async def fetch(self, url: str, *, max_bytes: int | None = None) -> FetchedPage:
+        """Fetch a page. `max_bytes` raises the size cap for one call (job boards are large)."""
         try:
             async with asyncio.timeout(self._timeout):
-                return await self._fetch(url)
+                return await self._fetch(url, max_bytes or self._max_bytes)
         except TimeoutError as exc:
             raise FetchError("timeout", "The page took too long to load.") from exc
 
-    async def _fetch(self, url: str) -> FetchedPage:
+    async def _fetch(self, url: str, max_bytes: int) -> FetchedPage:
         async with httpx.AsyncClient(
             transport=self._transport,
             follow_redirects=False,
@@ -153,13 +154,15 @@ class Fetcher:
         ) as client:
             current = _parse(url)
             for _ in range(MAX_REDIRECTS + 1):
-                page_or_next = await self._hop(client, current)
+                page_or_next = await self._hop(client, current, max_bytes)
                 if isinstance(page_or_next, FetchedPage):
                     return page_or_next
                 current = page_or_next
         raise FetchError("too_many_redirects", "The page redirected too many times.")
 
-    async def _hop(self, client: httpx.AsyncClient, url: httpx.URL) -> "FetchedPage | httpx.URL":
+    async def _hop(
+        self, client: httpx.AsyncClient, url: httpx.URL, max_bytes: int
+    ) -> "FetchedPage | httpx.URL":
         host, port = url.host, url.port or (443 if url.scheme == "https" else 80)
         if is_blocked_domain(host):
             raise FetchError(
@@ -194,8 +197,8 @@ class Fetcher:
                 truncated = False
                 async for chunk in response.aiter_bytes():
                     body.extend(chunk)
-                    if len(body) > self._max_bytes:
-                        del body[self._max_bytes :]
+                    if len(body) > max_bytes:
+                        del body[max_bytes:]
                         truncated = True
                         break
                 text = _decode(bytes(body), response.charset_encoding)

@@ -22,6 +22,7 @@ Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [R
 - All model calls go through `core/llm.call_llm` or `call_llm_json` (daily token cap, audit table). Prompts are files in `prompts/<name>/vN.md`; add a new version instead of editing one that was used. Wrap untrusted text with `core/prompts.data_block`.
 - Research code fetches pages only through `core/fetcher.Fetcher` (SSRF guard, blocked sites). Anything a model quotes must pass `core/evidence.quote_appears` against the fetched text before it is stored.
 - Verdicts, scores and states are computed by code (`rules.py`, `workflow.py`), never by the model. Outreach has no send action and must not get one; approval guards are in `modules/outreach/service.py`.
+- Background work is a `tasks` row with an idempotent key, claimed with SKIP LOCKED, handled in `worker.py`. Handlers raise `TaskFailure` with a message written for the user. A new job source is an adapter in `modules/discovery/adapters.py` (pure parser plus a board address on the provider's own host) and goes through the safe fetcher; never add a source whose terms forbid automation.
 - Your profile for scoring is `content/private/profile.yaml` (see `content/profile.example.yaml`); skills live once in `content/skills.yaml`.
 - Anything that leaves the machine (email, applications) needs explicit user approval; there is no send action.
 

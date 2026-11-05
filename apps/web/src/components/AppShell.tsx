@@ -10,10 +10,12 @@ import { useLogout, useSession } from "@/lib/session";
 const NAV = [
   { href: "/", label: "Today" },
   { href: "/jobs", label: "Jobs" },
+  { href: "/discover", label: "Discover" },
   { href: "/prep", label: "Prep" },
   { href: "/practice", label: "Practice" },
   { href: "/ask", label: "Ask" },
   { href: "/mock", label: "Mock" },
+  { href: "/tasks", label: "Tasks" },
 ];
 
 /** Signed-in frame: redirects to /login without a session and shows the main navigation. */

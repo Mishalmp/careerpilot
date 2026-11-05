@@ -437,6 +437,8 @@ Time-box: building takes at most **2 hours a day** in the first three weeks; int
 
 **Phase 4 as built (see [ADR 0009](docs/adr/0009-research-scoring-outreach.md)):** the fetcher with its SSRF suite, company verification, scoring, outreach with the ported linter and approval rules, interview intel, the prompt registry and JSON replies with a repair attempt. Differences from the plan above: research reads fixed pages and checks quotes in code instead of running a tool-using agent loop; the chance is a rule-of-thumb label, not a percentage; similar-company inference uses sources you add, not facts the model recalls. Mock interviews were added afterwards (`modules/mock`). Not built: MCP tools for these features, a live Claude check, Gmail drafts.
 
+**Phase 5 as built (see [ADR 0010](docs/adr/0010-discovery-and-background-tasks.md)):** Greenhouse, Lever and Ashby adapters feeding an inbox (you accept what reaches the tracker), a small Postgres task queue with retries, a watchdog and a Tasks screen, and a daily digest. Differences from the plan: a hand-written queue instead of procrastinate (spike S3 not run); no separate `domain_policies` table (the fetcher's blocked list plus per-adapter hosts do the job); the Gmail alert parser is not built.
+
 **Technical spikes before committing (each about 1 to 2 hours, done at the start of the phase that needs it):**
 - S1 Pyodide in a Web Worker with strict CSP and self-hosted assets.
 - S2 PGlite with fixtures and result-set comparison.

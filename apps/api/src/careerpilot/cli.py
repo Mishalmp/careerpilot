@@ -139,6 +139,35 @@ def _eval_rag(args: argparse.Namespace) -> int:
     return _guarded(action)
 
 
+def _worker(_: argparse.Namespace) -> int:
+    """Run the background worker on its own (the API also runs one while it is up)."""
+    import asyncio
+    import contextlib
+    import signal
+
+    from careerpilot.core.config import get_settings
+    from careerpilot.core.db import create_engine, create_sessionmaker
+    from careerpilot.core.fetcher import Fetcher
+    from careerpilot.worker import worker_loop
+
+    async def run() -> None:
+        settings = get_settings()
+        engine = create_engine(settings.database_url)
+        stop = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for name in ("SIGINT", "SIGTERM"):
+            if hasattr(signal, name):
+                loop.add_signal_handler(getattr(signal, name), stop.set)
+        try:
+            await worker_loop(create_sessionmaker(engine), Fetcher(), settings, stop)
+        finally:
+            await engine.dispose()
+
+    with contextlib.suppress(KeyboardInterrupt):  # Windows has no loop signal handlers
+        asyncio.run(run())
+    return 0
+
+
 def _guarded(action: Callable[[AsyncSession], Awaitable[None]]) -> int:
     try:
         asyncio.run(_run(action))
@@ -162,6 +191,9 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser("ingest", help="index your notes for search (safe to repeat)").set_defaults(
         run=_ingest
     )
+    commands.add_parser(
+        "worker", help="run the background worker (job boards, daily digest)"
+    ).set_defaults(func=_worker)
     find = commands.add_parser("search", help="search your notes")
     find.add_argument("query")
     find.add_argument("--limit", type=int, default=5)

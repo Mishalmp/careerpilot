@@ -51,6 +51,15 @@ class Settings(BaseSettings):
     # Outreach stays personal: at most this many messages can be approved per day.
     outreach_daily_cap: int = Field(default=10, ge=1)
 
+    # Background work (job-board discovery, the daily digest). The worker runs inside the API
+    # process while it is up; `python -m careerpilot.cli worker` runs it on its own.
+    worker_enabled: bool = True
+    worker_poll_seconds: int = Field(default=30, ge=1)
+    discovery_hour: int = Field(default=7, ge=0, le=23)  # local time, once a day
+    digest_hour: int = Field(default=8, ge=0, le=23)
+    task_max_attempts: int = Field(default=3, ge=1, le=10)
+    task_stuck_minutes: int = Field(default=15, ge=1)
+
     @field_validator("anthropic_api_key", mode="before")
     @classmethod
     def _blank_key_means_none(cls, value: object) -> object:

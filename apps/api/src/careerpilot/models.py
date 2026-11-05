@@ -4,6 +4,8 @@ from careerpilot.core.audit import AuditEvent
 from careerpilot.core.db import Base
 from careerpilot.core.llm import LlmCall
 from careerpilot.modules.auth.models import AuthSession, User
+from careerpilot.modules.digest.models import Digest
+from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
 from careerpilot.modules.intel.models import IntelItem, IntelSource
 from careerpilot.modules.knowledge.models import Chunk, Document
 from careerpilot.modules.mock.models import MockSession
@@ -11,6 +13,7 @@ from careerpilot.modules.outreach.models import OutreachDraft
 from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
 from careerpilot.modules.scoring.models import JobScore
+from careerpilot.modules.tasks.models import Task
 from careerpilot.modules.tracker.models import (
     Application,
     ApplicationEvent,
@@ -39,6 +42,10 @@ REGISTERED_MODELS = (
     IntelSource,
     IntelItem,
     MockSession,
+    DiscoverySource,
+    DiscoveredJob,
+    Task,
+    Digest,
     Submission,
     Document,
     Chunk,

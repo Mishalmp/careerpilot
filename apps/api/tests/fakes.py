@@ -1,5 +1,6 @@
 """Test doubles shared by more than one test file."""
 
+import ipaddress
 from dataclasses import dataclass
 from typing import Any
 
@@ -66,7 +67,11 @@ class FakeWeb:
         async def resolver(host: str, port: int) -> list[str]:
             if host in self.dead:
                 raise FetchError("unresolvable", f"Could not resolve {host}.")
-            return ["93.184.216.34"]
+            try:
+                ipaddress.ip_address(host)
+            except ValueError:
+                return ["93.184.216.34"]
+            return [host]  # like getaddrinfo, a literal address resolves to itself
 
         return Fetcher(resolver=resolver, transport=httpx.MockTransport(self._handle))
 
