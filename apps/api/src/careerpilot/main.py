@@ -17,6 +17,7 @@ from careerpilot.modules.auth.throttle import LoginThrottle
 from careerpilot.modules.intel.router import router as intel_router
 from careerpilot.modules.knowledge.embeddings import make_embedder
 from careerpilot.modules.knowledge.router import router as knowledge_router
+from careerpilot.modules.mock.router import router as mock_router
 from careerpilot.modules.outreach.router import router as outreach_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
@@ -69,6 +70,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(scoring_router, prefix=API_PREFIX)
     app.include_router(outreach_router, prefix=API_PREFIX)
     app.include_router(intel_router, prefix=API_PREFIX)
+    app.include_router(mock_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

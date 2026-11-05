@@ -35,8 +35,11 @@ You paste text you read, or have a company page fetched; the model extracts roun
 ## Prompts and cost
 Prompts are files under `prompts/<name>/vN.md` (`core/prompts.py`); `llm_calls.purpose` records the version. `core/llm.call_llm_json` validates replies with one repair attempt, and every attempt counts against the daily token cap.
 
+## Mock interviews (`modules/mock`)
+The model plays the interviewer on a job (its description and any collected intel) or a topic: it asks one question, then for each answer returns a 0-5 score, short feedback and the next question in one call. Your answer goes to the model inside a data block, scores outside 0-5 are rejected and repaired, and your own notes are added as reference only when they cover the question. The summary (average, weak topics under 3, strong topics from 4) is computed by code, not by the model. A `turn` number in each answer makes a double submit a 409, and the session is re-read under a row lock after the model call (the call commits, which releases the lock). Transcripts are stored as JSON on the session. Scores are the model's opinion; the screen says so.
+
 ## Not built
-Mock interviews, an MCP tool for these features, a live Claude check (no key was available), Gmail drafts, and a task queue (research runs inside the request, a few seconds).
+An MCP tool for these features, a live Claude check (no key was available), Gmail drafts, and a task queue (research runs inside the request, a few seconds).
 
 ## Dependency
 `httpx` is now a runtime dependency (it was a test-only transitive one): the fetcher uses it directly. Removal path: switch the fetcher to `httpx2`, which the Anthropic SDK already installs.

@@ -6,6 +6,7 @@ from careerpilot.core.llm import LlmCall
 from careerpilot.modules.auth.models import AuthSession, User
 from careerpilot.modules.intel.models import IntelItem, IntelSource
 from careerpilot.modules.knowledge.models import Chunk, Document
+from careerpilot.modules.mock.models import MockSession
 from careerpilot.modules.outreach.models import OutreachDraft
 from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
@@ -37,6 +38,7 @@ REGISTERED_MODELS = (
     OutreachDraft,
     IntelSource,
     IntelItem,
+    MockSession,
     Submission,
     Document,
     Chunk,
