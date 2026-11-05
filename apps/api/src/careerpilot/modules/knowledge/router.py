@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from careerpilot.core.deps import AppSettings, DbSession
+from careerpilot.core.deps import AppLlm, AppSettings, DbSession
 from careerpilot.modules.auth.dependencies import Authenticated
 from careerpilot.modules.knowledge import service
-from careerpilot.modules.knowledge.dependencies import AppEmbedder, AppLlm
+from careerpilot.modules.knowledge.dependencies import AppEmbedder
 from careerpilot.modules.knowledge.schemas import (
     AskOut,
     AskRequest,

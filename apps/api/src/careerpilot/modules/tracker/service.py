@@ -19,6 +19,7 @@ from careerpilot.modules.tracker.models import Application, Contact, Job
 from careerpilot.modules.tracker.schemas import (
     ApplicationInit,
     ApplicationUpdate,
+    CompanyUpdate,
     ContactCreate,
     JobCreate,
     JobUpdate,
@@ -188,6 +189,17 @@ async def update_application(
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(application, field, value)
     job_id = application.job_id
+    await repository.touch_job(db, job_id)
+    await db.commit()
+    return await get_job(db, owner_id, job_id)
+
+
+async def update_company(
+    db: AsyncSession, owner_id: uuid.UUID, job_id: uuid.UUID, data: CompanyUpdate
+) -> Job:
+    job = await get_job(db, owner_id, job_id)
+    for field in data.model_fields_set:
+        setattr(job.company, field, getattr(data, field))
     await repository.touch_job(db, job_id)
     await db.commit()
     return await get_job(db, owner_id, job_id)

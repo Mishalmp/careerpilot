@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     timezone: str = "Asia/Kolkata"
     # Committed guides live in content/guides; private ones (employer-specific) in content/private.
     content_dir: Path = REPO_ROOT / "content"
+    # Versioned prompt files (prompts/<name>/vN.md); see core/prompts.py.
+    prompts_dir: Path = REPO_ROOT / "prompts"
 
     # Search over your notes. Embeddings run locally; the model downloads once into model_cache_dir.
     embedder: Literal["fastembed", "hash"] = "fastembed"  # "hash" is a stand-in for tests
@@ -45,6 +47,9 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr | None = Field(default=None, validation_alias="ANTHROPIC_API_KEY")
     llm_model: str = "claude-sonnet-5-5"
     llm_daily_token_cap: int = Field(default=200_000, ge=1)
+
+    # Outreach stays personal: at most this many messages can be approved per day.
+    outreach_daily_cap: int = Field(default=10, ge=1)
 
     @field_validator("anthropic_api_key", mode="before")
     @classmethod

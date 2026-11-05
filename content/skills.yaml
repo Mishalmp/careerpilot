@@ -1,0 +1,111 @@
+# One normalised skill list. Job scoring finds these in a job description and in your profile.
+# `name` is the canonical form; `aliases` are other spellings. Matching ignores case unless
+# `exact_case: true`. Keep ambiguous words out (for example the language "Go" is only matched as
+# "Golang"), because a wrong match is worse than a missing one.
+skills:
+  # languages
+  - {name: python, aliases: [python3]}
+  - {name: typescript, aliases: [ts]}
+  - {name: javascript, aliases: [js, ecmascript]}
+  - {name: java}
+  - {name: golang, aliases: ["go language", "go programming"]}
+  - {name: rust}
+  - {name: c++, aliases: [cpp]}
+  - {name: c#, aliases: [csharp]}
+  - {name: kotlin}
+  - {name: scala}
+  - {name: ruby}
+  - {name: php}
+  - {name: sql}
+  - {name: bash, aliases: [shell scripting]}
+  # backend and frameworks
+  - {name: fastapi}
+  - {name: django, aliases: [django rest framework, drf]}
+  - {name: flask}
+  - {name: spring boot, aliases: [spring]}
+  - {name: node.js, aliases: [nodejs, node]}
+  - {name: express, aliases: [express.js, expressjs]}
+  - {name: nestjs, aliases: [nest.js]}
+  - {name: .net, aliases: [dotnet, asp.net]}
+  - {name: graphql}
+  - {name: rest apis, aliases: [rest api, restful, rest]}
+  - {name: grpc}
+  - {name: microservices, aliases: [microservice]}
+  - {name: system design, aliases: [distributed systems]}
+  - {name: sqlalchemy}
+  - {name: alembic}
+  - {name: celery}
+  - {name: jwt, aliases: [json web token]}
+  - {name: rbac}
+  - {name: oauth, aliases: [oauth2, openid connect, oidc]}
+  # frontend
+  - {name: react, aliases: [react.js, reactjs]}
+  - {name: next.js, aliases: [nextjs]}
+  - {name: redux, aliases: [redux toolkit, rtk]}
+  - {name: vue, aliases: [vue.js, vuejs]}
+  - {name: angular}
+  - {name: tailwind css, aliases: [tailwind]}
+  - {name: html}
+  - {name: css}
+  - {name: webpack}
+  # data
+  - {name: postgresql, aliases: [postgres, psql]}
+  - {name: mysql}
+  - {name: mongodb, aliases: [mongo]}
+  - {name: redis}
+  - {name: elasticsearch, aliases: [opensearch]}
+  - {name: kafka}
+  - {name: rabbitmq}
+  - {name: duckdb}
+  - {name: delta lake}
+  - {name: dbt}
+  - {name: spark, aliases: [pyspark, apache spark]}
+  - {name: airflow, aliases: [apache airflow]}
+  - {name: kestra}
+  - {name: snowflake}
+  - {name: bigquery}
+  - {name: redshift}
+  - {name: etl, aliases: [elt, data pipelines, data pipeline]}
+  - {name: data modeling, aliases: [data modelling]}
+  - {name: parquet}
+  - {name: apache arrow, aliases: [arrow]}
+  - {name: pandas}
+  - {name: numpy}
+  # cloud and devops
+  - {name: aws, aliases: [amazon web services]}
+  - {name: gcp, aliases: [google cloud]}
+  - {name: azure}
+  - {name: docker}
+  - {name: kubernetes, aliases: [k8s]}
+  - {name: terraform}
+  - {name: ci/cd, aliases: [cicd, ci cd, continuous integration, gitlab ci, github actions, jenkins]}
+  - {name: nginx}
+  - {name: linux}
+  - {name: git}
+  - {name: ecs}
+  - {name: lambda, aliases: [aws lambda, serverless]}
+  - {name: s3}
+  - {name: prometheus}
+  - {name: grafana}
+  - {name: observability, aliases: [monitoring, opentelemetry]}
+  # testing and practices
+  - {name: pytest}
+  - {name: vitest}
+  - {name: jest}
+  - {name: playwright}
+  - {name: cypress}
+  - {name: unit testing, aliases: [unit tests, test automation, tdd]}
+  - {name: agile, aliases: [scrum]}
+  # ai
+  - {name: machine learning, aliases: [ml]}
+  - {name: llm, aliases: [llms, large language models, generative ai, genai]}
+  - {name: rag, aliases: [retrieval augmented generation, retrieval-augmented generation]}
+  - {name: openai api, aliases: [openai]}
+  - {name: langchain}
+  - {name: pytorch}
+  - {name: tensorflow}
+  # other
+  - {name: stripe}
+  - {name: multi-tenant, aliases: [multitenant, multi tenant]}
+  - {name: saas}
+  - {name: i18n, aliases: [internationalization, internationalisation, next-intl]}

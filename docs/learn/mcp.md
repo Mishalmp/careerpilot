@@ -74,4 +74,4 @@ You can also run `uv run mcp dev` against a small script of your own to open the
 
 ## Not built yet (and why)
 - **HTTP transport.** stdio is enough for a local host. HTTP would need a bearer token, an Origin check and TLS before leaving localhost.
-- **Tools for company briefs and outreach drafts.** They arrive with the research features in the next phase.
+- **Tools for company checks, scores, intel and outreach drafts.** The features exist in the web app (ADR 0009) but are not exposed over MCP yet. Read tools would be safe; outreach must stay without any send tool.

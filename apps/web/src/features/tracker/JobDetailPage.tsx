@@ -22,6 +22,7 @@ import {
   useUpdateApplication,
   useUpdateJob,
 } from "./hooks";
+import { ResearchSection } from "../research/ResearchSection";
 import { StatusSelect, useStatusChanger } from "./StatusChanger";
 import { StatusBadge } from "./StatusBadge";
 import { STATUSES } from "./status";
@@ -96,6 +97,7 @@ export function JobDetailPage() {
 
       <Facts job={data} />
       <ContactsPanel job={data} />
+      <ResearchSection job={data} />
 
       {data.jd_text && (
         <section className={card}>

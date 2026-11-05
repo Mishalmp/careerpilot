@@ -241,6 +241,56 @@
         "title": "AskRequest",
         "type": "object"
       },
+      "BriefOut": {
+        "properties": {
+          "likely_questions": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Likely Questions",
+            "type": "array"
+          },
+          "needs_more_sources": {
+            "title": "Needs More Sources",
+            "type": "boolean"
+          },
+          "own_recent_sources": {
+            "title": "Own Recent Sources",
+            "type": "integer"
+          },
+          "rounds": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Rounds",
+            "type": "array"
+          },
+          "tips": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Tips",
+            "type": "array"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/IntelTopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rounds",
+          "topics",
+          "likely_questions",
+          "tips",
+          "own_recent_sources",
+          "needs_more_sources"
+        ],
+        "title": "BriefOut",
+        "type": "object"
+      },
       "CaseResult": {
         "properties": {
           "name": {
@@ -265,6 +315,186 @@
           "status"
         ],
         "title": "CaseResult",
+        "type": "object"
+      },
+      "Channel": {
+        "enum": [
+          "email",
+          "recruiter_message",
+          "referral_request"
+        ],
+        "title": "Channel",
+        "type": "string"
+      },
+      "CheckKey": {
+        "enum": [
+          "website",
+          "domain_age",
+          "mail_domain",
+          "careers_page",
+          "registration",
+          "contact_details",
+          "people",
+          "independent_mentions",
+          "asks_for_money",
+          "chat_only_hiring",
+          "no_interview",
+          "free_mail_recruiter"
+        ],
+        "title": "CheckKey",
+        "type": "string"
+      },
+      "CheckOut": {
+        "properties": {
+          "checked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          },
+          "evidence_quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Quote"
+          },
+          "evidence_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Url"
+          },
+          "key": {
+            "$ref": "#/components/schemas/CheckKey"
+          },
+          "kind": {
+            "enum": [
+              "check",
+              "flag"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CheckSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/CheckStatus"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "status",
+          "source",
+          "evidence_url",
+          "evidence_quote",
+          "note",
+          "checked_at"
+        ],
+        "title": "CheckOut",
+        "type": "object"
+      },
+      "CheckSource": {
+        "enum": [
+          "auto",
+          "ai",
+          "manual"
+        ],
+        "title": "CheckSource",
+        "type": "string"
+      },
+      "CheckStatus": {
+        "enum": [
+          "pass",
+          "fail",
+          "unknown"
+        ],
+        "title": "CheckStatus",
+        "type": "string"
+      },
+      "CheckUpdate": {
+        "description": "Your own finding about a check or flag. Automatic runs never overwrite it.",
+        "properties": {
+          "evidence_quote": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Quote"
+          },
+          "evidence_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Url"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CheckStatus"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "CheckUpdate",
         "type": "object"
       },
       "CitationOut": {
@@ -327,6 +557,38 @@
         "title": "CompanyOut",
         "type": "object"
       },
+      "CompanyUpdate": {
+        "description": "Only the fields you send change; send null to clear one.",
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          }
+        },
+        "title": "CompanyUpdate",
+        "type": "object"
+      },
       "Compare": {
         "description": "How a function's result is compared with the expected value.",
         "enum": [
@@ -337,6 +599,49 @@
         ],
         "title": "Compare",
         "type": "string"
+      },
+      "ComponentOut": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "key": {
+            "enum": [
+              "skills",
+              "pay",
+              "seniority",
+              "company",
+              "location",
+              "growth"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "weight",
+          "score",
+          "detail"
+        ],
+        "title": "ComponentOut",
+        "type": "object"
       },
       "ContactCreate": {
         "properties": {
@@ -632,6 +937,229 @@
         "title": "DocumentKind",
         "type": "string"
       },
+      "DraftCreate": {
+        "description": "A draft you wrote yourself.",
+        "properties": {
+          "body": {
+            "maxLength": 3000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel",
+            "default": "email"
+          },
+          "contact_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Id"
+          },
+          "facts": {
+            "default": [],
+            "items": {
+              "maxLength": 200,
+              "minLength": 3,
+              "type": "string"
+            },
+            "maxItems": 3,
+            "title": "Facts",
+            "type": "array"
+          },
+          "subject": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ],
+        "title": "DraftCreate",
+        "type": "object"
+      },
+      "DraftEdit": {
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "maxLength": 3000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "facts": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 200,
+                  "minLength": 3,
+                  "type": "string"
+                },
+                "maxItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facts"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject"
+          }
+        },
+        "title": "DraftEdit",
+        "type": "object"
+      },
+      "DraftOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          },
+          "contact_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "facts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Facts",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "lint": {
+            "$ref": "#/components/schemas/LintOut"
+          },
+          "recipient_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipient Email"
+          },
+          "recipient_source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipient Source Url"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OutreachStatus"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "variant": {
+            "title": "Variant",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "contact_id",
+          "channel",
+          "status",
+          "variant",
+          "subject",
+          "body",
+          "recipient_email",
+          "recipient_source_url",
+          "facts",
+          "lint",
+          "created_at",
+          "approved_at",
+          "sent_at"
+        ],
+        "title": "DraftOut",
+        "type": "object"
+      },
       "EmailMode": {
         "enum": [
           "Not yet",
@@ -702,6 +1230,56 @@
         "title": "EventType",
         "type": "string"
       },
+      "ExtractOut": {
+        "properties": {
+          "dropped": {
+            "title": "Dropped",
+            "type": "integer"
+          },
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceOut"
+          }
+        },
+        "required": [
+          "source",
+          "kept",
+          "dropped"
+        ],
+        "title": "ExtractOut",
+        "type": "object"
+      },
+      "FactIn": {
+        "description": "Something specific about the company or role that the message should mention.",
+        "properties": {
+          "source_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "text": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "FactIn",
+        "type": "object"
+      },
       "FunctionTestOut": {
         "description": "The runner needs every case. `hidden` only hides a case in the UI.",
         "properties": {
@@ -733,6 +1311,59 @@
           "compare"
         ],
         "title": "FunctionTestOut",
+        "type": "object"
+      },
+      "GenerateRequest": {
+        "properties": {
+          "channel": {
+            "$ref": "#/components/schemas/Channel",
+            "default": "email"
+          },
+          "constraint": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraint"
+          },
+          "contact_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Id"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/FactIn"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Facts",
+            "type": "array"
+          },
+          "sender_name": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Sender Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sender_name",
+          "facts"
+        ],
+        "title": "GenerateRequest",
         "type": "object"
       },
       "GuideInfoOut": {
@@ -895,6 +1526,184 @@
           "chunks"
         ],
         "title": "IngestOut",
+        "type": "object"
+      },
+      "IntelOut": {
+        "properties": {
+          "ai_available": {
+            "title": "Ai Available",
+            "type": "boolean"
+          },
+          "brief": {
+            "$ref": "#/components/schemas/BriefOut"
+          },
+          "company_name": {
+            "title": "Company Name",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "note": {
+            "default": "Everything here comes from the sources listed, each with a quote that was checked against the source text. Facts from a text about another company are marked as inferred. Nothing is a prediction of what you will be asked.",
+            "title": "Note",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "job_id",
+          "company_name",
+          "sources",
+          "brief",
+          "ai_available"
+        ],
+        "title": "IntelOut",
+        "type": "object"
+      },
+      "IntelTopicOut": {
+        "properties": {
+          "inferred_only": {
+            "title": "Inferred Only",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "prep_topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Prep Topics",
+            "type": "array"
+          },
+          "reliability": {
+            "title": "Reliability",
+            "type": "integer"
+          },
+          "sources": {
+            "title": "Sources",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "sources",
+          "reliability",
+          "inferred_only",
+          "prep_topics"
+        ],
+        "title": "IntelTopicOut",
+        "type": "object"
+      },
+      "ItemKind": {
+        "enum": [
+          "round",
+          "topic",
+          "question",
+          "tip"
+        ],
+        "title": "ItemKind",
+        "type": "string"
+      },
+      "ItemOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inferred": {
+            "title": "Inferred",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ItemKind"
+          },
+          "published_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published On"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "reliability": {
+            "title": "Reliability",
+            "type": "integer"
+          },
+          "similar_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Similar To"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_label": {
+            "title": "Source Label",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "key",
+          "text",
+          "quote",
+          "source_id",
+          "source_label",
+          "source_url",
+          "published_on",
+          "inferred",
+          "similar_to",
+          "reliability"
+        ],
+        "title": "ItemOut",
         "type": "object"
       },
       "JobCreate": {
@@ -1876,6 +2685,27 @@
         "title": "LanguageSpec",
         "type": "object"
       },
+      "LintOut": {
+        "properties": {
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "words": {
+            "title": "Words",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "words",
+          "flags"
+        ],
+        "title": "LintOut",
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "email": {
@@ -1897,6 +2727,103 @@
           "password"
         ],
         "title": "LoginRequest",
+        "type": "object"
+      },
+      "Move": {
+        "properties": {
+          "acknowledge_flags": {
+            "default": false,
+            "title": "Acknowledge Flags",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OutreachStatus"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "Move",
+        "type": "object"
+      },
+      "OutreachList": {
+        "properties": {
+          "approved_today": {
+            "title": "Approved Today",
+            "type": "integer"
+          },
+          "daily_cap": {
+            "title": "Daily Cap",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DraftOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "note": {
+            "default": "CareerPilot never sends anything. Approving a draft only marks it ready: you copy it into your own mail client, send it yourself, then record that it was sent.",
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "approved_today",
+          "daily_cap"
+        ],
+        "title": "OutreachList",
+        "type": "object"
+      },
+      "OutreachStatus": {
+        "enum": [
+          "draft",
+          "approved",
+          "sent",
+          "rejected"
+        ],
+        "title": "OutreachStatus",
+        "type": "string"
+      },
+      "PeerOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "why"
+        ],
+        "title": "PeerOut",
+        "type": "object"
+      },
+      "PeersOut": {
+        "properties": {
+          "note": {
+            "default": "Suggestions of where to look, from the model's general knowledge. They are not facts about any interview. Find write-ups about them, then add those as sources.",
+            "title": "Note",
+            "type": "string"
+          },
+          "peers": {
+            "items": {
+              "$ref": "#/components/schemas/PeerOut"
+            },
+            "title": "Peers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "peers"
+        ],
+        "title": "PeersOut",
         "type": "object"
       },
       "PlanOut": {
@@ -2140,6 +3067,81 @@
         "title": "ProgressStatus",
         "type": "string"
       },
+      "QuestionsOut": {
+        "properties": {
+          "note": {
+            "default": "Suggestions from the model, based only on the job description.",
+            "title": "Note",
+            "type": "string"
+          },
+          "questions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Questions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "questions"
+        ],
+        "title": "QuestionsOut",
+        "type": "object"
+      },
+      "ReadingOut": {
+        "properties": {
+          "dropped_flags": {
+            "title": "Dropped Flags",
+            "type": "integer"
+          },
+          "growth": {
+            "title": "Growth",
+            "type": "integer"
+          },
+          "growth_reason": {
+            "title": "Growth Reason",
+            "type": "string"
+          },
+          "red_flags": {
+            "items": {
+              "$ref": "#/components/schemas/RedFlagOut"
+            },
+            "title": "Red Flags",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary",
+          "growth",
+          "growth_reason",
+          "red_flags",
+          "dropped_flags"
+        ],
+        "title": "ReadingOut",
+        "type": "object"
+      },
+      "RedFlagOut": {
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "quote"
+        ],
+        "title": "RedFlagOut",
+        "type": "object"
+      },
       "Region": {
         "enum": [
           "India",
@@ -2150,6 +3152,113 @@
         ],
         "title": "Region",
         "type": "string"
+      },
+      "ScoreOut": {
+        "properties": {
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blockers",
+            "type": "array"
+          },
+          "chance": {
+            "enum": [
+              "good",
+              "possible",
+              "unlikely",
+              "unknown"
+            ],
+            "title": "Chance",
+            "type": "string"
+          },
+          "chance_note": {
+            "title": "Chance Note",
+            "type": "string"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/ComponentOut"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "coverage": {
+            "title": "Coverage",
+            "type": "integer"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "reading": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReadingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "stale": {
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "job_id",
+          "score",
+          "chance",
+          "chance_note",
+          "priority",
+          "coverage",
+          "version",
+          "stale",
+          "components",
+          "blockers",
+          "reading",
+          "computed_at"
+        ],
+        "title": "ScoreOut",
+        "type": "object"
       },
       "SearchOut": {
         "properties": {
@@ -2253,6 +3362,148 @@
           "kind"
         ],
         "title": "SessionCreate",
+        "type": "object"
+      },
+      "SourceCreate": {
+        "description": "Either paste text you read yourself, or give a page for CareerPilot to fetch.",
+        "properties": {
+          "about_company": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "About Company"
+          },
+          "label": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "published_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published On"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "minLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "SourceCreate",
+        "type": "object"
+      },
+      "SourceKind": {
+        "enum": [
+          "pasted",
+          "fetched"
+        ],
+        "title": "SourceKind",
+        "type": "string"
+      },
+      "SourceOut": {
+        "properties": {
+          "about_company": {
+            "title": "About Company",
+            "type": "string"
+          },
+          "characters": {
+            "title": "Characters",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inferred": {
+            "title": "Inferred",
+            "type": "boolean"
+          },
+          "item_count": {
+            "title": "Item Count",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "published_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published On"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "label",
+          "url",
+          "about_company",
+          "inferred",
+          "published_on",
+          "item_count",
+          "characters"
+        ],
+        "title": "SourceOut",
         "type": "object"
       },
       "SqlExpectedOut": {
@@ -2843,6 +4094,92 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VerdictLabel": {
+        "enum": [
+          "verified",
+          "likely_genuine",
+          "needs_check",
+          "suspicious"
+        ],
+        "title": "VerdictLabel",
+        "type": "string"
+      },
+      "VerificationOut": {
+        "properties": {
+          "ai_available": {
+            "title": "Ai Available",
+            "type": "boolean"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckOut"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "company_name": {
+            "title": "Company Name",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "needs_review": {
+            "title": "Needs Review",
+            "type": "boolean"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "raised_flags": {
+            "items": {
+              "$ref": "#/components/schemas/CheckKey"
+            },
+            "title": "Raised Flags",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/VerdictLabel"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          }
+        },
+        "required": [
+          "job_id",
+          "company_name",
+          "website",
+          "verdict",
+          "passed",
+          "total",
+          "raised_flags",
+          "needs_review",
+          "notice",
+          "ai_available",
+          "checks"
+        ],
+        "title": "VerificationOut",
         "type": "object"
       },
       "Visa": {
@@ -3723,6 +5060,75 @@
         ]
       }
     },
+    "/api/v1/jobs/{job_id}/company": {
+      "patch": {
+        "operationId": "update_company",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Company",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
     "/api/v1/jobs/{job_id}/contacts": {
       "post": {
         "operationId": "add_contact",
@@ -3789,6 +5195,999 @@
         "summary": "Add Contact",
         "tags": [
           "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel": {
+      "get": {
+        "description": "Sources about how this company interviews, and the brief built from them.",
+        "operationId": "get_intel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Intel",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel/peers": {
+      "post": {
+        "description": "Companies worth reading about when this one has little public information.",
+        "operationId": "suggest_intel_peers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Peers",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel/questions-to-ask": {
+      "post": {
+        "operationId": "suggest_questions_to_ask",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Questions",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel/sources": {
+      "post": {
+        "description": "Add a text you pasted, or a page to fetch. With a key, the model extracts facts from it\nand code keeps only those whose quote is really in the text.",
+        "operationId": "add_intel_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Source",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel/sources/{source_id}": {
+      "delete": {
+        "operationId": "delete_intel_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Source Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Source",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/intel/sources/{source_id}/extract": {
+      "post": {
+        "operationId": "extract_intel_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Source Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Extract Source",
+        "tags": [
+          "intel"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/outreach": {
+      "get": {
+        "operationId": "list_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutreachList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Outreach",
+        "tags": [
+          "outreach"
+        ]
+      },
+      "post": {
+        "description": "Save a draft you wrote yourself. It gets the same checks as a generated one.",
+        "operationId": "create_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Outreach",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/outreach/generate": {
+      "post": {
+        "description": "Two variants, from facts you give (checked against the job text or your source page).",
+        "operationId": "generate_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DraftOut"
+                  },
+                  "title": "Response Generate Outreach",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generate Outreach",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/score": {
+      "get": {
+        "description": "The stored score, or null when the job has not been scored.",
+        "operationId": "get_score",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ScoreOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Score"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Score",
+        "tags": [
+          "scoring"
+        ]
+      },
+      "post": {
+        "description": "Score the job against your profile (content/private/profile.yaml). Safe to repeat.",
+        "operationId": "score_job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Let the model read the description",
+            "in": "query",
+            "name": "ai",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Let the model read the description",
+              "title": "Ai",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScoreOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Score Job",
+        "tags": [
+          "scoring"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/verification": {
+      "get": {
+        "operationId": "get_verification",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Verification",
+        "tags": [
+          "verification"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/verification/checks/{key}": {
+      "delete": {
+        "description": "Forget a result (yours or automatic) so the next run can fill it in.",
+        "operationId": "clear_verification_check",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CheckKey"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Clear Check",
+        "tags": [
+          "verification"
+        ]
+      },
+      "put": {
+        "operationId": "set_verification_check",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CheckKey"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Check",
+        "tags": [
+          "verification"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/verification/run": {
+      "post": {
+        "description": "Run the lookups. Takes several seconds; safe to repeat. Your own findings are kept.",
+        "operationId": "run_verification",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Let the model read the company's own pages",
+            "in": "query",
+            "name": "ai",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Let the model read the company's own pages",
+              "title": "Ai",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Verification",
+        "tags": [
+          "verification"
         ]
       }
     },
@@ -4019,6 +6418,195 @@
         "summary": "Knowledge Status",
         "tags": [
           "knowledge"
+        ]
+      }
+    },
+    "/api/v1/outreach/{draft_id}": {
+      "delete": {
+        "operationId": "delete_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Outreach",
+        "tags": [
+          "outreach"
+        ]
+      },
+      "patch": {
+        "operationId": "edit_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftEdit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Edit Outreach",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/v1/outreach/{draft_id}/status": {
+      "post": {
+        "description": "Approve, reject, reopen, or record that you sent it yourself. Nothing is ever sent.",
+        "operationId": "move_outreach",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Move"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move Outreach",
+        "tags": [
+          "outreach"
         ]
       }
     },

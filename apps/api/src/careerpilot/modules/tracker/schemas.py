@@ -169,6 +169,13 @@ class EventOut(_Out):
     at: datetime
 
 
+class CompanyUpdate(BaseModel):
+    """Only the fields you send change; send null to clear one."""
+
+    website: Url | None = None
+    country: Short | None = None
+
+
 class ContactCreate(BaseModel):
     name: Short
     role: Short | None = None

@@ -208,6 +208,7 @@ dependencies = [
     { name = "asyncpg" },
     { name = "fastapi" },
     { name = "fastembed" },
+    { name = "httpx" },
     { name = "mcp" },
     { name = "openpyxl" },
     { name = "pgvector" },
@@ -222,7 +223,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "import-linter" },
     { name = "pyright" },
     { name = "pytest" },
@@ -239,6 +239,7 @@ requires-dist = [
     { name = "asyncpg", specifier = ">=0.30" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "fastembed", specifier = ">=0.9.1" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "mcp", specifier = ">=1.0" },
     { name = "openpyxl", specifier = ">=3.1.5" },
     { name = "pgvector", specifier = ">=0.5.1" },
@@ -253,7 +254,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.27" },
     { name = "import-linter", specifier = ">=2.1" },
     { name = "pyright", specifier = ">=1.1.390" },
     { name = "pytest", specifier = ">=8" },

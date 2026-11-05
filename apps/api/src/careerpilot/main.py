@@ -8,17 +8,22 @@ from careerpilot import health
 from careerpilot.core.config import Settings, get_settings
 from careerpilot.core.db import create_engine, create_sessionmaker
 from careerpilot.core.errors import register_error_handlers
+from careerpilot.core.fetcher import Fetcher
 from careerpilot.core.llm import make_llm
 from careerpilot.core.logging import configure_logging
 from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
 from careerpilot.modules.auth.router import router as auth_router
 from careerpilot.modules.auth.throttle import LoginThrottle
+from careerpilot.modules.intel.router import router as intel_router
 from careerpilot.modules.knowledge.embeddings import make_embedder
 from careerpilot.modules.knowledge.router import router as knowledge_router
+from careerpilot.modules.outreach.router import router as outreach_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
+from careerpilot.modules.scoring.router import router as scoring_router
 from careerpilot.modules.today.router import router as today_router
 from careerpilot.modules.tracker.router import router as tracker_router
+from careerpilot.modules.verification.router import router as verification_router
 
 API_PREFIX = "/api/v1"
 
@@ -43,6 +48,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         settings.embedder, settings.embedding_model, settings.model_cache_dir
     )
     app.state.llm = make_llm(settings)
+    app.state.fetcher = Fetcher()
     app.state.login_throttle = LoginThrottle(
         settings.login_max_failures, settings.login_window_seconds
     )
@@ -59,6 +65,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(prep_router, prefix=API_PREFIX)
     app.include_router(practice_router, prefix=API_PREFIX)
     app.include_router(knowledge_router, prefix=API_PREFIX)
+    app.include_router(verification_router, prefix=API_PREFIX)
+    app.include_router(scoring_router, prefix=API_PREFIX)
+    app.include_router(outreach_router, prefix=API_PREFIX)
+    app.include_router(intel_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

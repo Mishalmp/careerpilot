@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.core.config import Settings
 from careerpilot.core.llm import LlmClient, call_llm
+from careerpilot.core.prompts import load_prompt
 from careerpilot.modules.knowledge import prompts, repository
 from careerpilot.modules.knowledge.chunking import chunk_markdown
 from careerpilot.modules.knowledge.embeddings import Embedder
@@ -27,7 +28,6 @@ from careerpilot.modules.knowledge.schemas import (
 CANDIDATES = 20  # how many results each search contributes before they are fused
 ANSWER_PASSAGES = 6  # how many passages the model sees
 EMBED_BATCH = 32
-ANSWER_TOKENS = 700
 
 _CITATION = re.compile(r"\[(\d+)\]")
 
@@ -218,15 +218,16 @@ async def ask(
         return AskOut(mode="retrieval_only", answer=None, citations=[], hits=found.hits)
 
     passages = found.hits[:ANSWER_PASSAGES]
+    prompt = load_prompt(settings.prompts_dir, "ask-notes")
     reply = await call_llm(
         db,
         owner_id,
         llm,
         settings,
-        purpose="ask_notes",
-        system=prompts.SYSTEM,
+        purpose=prompt.label,
+        system=prompt.system,
         user=prompts.user_message(question, [(_label(h), h.text) for h in passages]),
-        max_tokens=ANSWER_TOKENS,
+        max_tokens=prompt.max_tokens,
     )
     return interpret(reply.text, reply.refused, passages, found.hits)
 

@@ -9,12 +9,14 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy import text
 
-from careerpilot.core.config import Settings
-from careerpilot.core.llm import LlmError, LlmReply
+from careerpilot.core.config import REPO_ROOT, Settings
+from careerpilot.core.llm import LlmError
+from careerpilot.core.prompts import load_prompt
 from careerpilot.main import create_app
 from careerpilot.modules.knowledge import prompts
 from careerpilot.modules.knowledge.embeddings import HashEmbedder
 from tests.conftest import EMAIL, PASSWORD, sign_in
+from tests.fakes import FakeLlm
 
 K = "/api/v1/knowledge"
 # The real threshold (0.5) is tuned for the real embedding model; the test stand-in scores lower.
@@ -43,29 +45,6 @@ wildcard in a LIKE pattern cannot use it.
 
 **2. Window functions.** ROW_NUMBER and RANK number rows inside a partition without collapsing them.
 """
-
-
-class FakeLlm:
-    model = "fake-model"
-
-    def __init__(
-        self,
-        text: str = "",
-        *,
-        input_tokens: int = 100,
-        output_tokens: int = 50,
-        refused: bool = False,
-        error: LlmError | None = None,
-    ) -> None:
-        self.text, self.refused, self.error = text, refused, error
-        self.input_tokens, self.output_tokens = input_tokens, output_tokens
-        self.calls: list[dict[str, Any]] = []
-
-    async def complete(self, *, system: str, user: str, max_tokens: int) -> LlmReply:
-        self.calls.append({"system": system, "user": user, "max_tokens": max_tokens})
-        if self.error:
-            raise self.error
-        return LlmReply(self.text, self.input_tokens, self.output_tokens, self.refused)
 
 
 @dataclass
@@ -261,7 +240,8 @@ async def test_an_answer_with_real_citations_is_shown(notes: Notes) -> None:
     assert [c["number"] for c in body["citations"]] == [1]
     assert body["citations"][0]["hit"]["document_name"] == "01-python"
     sent = fake.calls[0]
-    assert sent["system"] == prompts.SYSTEM and sent["max_tokens"] == 700
+    assert sent["system"] == load_prompt(REPO_ROOT / "prompts", "ask-notes", 1).system
+    assert sent["max_tokens"] == 700
     assert "Passages:" in sent["user"] and "Question: why does a lambda" in sent["user"]
 
 
@@ -346,7 +326,7 @@ async def test_every_call_is_recorded_and_the_daily_cap_is_enforced(
                     text("select purpose, input_tokens, output_tokens, status from llm_calls")
                 )
             ).all()
-        assert [tuple(r) for r in rows] == [("ask_notes", 150, 60, "ok")]
+        assert [tuple(r) for r in rows] == [("ask-notes@v1", 150, 60, "ok")]
     finally:
         await client.aclose()
         await custom.state.engine.dispose()

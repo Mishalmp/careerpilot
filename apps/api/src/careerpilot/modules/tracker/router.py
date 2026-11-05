@@ -13,6 +13,7 @@ from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.models import Job
 from careerpilot.modules.tracker.schemas import (
     ApplicationUpdate,
+    CompanyUpdate,
     ContactCreate,
     ContactOut,
     EventOut,
@@ -131,6 +132,13 @@ async def update_application(
     application_id: uuid.UUID, body: ApplicationUpdate, session: Authenticated, db: DbSession
 ) -> JobDetail:
     return _detail(await service.update_application(db, session.user_id, application_id, body))
+
+
+@router.patch("/jobs/{job_id}/company", operation_id="update_company")
+async def update_company(
+    job_id: uuid.UUID, body: CompanyUpdate, session: Authenticated, db: DbSession
+) -> JobDetail:
+    return _detail(await service.update_company(db, session.user_id, job_id, body))
 
 
 @router.post(

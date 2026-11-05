@@ -13,6 +13,7 @@ from typing import Protocol
 
 import anthropic
 import httpx2
+from pydantic import BaseModel
 from sqlalchemy import DateTime, ForeignKey, Integer, Text, Uuid, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,6 +21,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from careerpilot.core.config import Settings
 from careerpilot.core.db import Base
 from careerpilot.core.errors import ProblemError
+from careerpilot.core.prompts import Prompt
 
 
 class LlmCall(Base):
@@ -185,3 +187,64 @@ async def call_llm(
     )
     await db.commit()
     return reply
+
+
+def parse_json_reply[T: BaseModel](text: str, schema: type[T]) -> T:
+    """The first-to-last braces of a reply, validated. Raises ValueError (incl. ValidationError)."""
+    start, end = text.find("{"), text.rfind("}")
+    if start < 0 or end < start:
+        raise ValueError("the reply contains no JSON object")
+    return schema.model_validate_json(text[start : end + 1])
+
+
+async def call_llm_json[T: BaseModel](
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    llm: LlmClient,
+    settings: Settings,
+    *,
+    prompt: Prompt,
+    user: str,
+    schema: type[T],
+) -> T:
+    """Ask for a JSON object and validate it against `schema`, with one repair attempt.
+
+    Both attempts count against the daily cap. If the reply still does not validate, nothing is
+    guessed: the caller gets a 502 and stores nothing.
+    """
+    reply = await call_llm(
+        db,
+        owner_id,
+        llm,
+        settings,
+        purpose=prompt.label,
+        system=prompt.system,
+        user=user,
+        max_tokens=prompt.max_tokens,
+    )
+    for attempt in range(2):
+        if reply.refused:
+            raise ProblemError(502, "The model declined", "It refused to answer this request.")
+        try:
+            return parse_json_reply(reply.text, schema)
+        except ValueError as exc:
+            if attempt == 1:
+                raise ProblemError(
+                    502, "AI reply could not be used", "The model did not return valid JSON twice."
+                ) from exc
+            problem = str(exc)[:400]
+        reply = await call_llm(
+            db,
+            owner_id,
+            llm,
+            settings,
+            purpose=prompt.label + ":repair",
+            system=prompt.system,
+            user=(
+                f"{user}\n\nYour previous reply could not be used ({problem}).\n"
+                f"Previous reply:\n{reply.text[:2000]}\n\n"
+                "Reply again with only the corrected JSON object."
+            ),
+            max_tokens=prompt.max_tokens,
+        )
+    raise AssertionError("unreachable")  # pragma: no cover

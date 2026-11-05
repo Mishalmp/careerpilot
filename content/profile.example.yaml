@@ -1,0 +1,12 @@
+# Copy this file to content/private/profile.yaml (git-ignored) and edit it. Job scoring reads it.
+# Anything you leave as null is left out of the score instead of guessed.
+years_experience: 3            # whole or half years of professional experience
+# Titles you aim for. Scoring warns when a title is clearly above your level.
+target_levels: [junior, mid]   # junior | mid | senior | lead
+# Skills you can honestly claim; spelled as you like (matched through content/skills.yaml).
+skills: [python, sql, postgresql, docker]
+# Regions you would take a job in; must match the tracker's regions.
+regions: [India, Remote (Global)]
+needs_visa_sponsorship: false  # true if you want to work abroad and need an employer to sponsor
+salary_floor_lpa: null         # the least you would accept, in lakhs per annum
+salary_target_lpa: null        # what you are aiming for, in lakhs per annum

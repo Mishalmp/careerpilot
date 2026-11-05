@@ -19,7 +19,10 @@ Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [R
 - Practice problems: tests are language-neutral JSON in `content/problems/<slug>.yaml`; add a reference solution to `tests/problem_solutions.py` and link the problem from a guide with `practice:<slug>`. Learner code only ever runs in the browser workers under their own CSP (ADR 0007); never run it on the server.
 - Changing chunking, embeddings, ranking or prompts for notes search: run `careerpilot eval-rag` before and after and keep the numbers in the PR; `CAREERPILOT_RUN_MODEL_TESTS=1 pytest tests/test_rag_eval.py` is the gate.
 - MCP tools call services, never repositories. Writes preview until `confirm=true` and are audited. Never add a tool that sends, deletes or changes settings. User-facing tool errors use `ToolError`; other exceptions are hidden from the model.
-- All model calls go through `core/llm.call_llm` (daily token cap, audit table).
+- All model calls go through `core/llm.call_llm` or `call_llm_json` (daily token cap, audit table). Prompts are files in `prompts/<name>/vN.md`; add a new version instead of editing one that was used. Wrap untrusted text with `core/prompts.data_block`.
+- Research code fetches pages only through `core/fetcher.Fetcher` (SSRF guard, blocked sites). Anything a model quotes must pass `core/evidence.quote_appears` against the fetched text before it is stored.
+- Verdicts, scores and states are computed by code (`rules.py`, `workflow.py`), never by the model. Outreach has no send action and must not get one; approval guards are in `modules/outreach/service.py`.
+- Your profile for scoring is `content/private/profile.yaml` (see `content/profile.example.yaml`); skills live once in `content/skills.yaml`.
 - Anything that leaves the machine (email, applications) needs explicit user approval; there is no send action.
 
 ## Safety

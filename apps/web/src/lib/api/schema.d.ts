@@ -160,6 +160,23 @@ export interface paths {
         patch: operations["update_job"];
         trace?: never;
     };
+    "/api/v1/jobs/{job_id}/company": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Company */
+        patch: operations["update_company"];
+        trace?: never;
+    };
     "/api/v1/jobs/{job_id}/contacts": {
         parameters: {
             query?: never;
@@ -171,6 +188,241 @@ export interface paths {
         put?: never;
         /** Add Contact */
         post: operations["add_contact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Intel
+         * @description Sources about how this company interviews, and the brief built from them.
+         */
+        get: operations["get_intel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel/peers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suggest Peers
+         * @description Companies worth reading about when this one has little public information.
+         */
+        post: operations["suggest_intel_peers"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel/questions-to-ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suggest Questions */
+        post: operations["suggest_questions_to_ask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Source
+         * @description Add a text you pasted, or a page to fetch. With a key, the model extracts facts from it
+         *     and code keeps only those whose quote is really in the text.
+         */
+        post: operations["add_intel_source"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel/sources/{source_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Source */
+        delete: operations["delete_intel_source"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/intel/sources/{source_id}/extract": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Extract Source */
+        post: operations["extract_intel_source"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/outreach": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Outreach */
+        get: operations["list_outreach"];
+        put?: never;
+        /**
+         * Create Outreach
+         * @description Save a draft you wrote yourself. It gets the same checks as a generated one.
+         */
+        post: operations["create_outreach"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/outreach/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Outreach
+         * @description Two variants, from facts you give (checked against the job text or your source page).
+         */
+        post: operations["generate_outreach"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Score
+         * @description The stored score, or null when the job has not been scored.
+         */
+        get: operations["get_score"];
+        put?: never;
+        /**
+         * Score Job
+         * @description Score the job against your profile (content/private/profile.yaml). Safe to repeat.
+         */
+        post: operations["score_job"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Verification */
+        get: operations["get_verification"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/verification/checks/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Check */
+        put: operations["set_verification_check"];
+        post?: never;
+        /**
+         * Clear Check
+         * @description Forget a result (yours or automatic) so the next run can fill it in.
+         */
+        delete: operations["clear_verification_check"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/verification/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run Verification
+         * @description Run the lookups. Takes several seconds; safe to repeat. Your own findings are kept.
+         */
+        post: operations["run_verification"];
         delete?: never;
         options?: never;
         head?: never;
@@ -242,6 +494,44 @@ export interface paths {
         get: operations["knowledge_status"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/outreach/{draft_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Outreach */
+        delete: operations["delete_outreach"];
+        options?: never;
+        head?: never;
+        /** Edit Outreach */
+        patch: operations["edit_outreach"];
+        trace?: never;
+    };
+    "/api/v1/outreach/{draft_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Move Outreach
+         * @description Approve, reject, reopen, or record that you sent it yourself. Nothing is ever sent.
+         */
+        post: operations["move_outreach"];
         delete?: never;
         options?: never;
         head?: never;
@@ -595,6 +885,21 @@ export interface components {
             /** Question */
             question: string;
         };
+        /** BriefOut */
+        BriefOut: {
+            /** Likely Questions */
+            likely_questions: components["schemas"]["ItemOut"][];
+            /** Needs More Sources */
+            needs_more_sources: boolean;
+            /** Own Recent Sources */
+            own_recent_sources: number;
+            /** Rounds */
+            rounds: components["schemas"]["ItemOut"][];
+            /** Tips */
+            tips: components["schemas"]["ItemOut"][];
+            /** Topics */
+            topics: components["schemas"]["IntelTopicOut"][];
+        };
         /** CaseResult */
         CaseResult: {
             /** Name */
@@ -604,6 +909,58 @@ export interface components {
              * @enum {string}
              */
             status: "pass" | "fail" | "error" | "timeout" | "skipped";
+        };
+        /**
+         * Channel
+         * @enum {string}
+         */
+        Channel: "email" | "recruiter_message" | "referral_request";
+        /**
+         * CheckKey
+         * @enum {string}
+         */
+        CheckKey: "website" | "domain_age" | "mail_domain" | "careers_page" | "registration" | "contact_details" | "people" | "independent_mentions" | "asks_for_money" | "chat_only_hiring" | "no_interview" | "free_mail_recruiter";
+        /** CheckOut */
+        CheckOut: {
+            /** Checked At */
+            checked_at: string | null;
+            /** Evidence Quote */
+            evidence_quote: string | null;
+            /** Evidence Url */
+            evidence_url: string | null;
+            key: components["schemas"]["CheckKey"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "check" | "flag";
+            /** Note */
+            note: string | null;
+            source: components["schemas"]["CheckSource"] | null;
+            status: components["schemas"]["CheckStatus"];
+        };
+        /**
+         * CheckSource
+         * @enum {string}
+         */
+        CheckSource: "auto" | "ai" | "manual";
+        /**
+         * CheckStatus
+         * @enum {string}
+         */
+        CheckStatus: "pass" | "fail" | "unknown";
+        /**
+         * CheckUpdate
+         * @description Your own finding about a check or flag. Automatic runs never overwrite it.
+         */
+        CheckUpdate: {
+            /** Evidence Quote */
+            evidence_quote?: string | null;
+            /** Evidence Url */
+            evidence_url?: string | null;
+            /** Note */
+            note?: string | null;
+            status: components["schemas"]["CheckStatus"];
         };
         /** CitationOut */
         CitationOut: {
@@ -626,11 +983,35 @@ export interface components {
             website: string | null;
         };
         /**
+         * CompanyUpdate
+         * @description Only the fields you send change; send null to clear one.
+         */
+        CompanyUpdate: {
+            /** Country */
+            country?: string | null;
+            /** Website */
+            website?: string | null;
+        };
+        /**
          * Compare
          * @description How a function's result is compared with the expected value.
          * @enum {string}
          */
         Compare: "exact" | "unordered" | "unordered_nested" | "float";
+        /** ComponentOut */
+        ComponentOut: {
+            /** Detail */
+            detail: string;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "skills" | "pay" | "seniority" | "company" | "location" | "growth";
+            /** Score */
+            score: number | null;
+            /** Weight */
+            weight: number;
+        };
         /** ContactCreate */
         ContactCreate: {
             /** Email */
@@ -720,6 +1101,73 @@ export interface components {
          */
         DocumentKind: "guide" | "private";
         /**
+         * DraftCreate
+         * @description A draft you wrote yourself.
+         */
+        DraftCreate: {
+            /** Body */
+            body: string;
+            /** @default email */
+            channel: components["schemas"]["Channel"];
+            /** Contact Id */
+            contact_id?: string | null;
+            /**
+             * Facts
+             * @default []
+             */
+            facts: string[];
+            /** Subject */
+            subject: string;
+        };
+        /** DraftEdit */
+        DraftEdit: {
+            /** Body */
+            body?: string | null;
+            /** Facts */
+            facts?: string[] | null;
+            /** Subject */
+            subject?: string | null;
+        };
+        /** DraftOut */
+        DraftOut: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Body */
+            body: string;
+            channel: components["schemas"]["Channel"];
+            /** Contact Id */
+            contact_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Facts */
+            facts: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            lint: components["schemas"]["LintOut"];
+            /** Recipient Email */
+            recipient_email: string | null;
+            /** Recipient Source Url */
+            recipient_source_url: string | null;
+            /** Sent At */
+            sent_at: string | null;
+            status: components["schemas"]["OutreachStatus"];
+            /** Subject */
+            subject: string;
+            /** Variant */
+            variant: string;
+        };
+        /**
          * EmailMode
          * @enum {string}
          */
@@ -747,6 +1195,24 @@ export interface components {
          * @enum {string}
          */
         EventType: "created" | "status_changed" | "reopened";
+        /** ExtractOut */
+        ExtractOut: {
+            /** Dropped */
+            dropped: number;
+            /** Kept */
+            kept: number;
+            source: components["schemas"]["SourceOut"];
+        };
+        /**
+         * FactIn
+         * @description Something specific about the company or role that the message should mention.
+         */
+        FactIn: {
+            /** Source Url */
+            source_url?: string | null;
+            /** Text */
+            text: string;
+        };
         /**
          * FunctionTestOut
          * @description The runner needs every case. `hidden` only hides a case in the UI.
@@ -761,6 +1227,19 @@ export interface components {
             hidden: boolean;
             /** Name */
             name: string;
+        };
+        /** GenerateRequest */
+        GenerateRequest: {
+            /** @default email */
+            channel: components["schemas"]["Channel"];
+            /** Constraint */
+            constraint?: string | null;
+            /** Contact Id */
+            contact_id?: string | null;
+            /** Facts */
+            facts: components["schemas"]["FactIn"][];
+            /** Sender Name */
+            sender_name: string;
         };
         /** GuideInfoOut */
         GuideInfoOut: {
@@ -825,6 +1304,76 @@ export interface components {
             unchanged: number;
             /** Updated */
             updated: number;
+        };
+        /** IntelOut */
+        IntelOut: {
+            /** Ai Available */
+            ai_available: boolean;
+            brief: components["schemas"]["BriefOut"];
+            /** Company Name */
+            company_name: string;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /**
+             * Note
+             * @default Everything here comes from the sources listed, each with a quote that was checked against the source text. Facts from a text about another company are marked as inferred. Nothing is a prediction of what you will be asked.
+             */
+            note: string;
+            /** Sources */
+            sources: components["schemas"]["SourceOut"][];
+        };
+        /** IntelTopicOut */
+        IntelTopicOut: {
+            /** Inferred Only */
+            inferred_only: boolean;
+            /** Key */
+            key: string;
+            /** Prep Topics */
+            prep_topics: string[];
+            /** Reliability */
+            reliability: number;
+            /** Sources */
+            sources: number;
+        };
+        /**
+         * ItemKind
+         * @enum {string}
+         */
+        ItemKind: "round" | "topic" | "question" | "tip";
+        /** ItemOut */
+        ItemOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Inferred */
+            inferred: boolean;
+            /** Key */
+            key: string;
+            kind: components["schemas"]["ItemKind"];
+            /** Published On */
+            published_on: string | null;
+            /** Quote */
+            quote: string;
+            /** Reliability */
+            reliability: number;
+            /** Similar To */
+            similar_to: string | null;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Source Label */
+            source_label: string;
+            /** Source Url */
+            source_url: string | null;
+            /** Text */
+            text: string;
         };
         /** JobCreate */
         JobCreate: {
@@ -1020,6 +1569,13 @@ export interface components {
             /** Starter */
             starter: string;
         };
+        /** LintOut */
+        LintOut: {
+            /** Flags */
+            flags: string[];
+            /** Words */
+            words: number;
+        };
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -1032,6 +1588,51 @@ export interface components {
              * Format: password
              */
             password: string;
+        };
+        /** Move */
+        Move: {
+            /**
+             * Acknowledge Flags
+             * @default false
+             */
+            acknowledge_flags: boolean;
+            status: components["schemas"]["OutreachStatus"];
+        };
+        /** OutreachList */
+        OutreachList: {
+            /** Approved Today */
+            approved_today: number;
+            /** Daily Cap */
+            daily_cap: number;
+            /** Items */
+            items: components["schemas"]["DraftOut"][];
+            /**
+             * Note
+             * @default CareerPilot never sends anything. Approving a draft only marks it ready: you copy it into your own mail client, send it yourself, then record that it was sent.
+             */
+            note: string;
+        };
+        /**
+         * OutreachStatus
+         * @enum {string}
+         */
+        OutreachStatus: "draft" | "approved" | "sent" | "rejected";
+        /** PeerOut */
+        PeerOut: {
+            /** Name */
+            name: string;
+            /** Why */
+            why: string;
+        };
+        /** PeersOut */
+        PeersOut: {
+            /**
+             * Note
+             * @default Suggestions of where to look, from the model's general knowledge. They are not facts about any interview. Find write-ups about them, then add those as sources.
+             */
+            note: string;
+            /** Peers */
+            peers: components["schemas"]["PeerOut"][];
         };
         /** PlanOut */
         PlanOut: {
@@ -1114,11 +1715,76 @@ export interface components {
          * @enum {string}
          */
         ProgressStatus: "unsolved" | "attempted" | "solved";
+        /** QuestionsOut */
+        QuestionsOut: {
+            /**
+             * Note
+             * @default Suggestions from the model, based only on the job description.
+             */
+            note: string;
+            /** Questions */
+            questions: string[];
+        };
+        /** ReadingOut */
+        ReadingOut: {
+            /** Dropped Flags */
+            dropped_flags: number;
+            /** Growth */
+            growth: number;
+            /** Growth Reason */
+            growth_reason: string;
+            /** Red Flags */
+            red_flags: components["schemas"]["RedFlagOut"][];
+            /** Summary */
+            summary: string;
+        };
+        /** RedFlagOut */
+        RedFlagOut: {
+            /** Quote */
+            quote: string;
+            /** Text */
+            text: string;
+        };
         /**
          * Region
          * @enum {string}
          */
         Region: "India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)";
+        /** ScoreOut */
+        ScoreOut: {
+            /** Blockers */
+            blockers: string[];
+            /**
+             * Chance
+             * @enum {string}
+             */
+            chance: "good" | "possible" | "unlikely" | "unknown";
+            /** Chance Note */
+            chance_note: string;
+            /** Components */
+            components: components["schemas"]["ComponentOut"][];
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Coverage */
+            coverage: number;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Priority */
+            priority: ("high" | "medium" | "low") | null;
+            reading: components["schemas"]["ReadingOut"] | null;
+            /** Score */
+            score: number | null;
+            /** Stale */
+            stale: boolean;
+            /** Version */
+            version: number;
+        };
         /** SearchOut */
         SearchOut: {
             /** Best Similarity */
@@ -1148,6 +1814,50 @@ export interface components {
             notes?: string | null;
             /** Studied On */
             studied_on?: string | null;
+        };
+        /**
+         * SourceCreate
+         * @description Either paste text you read yourself, or give a page for CareerPilot to fetch.
+         */
+        SourceCreate: {
+            /** About Company */
+            about_company?: string | null;
+            /** Label */
+            label: string;
+            /** Published On */
+            published_on?: string | null;
+            /** Text */
+            text?: string | null;
+            /** Url */
+            url?: string | null;
+        };
+        /**
+         * SourceKind
+         * @enum {string}
+         */
+        SourceKind: "pasted" | "fetched";
+        /** SourceOut */
+        SourceOut: {
+            /** About Company */
+            about_company: string;
+            /** Characters */
+            characters: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Inferred */
+            inferred: boolean;
+            /** Item Count */
+            item_count: number;
+            kind: components["schemas"]["SourceKind"];
+            /** Label */
+            label: string;
+            /** Published On */
+            published_on: string | null;
+            /** Url */
+            url: string | null;
         };
         /** SqlExpectedOut */
         SqlExpectedOut: {
@@ -1334,6 +2044,38 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /**
+         * VerdictLabel
+         * @enum {string}
+         */
+        VerdictLabel: "verified" | "likely_genuine" | "needs_check" | "suspicious";
+        /** VerificationOut */
+        VerificationOut: {
+            /** Ai Available */
+            ai_available: boolean;
+            /** Checks */
+            checks: components["schemas"]["CheckOut"][];
+            /** Company Name */
+            company_name: string;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Needs Review */
+            needs_review: boolean;
+            /** Notice */
+            notice: string;
+            /** Passed */
+            passed: number;
+            /** Raised Flags */
+            raised_flags: components["schemas"]["CheckKey"][];
+            /** Total */
+            total: number;
+            verdict: components["schemas"]["VerdictLabel"];
+            /** Website */
+            website: string | null;
         };
         /**
          * Visa
@@ -1797,6 +2539,43 @@ export interface operations {
             };
         };
     };
+    update_company: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompanyUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     add_contact: {
         parameters: {
             query?: never;
@@ -1821,6 +2600,525 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContactOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntelOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_intel_peers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PeersOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_questions_to_ask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_intel_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourceCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_intel_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+                source_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    extract_intel_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+                source_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutreachList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DraftCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_score: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScoreOut"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    score_job: {
+        parameters: {
+            query?: {
+                /** @description Let the model read the description */
+                ai?: boolean;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_verification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_verification_check: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+                key: components["schemas"]["CheckKey"];
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clear_verification_check: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+                key: components["schemas"]["CheckKey"];
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_verification: {
+        parameters: {
+            query?: {
+                /** @description Let the model read the company's own pages */
+                ai?: boolean;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationOut"];
                 };
             };
             /** @description Validation Error */
@@ -1952,6 +3250,111 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edit_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DraftEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    move_outreach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Move"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"];
                 };
             };
             /** @description Validation Error */
