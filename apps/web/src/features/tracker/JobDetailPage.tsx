@@ -29,6 +29,7 @@ import {
   useUpdateApplication,
   useUpdateJob,
 } from "./hooks";
+import { JobResearch } from "../learn/JobResearch";
 import { ResearchSection } from "../research/ResearchSection";
 import { StatusSelect, useStatusChanger } from "./StatusChanger";
 import { STATUSES } from "./status";
@@ -127,7 +128,8 @@ export function JobDetailPage() {
           <ContactsPanel job={data} />
         </TabsContent>
 
-        <TabsContent value="research">
+        <TabsContent value="research" className="flex flex-col gap-6">
+          <JobResearch jobId={data.id} />
           <ResearchSection job={data} />
         </TabsContent>
 

@@ -15,6 +15,7 @@ const KIND_LABEL = {
   discover: "Read a job board",
   daily_digest: "Build the daily digest",
   backup: "Back up the database",
+  research: "Research interview topics",
 } as const;
 
 export function TasksPage() {

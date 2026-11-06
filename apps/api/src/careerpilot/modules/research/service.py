@@ -30,11 +30,11 @@ from careerpilot.modules.research import repository, rules
 from careerpilot.modules.research.enums import FindingKind, FindingStatus, RunStatus
 from careerpilot.modules.research.models import ResearchFinding, ResearchRun
 from careerpilot.modules.research.schemas import (
-    Approved,
     ExtractReply,
-    FindingOut,
-    FindingPage,
-    RunOut,
+    ResearchApproved,
+    ResearchFindingOut,
+    ResearchFindingPage,
+    ResearchRunOut,
 )
 from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
@@ -44,8 +44,8 @@ from careerpilot.modules.tracker import service as tracker_service
 STALE_RUN = timedelta(hours=1)  # a run still "running" after this is considered dead
 
 
-def _run_out(run: ResearchRun, pending: int = 0) -> RunOut:
-    out = RunOut.model_validate(run)
+def _run_out(run: ResearchRun, pending: int = 0) -> ResearchRunOut:
+    out = ResearchRunOut.model_validate(run)
     out.pending_findings = pending
     return out
 
@@ -61,7 +61,7 @@ async def start_run(
     *,
     search_configured: bool,
     now: datetime | None = None,
-) -> RunOut:
+) -> ResearchRunOut:
     """Queue a research run for a job. Asking again while one is active returns that run."""
     now = now or datetime.now(UTC)
     await tracker_service.get_job(db, owner_id, job_id)  # 404 when it is not yours
@@ -99,13 +99,13 @@ async def start_run(
 
 async def list_runs(
     db: AsyncSession, owner_id: uuid.UUID, job_id: uuid.UUID | None, limit: int
-) -> list[RunOut]:
+) -> list[ResearchRunOut]:
     runs = await repository.list_runs(db, owner_id, job_id, limit)
     pending = await repository.pending_counts(db, owner_id)
     return [_run_out(r, pending.get(r.id, 0)) for r in runs]
 
 
-async def get_run(db: AsyncSession, owner_id: uuid.UUID, run_id: uuid.UUID) -> RunOut:
+async def get_run(db: AsyncSession, owner_id: uuid.UUID, run_id: uuid.UUID) -> ResearchRunOut:
     run = await repository.get_run(db, owner_id, run_id)
     if run is None:
         raise ProblemError(404, "Not found", "Research run not found.")
@@ -121,11 +121,13 @@ async def list_findings(
     run_id: uuid.UUID | None,
     limit: int,
     offset: int,
-) -> FindingPage:
+) -> ResearchFindingPage:
     rows, total = await repository.list_findings(
         db, owner_id, status=status, run_id=run_id, limit=limit, offset=offset
     )
-    return FindingPage(items=[FindingOut.model_validate(r) for r in rows], total=total)
+    return ResearchFindingPage(
+        items=[ResearchFindingOut.model_validate(r) for r in rows], total=total
+    )
 
 
 # --- the run itself ----------------------------------------------------------------------------
@@ -141,7 +143,7 @@ async def execute(
     llm: LlmClient | None,
     settings: Settings,
     now: datetime | None = None,
-) -> RunOut:
+) -> ResearchRunOut:
     """Do the work. Raises TaskFailure (message for the owner) only if nothing could be done."""
     run = await repository.get_run(db, owner_id, run_id)
     if run is None:
@@ -293,7 +295,7 @@ async def _pending(db: AsyncSession, owner_id: uuid.UUID, finding_id: uuid.UUID)
 
 async def approve(
     db: AsyncSession, owner_id: uuid.UUID, finding_id: uuid.UUID, now: datetime | None = None
-) -> Approved:
+) -> ResearchApproved:
     """Move a finding into the learning area: its topic, and for a question the question too."""
     now = now or datetime.now(UTC)
     finding = await _pending(db, owner_id, finding_id)
@@ -308,7 +310,7 @@ async def approve(
     finding.decided_at = now
     if finding.kind is FindingKind.TOPIC:
         await db.commit()
-        return Approved(topic_id=topic.id, question_id=None)
+        return ResearchApproved(topic_id=topic.id, question_id=None)
     # The question, its source and the finding's new status are saved together by create_question.
     created = await learn_service.create_question(
         db,
@@ -333,7 +335,7 @@ async def approve(
         origin=QuestionOrigin.RESEARCH,
         status=QuestionStatus.VERIFIED,
     )
-    return Approved(topic_id=topic.id, question_id=created.id)
+    return ResearchApproved(topic_id=topic.id, question_id=created.id)
 
 
 async def reject(

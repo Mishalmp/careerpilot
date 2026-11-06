@@ -258,34 +258,6 @@
         "title": "ApplicationUpdate",
         "type": "object"
       },
-      "Approved": {
-        "description": "What an approval created in the learning area.",
-        "properties": {
-          "question_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Question Id"
-          },
-          "topic_id": {
-            "format": "uuid",
-            "title": "Topic Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "topic_id",
-          "question_id"
-        ],
-        "title": "Approved",
-        "type": "object"
-      },
       "AskOut": {
         "description": "`mode` says what happened:\nanswered: a written answer with citations; retrieval_only: no AI key, passages only;\nnot_in_notes: nothing relevant enough; ungrounded: the AI cited nothing, so it was withheld;\nrefused: the AI declined.",
         "properties": {
@@ -2155,98 +2127,6 @@
         ],
         "title": "FindingKind",
         "type": "string"
-      },
-      "FindingOut": {
-        "properties": {
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "$ref": "#/components/schemas/FindingKind"
-          },
-          "quote": {
-            "title": "Quote",
-            "type": "string"
-          },
-          "relevance": {
-            "title": "Relevance",
-            "type": "integer"
-          },
-          "run_id": {
-            "format": "uuid",
-            "title": "Run Id",
-            "type": "string"
-          },
-          "source_title": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Source Title"
-          },
-          "source_url": {
-            "title": "Source Url",
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/FindingStatus"
-          },
-          "text": {
-            "title": "Text",
-            "type": "string"
-          },
-          "topic": {
-            "title": "Topic",
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "run_id",
-          "kind",
-          "topic",
-          "text",
-          "quote",
-          "source_url",
-          "source_title",
-          "relevance",
-          "status",
-          "created_at"
-        ],
-        "title": "FindingOut",
-        "type": "object"
-      },
-      "FindingPage": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/FindingOut"
-            },
-            "title": "Items",
-            "type": "array"
-          },
-          "total": {
-            "title": "Total",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "items",
-          "total"
-        ],
-        "title": "FindingPage",
-        "type": "object"
       },
       "FindingStatus": {
         "enum": [
@@ -6093,6 +5973,220 @@
         "title": "Region",
         "type": "string"
       },
+      "ResearchApproved": {
+        "description": "What an approval created in the learning area.",
+        "properties": {
+          "question_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Id"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic_id",
+          "question_id"
+        ],
+        "title": "ResearchApproved",
+        "type": "object"
+      },
+      "ResearchFindingOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/FindingKind"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "relevance": {
+            "title": "Relevance",
+            "type": "integer"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "source_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Title"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/FindingStatus"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "topic": {
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "topic",
+          "text",
+          "quote",
+          "source_url",
+          "source_title",
+          "relevance",
+          "status",
+          "created_at"
+        ],
+        "title": "ResearchFindingOut",
+        "type": "object"
+      },
+      "ResearchFindingPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ResearchFindingOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "ResearchFindingPage",
+        "type": "object"
+      },
+      "ResearchRunOut": {
+        "properties": {
+          "budgets": {
+            "additionalProperties": true,
+            "title": "Budgets",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "pending_findings": {
+            "default": 0,
+            "title": "Pending Findings",
+            "type": "integer"
+          },
+          "queries": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Queries",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "usage": {
+            "additionalProperties": true,
+            "title": "Usage",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "status",
+          "queries",
+          "budgets",
+          "usage",
+          "message",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "ResearchRunOut",
+        "type": "object"
+      },
+      "ResearchRunStart": {
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "title": "ResearchRunStart",
+        "type": "object"
+      },
       "RetryAllOut": {
         "properties": {
           "requeued": {
@@ -6106,18 +6200,27 @@
         "title": "RetryAllOut",
         "type": "object"
       },
-      "RunStart": {
+      "RunOut": {
         "properties": {
-          "job_id": {
-            "format": "uuid",
-            "title": "Job Id",
-            "type": "string"
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "listed": {
+            "title": "Listed",
+            "type": "integer"
+          },
+          "new": {
+            "title": "New",
+            "type": "integer"
           }
         },
         "required": [
-          "job_id"
+          "listed",
+          "kept",
+          "new"
         ],
-        "title": "RunStart",
+        "title": "RunOut",
         "type": "object"
       },
       "RunStatus": {
@@ -7671,29 +7774,6 @@
         "title": "SessionOut",
         "type": "object"
       },
-      "careerpilot__modules__discovery__schemas__RunOut": {
-        "properties": {
-          "kept": {
-            "title": "Kept",
-            "type": "integer"
-          },
-          "listed": {
-            "title": "Listed",
-            "type": "integer"
-          },
-          "new": {
-            "title": "New",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "listed",
-          "kept",
-          "new"
-        ],
-        "title": "RunOut",
-        "type": "object"
-      },
       "careerpilot__modules__prep__schemas__SessionOut": {
         "properties": {
           "id": {
@@ -7739,86 +7819,6 @@
           "notes"
         ],
         "title": "SessionOut",
-        "type": "object"
-      },
-      "careerpilot__modules__research__schemas__RunOut": {
-        "properties": {
-          "budgets": {
-            "additionalProperties": true,
-            "title": "Budgets",
-            "type": "object"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "finished_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Finished At"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "job_id": {
-            "format": "uuid",
-            "title": "Job Id",
-            "type": "string"
-          },
-          "message": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Message"
-          },
-          "pending_findings": {
-            "default": 0,
-            "title": "Pending Findings",
-            "type": "integer"
-          },
-          "queries": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Queries",
-            "type": "array"
-          },
-          "status": {
-            "$ref": "#/components/schemas/RunStatus"
-          },
-          "usage": {
-            "additionalProperties": true,
-            "title": "Usage",
-            "type": "object"
-          }
-        },
-        "required": [
-          "id",
-          "job_id",
-          "status",
-          "queries",
-          "budgets",
-          "usage",
-          "message",
-          "created_at",
-          "finished_at"
-        ],
-        "title": "RunOut",
         "type": "object"
       }
     }
@@ -8982,7 +8982,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/careerpilot__modules__discovery__schemas__RunOut"
+                  "$ref": "#/components/schemas/RunOut"
                 }
               }
             },
@@ -13421,7 +13421,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FindingPage"
+                  "$ref": "#/components/schemas/ResearchFindingPage"
                 }
               }
             },
@@ -13480,7 +13480,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Approved"
+                  "$ref": "#/components/schemas/ResearchApproved"
                 }
               }
             },
@@ -13611,7 +13611,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/careerpilot__modules__research__schemas__RunOut"
+                    "$ref": "#/components/schemas/ResearchRunOut"
                   },
                   "title": "Response List Research Runs",
                   "type": "array"
@@ -13661,7 +13661,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RunStart"
+                "$ref": "#/components/schemas/ResearchRunStart"
               }
             }
           },
@@ -13672,7 +13672,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/careerpilot__modules__research__schemas__RunOut"
+                  "$ref": "#/components/schemas/ResearchRunOut"
                 }
               }
             },
@@ -13731,7 +13731,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/careerpilot__modules__research__schemas__RunOut"
+                  "$ref": "#/components/schemas/ResearchRunOut"
                 }
               }
             },

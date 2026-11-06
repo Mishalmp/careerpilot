@@ -1554,19 +1554,6 @@ export interface components {
             site_mode?: components["schemas"]["PortalMode"] | null;
         };
         /**
-         * Approved
-         * @description What an approval created in the learning area.
-         */
-        Approved: {
-            /** Question Id */
-            question_id: string | null;
-            /**
-             * Topic Id
-             * Format: uuid
-             */
-            topic_id: string;
-        };
-        /**
          * AskOut
          * @description `mode` says what happened:
          *     answered: a written answer with citations; retrieval_only: no AI key, passages only;
@@ -2202,45 +2189,6 @@ export interface components {
          * @enum {string}
          */
         FindingKind: "topic" | "question";
-        /** FindingOut */
-        FindingOut: {
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            kind: components["schemas"]["FindingKind"];
-            /** Quote */
-            quote: string;
-            /** Relevance */
-            relevance: number;
-            /**
-             * Run Id
-             * Format: uuid
-             */
-            run_id: string;
-            /** Source Title */
-            source_title: string | null;
-            /** Source Url */
-            source_url: string;
-            status: components["schemas"]["FindingStatus"];
-            /** Text */
-            text: string;
-            /** Topic */
-            topic: string;
-        };
-        /** FindingPage */
-        FindingPage: {
-            /** Items */
-            items: components["schemas"]["FindingOut"][];
-            /** Total */
-            total: number;
-        };
         /**
          * FindingStatus
          * @enum {string}
@@ -3436,18 +3384,117 @@ export interface components {
          * @enum {string}
          */
         Region: "India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)";
-        /** RetryAllOut */
-        RetryAllOut: {
-            /** Requeued */
-            requeued: number;
+        /**
+         * ResearchApproved
+         * @description What an approval created in the learning area.
+         */
+        ResearchApproved: {
+            /** Question Id */
+            question_id: string | null;
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
         };
-        /** RunStart */
-        RunStart: {
+        /** ResearchFindingOut */
+        ResearchFindingOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["FindingKind"];
+            /** Quote */
+            quote: string;
+            /** Relevance */
+            relevance: number;
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Source Title */
+            source_title: string | null;
+            /** Source Url */
+            source_url: string;
+            status: components["schemas"]["FindingStatus"];
+            /** Text */
+            text: string;
+            /** Topic */
+            topic: string;
+        };
+        /** ResearchFindingPage */
+        ResearchFindingPage: {
+            /** Items */
+            items: components["schemas"]["ResearchFindingOut"][];
+            /** Total */
+            total: number;
+        };
+        /** ResearchRunOut */
+        ResearchRunOut: {
+            /** Budgets */
+            budgets: {
+                [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /**
              * Job Id
              * Format: uuid
              */
             job_id: string;
+            /** Message */
+            message: string | null;
+            /**
+             * Pending Findings
+             * @default 0
+             */
+            pending_findings: number;
+            /** Queries */
+            queries: string[];
+            status: components["schemas"]["RunStatus"];
+            /** Usage */
+            usage: {
+                [key: string]: unknown;
+            };
+        };
+        /** ResearchRunStart */
+        ResearchRunStart: {
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+        };
+        /** RetryAllOut */
+        RetryAllOut: {
+            /** Requeued */
+            requeued: number;
+        };
+        /** RunOut */
+        RunOut: {
+            /** Kept */
+            kept: number;
+            /** Listed */
+            listed: number;
+            /** New */
+            new: number;
         };
         /**
          * RunStatus
@@ -3955,15 +4002,6 @@ export interface components {
             csrf_token: string;
             user: components["schemas"]["UserOut"];
         };
-        /** RunOut */
-        careerpilot__modules__discovery__schemas__RunOut: {
-            /** Kept */
-            kept: number;
-            /** Listed */
-            listed: number;
-            /** New */
-            new: number;
-        };
         /** SessionOut */
         careerpilot__modules__prep__schemas__SessionOut: {
             /**
@@ -3986,44 +4024,6 @@ export interface components {
              * Format: uuid
              */
             topic_id: string;
-        };
-        /** RunOut */
-        careerpilot__modules__research__schemas__RunOut: {
-            /** Budgets */
-            budgets: {
-                [key: string]: unknown;
-            };
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Finished At */
-            finished_at: string | null;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Job Id
-             * Format: uuid
-             */
-            job_id: string;
-            /** Message */
-            message: string | null;
-            /**
-             * Pending Findings
-             * @default 0
-             */
-            pending_findings: number;
-            /** Queries */
-            queries: string[];
-            status: components["schemas"]["RunStatus"];
-            /** Usage */
-            usage: {
-                [key: string]: unknown;
-            };
         };
     };
     responses: never;
@@ -4702,7 +4702,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["careerpilot__modules__discovery__schemas__RunOut"];
+                    "application/json": components["schemas"]["RunOut"];
                 };
             };
             /** @description Validation Error */
@@ -7005,7 +7005,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FindingPage"];
+                    "application/json": components["schemas"]["ResearchFindingPage"];
                 };
             };
             /** @description Validation Error */
@@ -7038,7 +7038,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Approved"];
+                    "application/json": components["schemas"]["ResearchApproved"];
                 };
             };
             /** @description Validation Error */
@@ -7103,7 +7103,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"][];
+                    "application/json": components["schemas"]["ResearchRunOut"][];
                 };
             };
             /** @description Validation Error */
@@ -7128,7 +7128,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RunStart"];
+                "application/json": components["schemas"]["ResearchRunStart"];
             };
         };
         responses: {
@@ -7138,7 +7138,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"];
+                    "application/json": components["schemas"]["ResearchRunOut"];
                 };
             };
             /** @description Validation Error */
@@ -7171,7 +7171,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"];
+                    "application/json": components["schemas"]["ResearchRunOut"];
                 };
             };
             /** @description Validation Error */

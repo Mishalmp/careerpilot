@@ -175,7 +175,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [~] | LU04 | Question card components: MCQ single/multi, short answer, practical (embedded editor), explain, scenario | D08, L10 | L | Keyboard answerable |
 | [~] | LU05 | Quiz runner: progress bar, confidence selector, instant feedback with explanation and source | LU04, L17 | L | Resumes after reload |
 | [~] | LU06 | Review session UI (spaced repetition) with rating feedback and next-due preview | LU04, L16 | M | |
-| [ ] | LU07 | Research inbox UI: grouped findings, source and quote, approve/edit/reject, bulk approve | R09 | L | |
+| [x] | LU07 | Research inbox UI: grouped findings, source and quote, approve/edit/reject, bulk approve | R09 | L | |
 | [ ] | LU08 | Add knowledge manually: paste text or link, convert to topics and questions (with AI optional) | R05, L13 | M | |
 | [ ] | LU09 | Checkpoint setup, exam screen (timer, flag, navigator), report with topic breakdown and "what to review" | L19 | L | Timer survives reload |
 | [ ] | LU10 | Question bank browser: filter by topic, type, status, source; bulk edit | L10 | M | |

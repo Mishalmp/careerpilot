@@ -22,6 +22,8 @@ import { EmptyState, ErrorState } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 
 import { type LearnTopic, useCreateTopic, useLearnStats, useLearnTopics } from "./hooks";
+import { ResearchInbox } from "./ResearchInbox";
+import { useFindings } from "./researchHooks";
 
 function Stat({ label, value, hint, icon: Icon }: { label: string; value: number | string; hint?: string; icon: typeof Timer }) {
   return (
@@ -57,6 +59,7 @@ export function LearnHome() {
   const stats = useLearnStats();
   const topics = useLearnTopics();
   const [adding, setAdding] = useState(false);
+  const inbox = useFindings(1);
   const due = (stats.data?.due_now ?? 0) + (stats.data?.new_today_left ?? 0);
   const available = Math.min(due, stats.data?.questions ?? 0);
 
@@ -114,7 +117,7 @@ export function LearnHome() {
           <EmptyState
             icon={<GraduationCap aria-hidden="true" />}
             title="Nothing to learn yet"
-            description="Nothing is predefined. Add a topic you need for the jobs you are applying to, then add questions to it. Soon, research will suggest topics for each job."
+            description="Nothing is predefined. Add a topic you need for the jobs you are applying to, then add questions to it, or open a job and choose “Research interview topics” to get suggestions with sources."
             action={
               <Button variant="primary" onClick={() => setAdding(true)}>
                 <Plus aria-hidden="true" /> Add your first topic
@@ -123,6 +126,13 @@ export function LearnHome() {
           />
         )}
         {topics.isSuccess && topics.data.length > 0 && <TopicTable topics={topics.data} />}
+      </section>
+
+      <section id="inbox" aria-labelledby="inbox-heading" className="flex scroll-mt-20 flex-col gap-3">
+        <h2 id="inbox-heading" className="text-lg font-semibold tracking-tight">
+          Research inbox{inbox.data && inbox.data.total > 0 ? ` (${inbox.data.total})` : ""}
+        </h2>
+        <ResearchInbox />
       </section>
 
       <AddTopicDialog open={adding} onOpenChange={setAdding} />

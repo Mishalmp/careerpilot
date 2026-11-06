@@ -7,11 +7,11 @@ from pydantic import BaseModel, ConfigDict
 from careerpilot.modules.research.enums import FindingKind, FindingStatus, RunStatus
 
 
-class RunStart(BaseModel):
+class ResearchRunStart(BaseModel):
     job_id: uuid.UUID
 
 
-class RunOut(BaseModel):
+class ResearchRunOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
@@ -26,7 +26,7 @@ class RunOut(BaseModel):
     pending_findings: int = 0
 
 
-class FindingOut(BaseModel):
+class ResearchFindingOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
@@ -42,12 +42,12 @@ class FindingOut(BaseModel):
     created_at: datetime
 
 
-class FindingPage(BaseModel):
-    items: list[FindingOut]
+class ResearchFindingPage(BaseModel):
+    items: list[ResearchFindingOut]
     total: int
 
 
-class Approved(BaseModel):
+class ResearchApproved(BaseModel):
     """What an approval created in the learning area."""
 
     topic_id: uuid.UUID
