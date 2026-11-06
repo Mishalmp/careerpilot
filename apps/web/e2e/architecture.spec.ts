@@ -58,6 +58,18 @@ test.describe("architecture explorer", () => {
     await expect(page.getByText(/search provider is down/i)).toBeVisible();
   });
 
+  test("live status shows the database, tasks, AI use, search and backups without any secret", async ({ page }) => {
+    await page.getByRole("tab", { name: "Live status" }).click();
+    await expect(page.getByRole("heading", { name: "Database" })).toBeVisible();
+    await expect(page.getByText("Connected")).toBeVisible();
+    await expect(page.getByText(/Schema version/)).toBeVisible();
+    await expect(page.getByText("0 failed")).toBeVisible();
+    await expect(page.getByText(/No API key: AI features are off/)).toBeVisible();
+    await expect(page.getByText(/Search not set up/)).toBeVisible();
+    await expect(page.getByText(/No backup key/)).toBeVisible();
+    await expect(page.getByText(/of [\d,]+ tokens/)).toBeVisible();
+  });
+
   test("concepts can be searched and opened, with proof and related links", async ({ page }) => {
     await page.getByRole("tab", { name: /Concepts/ }).click();
     await page.getByRole("searchbox", { name: "Search concepts" }).fill("queue");
@@ -101,6 +113,9 @@ for (const theme of ["light", "dark"] as Theme[]) {
     await expectNoA11yViolations(page);
     await page.getByRole("tab", { name: /Flows/ }).click();
     await page.waitForLoadState("networkidle");
+    await expectNoA11yViolations(page);
+    await page.getByRole("tab", { name: "Live status" }).click();
+    await expect(page.getByText("Connected")).toBeVisible();
     await expectNoA11yViolations(page);
     await page.getByRole("tab", { name: /Concepts/ }).click();
     await expectNoA11yViolations(page);

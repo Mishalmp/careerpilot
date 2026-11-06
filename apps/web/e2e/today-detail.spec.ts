@@ -17,6 +17,13 @@ test.describe("today", () => {
     await expect(page.getByText("New", { exact: true }).first()).toBeVisible();
   });
 
+  test("shows Learn reviews due and the research inbox, and links to them", async ({ page }) => {
+    await expect(page.getByText("Questions due")).toBeVisible();
+    await expect(page.getByText("Research inbox")).toBeVisible();
+    await page.getByRole("link", { name: /Questions due/ }).click();
+    await expect(page).toHaveURL(/\/learn\/review/);
+  });
+
   test("Add job leads to the jobs page", async ({ page }) => {
     await page.getByRole("link", { name: "Add job" }).click();
     await expect(page).toHaveURL(/\/jobs/);

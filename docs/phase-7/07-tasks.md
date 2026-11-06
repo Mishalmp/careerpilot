@@ -115,7 +115,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## B: backend platform prerequisites
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | B01 | `GET /system/status`: API, DB, migration revision, worker heartbeat, queue depth, last runs, LLM configured, embedder loaded, backup age, disk | none | M | Test covers each field and failure value |
+| [~] | B01 | `GET /system/status`: API, DB, migration revision, worker heartbeat, queue depth, last runs, LLM configured, embedder loaded, backup age, disk | none | M | Test covers each field and failure value |
 | [ ] | B02 | Worker heartbeat row updated each tick; watchdog uses it instead of only `started_at` | B01 | M | Killed worker detected within 2 ticks (test) |
 | [ ] | B03 | Profile and settings in the database (skills, levels, regions, pay) with API; import from `profile.yaml` once | none | L | UI edits persist; scoring reads DB |
 | [ ] | B04 | Long operations as tasks (verify, score with AI, outreach generate, intel extract, research) returning 202 and a task id | B05 | L | Web request returns fast; result appears on completion |
@@ -216,7 +216,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [~] | V09 | ERD view with module filter and live row counts | V02, V05 | M | |
 | [x] | V10 | Concept pages (What, Why, In this app, Failure modes, Try it, Proving test) | W01 | L | 14 pages render |
 | [ ] | V11 | Try-it widgets: chunking, rank fusion, SSRF checker, quote verifier, backoff calculator, FSRS simulator | V10 | L | Each calls real code via API |
-| [ ] | V12 | Live status panel (from B01) | B01, V04 | M | Shows real values |
+| [~] | V12 | Live status panel (from B01) | B01, V04 | M | Shows real values |
 | [ ] | V13 | Failure drills page: scenario, what happens, proving test, how to simulate in dev | W02, T11 | M | Each drill links a passing test |
 | [~] | V14 | ADR viewer and decision timeline | V01 | M | All ADRs listed |
 | [ ] | V15 | Search across architecture content in the command palette | D11, V10 | S | |

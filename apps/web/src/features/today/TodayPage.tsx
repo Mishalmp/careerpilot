@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen, Briefcase, CalendarClock, Plus } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, CalendarClock, Inbox, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
+import { useLearnStats } from "@/features/learn/hooks";
+import { useFindings } from "@/features/learn/researchHooks";
 import { useUpdateDay } from "@/features/prep/hooks";
 import { FollowUp } from "@/features/tracker/JobsTable";
 import { StatusBadge } from "@/features/tracker/StatusBadge";
@@ -32,6 +34,8 @@ function Stat({ label, value, hint, icon: Icon }: { label: string; value: number
 
 export function TodayPage() {
   const today = useTodayData();
+  const learn = useLearnStats();
+  const inbox = useFindings(1);
 
   if (today.isPending) {
     return (
@@ -54,7 +58,6 @@ export function TodayPage() {
   const { prep, pipeline, due_followups: followups } = today.data;
   const active = pipeline.filter((p) => p.count > 0);
   const totalJobs = pipeline.reduce((sum, p) => sum + p.count, 0);
-  const reviewsDue = prep.due_reviews.length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -70,10 +73,25 @@ export function TodayPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Jobs tracked" value={totalJobs} icon={Briefcase} hint={active.length ? `${active.length} stages in use` : "Start by adding one"} />
         <Stat label="Follow-ups due" value={followups.length} icon={CalendarClock} hint={followups.length ? "Open them below" : "Nothing overdue"} />
-        <Stat label="Topics to review" value={reviewsDue} icon={BookOpen} hint={reviewsDue ? "From your prep plan" : "All caught up"} />
+        <Link href="/learn/review" className="block rounded-lg focus-visible:outline-offset-2">
+          <Stat
+            label="Questions due"
+            value={learn.data ? learn.data.due_now : "-"}
+            icon={BookOpen}
+            hint={learn.data ? `${learn.data.new_today_left} new allowed today · streak ${learn.data.streak_days} d` : "Learn"}
+          />
+        </Link>
+        <Link href="/learn#inbox" className="block rounded-lg focus-visible:outline-offset-2">
+          <Stat
+            label="Research inbox"
+            value={inbox.data ? inbox.data.total : "-"}
+            icon={Inbox}
+            hint={inbox.data && inbox.data.total > 0 ? "Approve or reject" : "Nothing waiting"}
+          />
+        </Link>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

@@ -20,6 +20,29 @@
         "title": "AcceptOut",
         "type": "object"
       },
+      "AiStatus": {
+        "properties": {
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "daily_cap": {
+            "title": "Daily Cap",
+            "type": "integer"
+          },
+          "tokens_today": {
+            "title": "Tokens Today",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "configured",
+          "tokens_today",
+          "daily_cap"
+        ],
+        "title": "AiStatus",
+        "type": "object"
+      },
       "AnalyticsOut": {
         "properties": {
           "calibration": {
@@ -320,6 +343,44 @@
           "question"
         ],
         "title": "AskRequest",
+        "type": "object"
+      },
+      "BackupStatus": {
+        "properties": {
+          "age_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Hours"
+          },
+          "key_set": {
+            "title": "Key Set",
+            "type": "boolean"
+          },
+          "last_backup_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Backup At"
+          }
+        },
+        "required": [
+          "key_set",
+          "last_backup_at",
+          "age_hours"
+        ],
+        "title": "BackupStatus",
         "type": "object"
       },
       "BoardKind": {
@@ -1242,6 +1303,31 @@
         ],
         "title": "Currency",
         "type": "string"
+      },
+      "DatabaseStatus": {
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision"
+          }
+        },
+        "required": [
+          "ok",
+          "revision"
+        ],
+        "title": "DatabaseStatus",
+        "type": "object"
       },
       "DayMinutes": {
         "properties": {
@@ -6806,6 +6892,24 @@
         "title": "SearchOut",
         "type": "object"
       },
+      "SearchStatus": {
+        "properties": {
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "configured"
+        ],
+        "title": "SearchStatus",
+        "type": "object"
+      },
       "SeedResult": {
         "properties": {
           "days_added": {
@@ -7604,6 +7708,54 @@
         "title": "SubmissionOut",
         "type": "object"
       },
+      "SystemStatus": {
+        "description": "A snapshot of the parts of the system you can act on. No secrets are included.",
+        "properties": {
+          "ai": {
+            "$ref": "#/components/schemas/AiStatus"
+          },
+          "backups": {
+            "$ref": "#/components/schemas/BackupStatus"
+          },
+          "checked_at": {
+            "format": "date-time",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "database": {
+            "$ref": "#/components/schemas/DatabaseStatus"
+          },
+          "last_task_finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Task Finished At"
+          },
+          "search": {
+            "$ref": "#/components/schemas/SearchStatus"
+          },
+          "tasks": {
+            "$ref": "#/components/schemas/TaskStatusCounts"
+          }
+        },
+        "required": [
+          "checked_at",
+          "database",
+          "tasks",
+          "last_task_finished_at",
+          "ai",
+          "search",
+          "backups"
+        ],
+        "title": "SystemStatus",
+        "type": "object"
+      },
       "TaskCounts": {
         "properties": {
           "failed": {
@@ -7758,6 +7910,34 @@
         ],
         "title": "TaskStatus",
         "type": "string"
+      },
+      "TaskStatusCounts": {
+        "properties": {
+          "failed": {
+            "title": "Failed",
+            "type": "integer"
+          },
+          "queued": {
+            "title": "Queued",
+            "type": "integer"
+          },
+          "running": {
+            "title": "Running",
+            "type": "integer"
+          },
+          "succeeded": {
+            "title": "Succeeded",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "queued",
+          "running",
+          "failed",
+          "succeeded"
+        ],
+        "title": "TaskStatusCounts",
+        "type": "object"
       },
       "TodayOut": {
         "properties": {
@@ -14764,6 +14944,55 @@
         "summary": "Update Story",
         "tags": [
           "stories"
+        ]
+      }
+    },
+    "/api/v1/system/status": {
+      "get": {
+        "operationId": "get_system_status",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Status",
+        "tags": [
+          "system"
         ]
       }
     },

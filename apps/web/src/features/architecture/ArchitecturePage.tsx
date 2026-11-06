@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { DiagramCanvas, NodeDetails } from "./DiagramCanvas";
 import { FlowPlayer } from "./FlowPlayer";
+import { StatusPanel } from "./StatusPanel";
 import { useConcepts, useDiagrams, useFlows } from "./hooks";
 
 export function ArchitecturePage() {
@@ -50,6 +51,7 @@ export function ArchitecturePage() {
             <Workflow className="mr-1.5 inline size-4" aria-hidden="true" />
             Flows
           </TabsTrigger>
+          <TabsTrigger value="status">Live status</TabsTrigger>
           <TabsTrigger value="concepts">
             <BookOpenText className="mr-1.5 inline size-4" aria-hidden="true" />
             Concepts
@@ -78,6 +80,9 @@ export function ArchitecturePage() {
         <TabsContent value="flows">
           {flows.isError && <ErrorState title="Could not load the flows" description={flows.error.message} />}
           {flows.data && overview && <FlowPlayer flows={flows.data} overview={overview} />}
+        </TabsContent>
+        <TabsContent value="status">
+          <StatusPanel />
         </TabsContent>
         <TabsContent value="concepts">
           {concepts.isError && <ErrorState title="Could not load the concepts" description={concepts.error.message} />}

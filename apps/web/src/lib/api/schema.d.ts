@@ -1437,6 +1437,23 @@ export interface paths {
         patch: operations["update_story"];
         trace?: never;
     };
+    "/api/v1/system/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["get_system_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tasks": {
         parameters: {
             query?: never;
@@ -1559,6 +1576,15 @@ export interface components {
              */
             job_id: string;
         };
+        /** AiStatus */
+        AiStatus: {
+            /** Configured */
+            configured: boolean;
+            /** Daily Cap */
+            daily_cap: number;
+            /** Tokens Today */
+            tokens_today: number;
+        };
         /** AnalyticsOut */
         AnalyticsOut: {
             calibration: components["schemas"]["CalibrationOut"];
@@ -1646,6 +1672,15 @@ export interface components {
         AskRequest: {
             /** Question */
             question: string;
+        };
+        /** BackupStatus */
+        BackupStatus: {
+            /** Age Hours */
+            age_hours: number | null;
+            /** Key Set */
+            key_set: boolean;
+            /** Last Backup At */
+            last_backup_at: string | null;
         };
         /**
          * BoardKind
@@ -1948,6 +1983,13 @@ export interface components {
          * @enum {string}
          */
         Currency: "INR" | "USD" | "EUR" | "GBP" | "AED" | "CAD" | "AUD" | "SGD" | "Other";
+        /** DatabaseStatus */
+        DatabaseStatus: {
+            /** Ok */
+            ok: boolean;
+            /** Revision */
+            revision: string | null;
+        };
         /** DayMinutes */
         DayMinutes: {
             /**
@@ -3759,6 +3801,13 @@ export interface components {
             /** Hits */
             hits: components["schemas"]["HitOut"][];
         };
+        /** SearchStatus */
+        SearchStatus: {
+            /** Configured */
+            configured: boolean;
+            /** Provider */
+            provider: string;
+        };
         /** SeedResult */
         SeedResult: {
             /** Days Added */
@@ -4009,6 +4058,24 @@ export interface components {
             /** Total */
             total: number;
         };
+        /**
+         * SystemStatus
+         * @description A snapshot of the parts of the system you can act on. No secrets are included.
+         */
+        SystemStatus: {
+            ai: components["schemas"]["AiStatus"];
+            backups: components["schemas"]["BackupStatus"];
+            /**
+             * Checked At
+             * Format: date-time
+             */
+            checked_at: string;
+            database: components["schemas"]["DatabaseStatus"];
+            /** Last Task Finished At */
+            last_task_finished_at: string | null;
+            search: components["schemas"]["SearchStatus"];
+            tasks: components["schemas"]["TaskStatusCounts"];
+        };
         /** TaskCounts */
         TaskCounts: {
             /** Failed */
@@ -4068,6 +4135,17 @@ export interface components {
          * @enum {string}
          */
         TaskStatus: "queued" | "running" | "succeeded" | "failed";
+        /** TaskStatusCounts */
+        TaskStatusCounts: {
+            /** Failed */
+            failed: number;
+            /** Queued */
+            queued: number;
+            /** Running */
+            running: number;
+            /** Succeeded */
+            succeeded: number;
+        };
         /** TodayOut */
         TodayOut: {
             /** Due Followups */
@@ -7695,6 +7773,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StoryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_system_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStatus"];
                 };
             };
             /** @description Validation Error */
