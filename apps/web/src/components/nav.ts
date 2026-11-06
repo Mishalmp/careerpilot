@@ -13,6 +13,7 @@ import {
   Network,
   Sparkles,
   Star,
+  UserRound,
   Wallet,
 } from "lucide-react";
 
@@ -50,6 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "System",
     items: [
+      { href: "/profile", label: "Profile", icon: UserRound },
       { href: "/architecture", label: "How it works", icon: Network },
       { href: "/tasks", label: "Tasks", icon: ListChecks },
     ],

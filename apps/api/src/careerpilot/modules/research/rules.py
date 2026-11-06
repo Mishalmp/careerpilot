@@ -84,7 +84,9 @@ _BAD_HINTS = (
 )
 
 
-def plan_queries(title: str, company: str, *, limit: int = MAX_QUERIES) -> list[str]:
+def plan_queries(
+    title: str, company: str, *, skills: Sequence[str] = (), limit: int = MAX_QUERIES
+) -> list[str]:
     """Search phrases for a role, most useful first. Templates: the same job gives the same plan."""
     role = " ".join(title.split())
     firm = " ".join(company.split())
@@ -98,6 +100,11 @@ def plan_queries(title: str, company: str, *, limit: int = MAX_QUERIES) -> list[
         f"{role} coding interview practice questions",
         f"{role} skills required what to study",
     ]
+    # Your own strongest skills (from the CV) get their own searches, right after the role ones.
+    skill_queries = [
+        f"{skill} interview questions {role}" for skill in list(skills)[:3] if skill.strip()
+    ]
+    candidates = candidates[:5] + skill_queries + candidates[5:]
     seen: set[str] = set()
     plan: list[str] = []
     for query in candidates:

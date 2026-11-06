@@ -1312,6 +1312,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Profile */
+        get: operations["get_profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Profile */
+        patch: operations["update_profile"];
+        trace?: never;
+    };
+    "/api/v1/profile/cv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Analyse Cv
+         * @description Reads the CV text with rules and fills in skills, role titles and years.
+         */
+        put: operations["analyse_cv"];
+        post?: never;
+        /** Forget Cv */
+        delete: operations["forget_cv"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/research/findings": {
         parameters: {
             query?: never;
@@ -1983,6 +2022,11 @@ export interface components {
          * @enum {string}
          */
         Currency: "INR" | "USD" | "EUR" | "GBP" | "AED" | "CAD" | "AUD" | "SGD" | "Other";
+        /** CvIn */
+        CvIn: {
+            /** Text */
+            text: string;
+        };
         /** DatabaseStatus */
         DatabaseStatus: {
             /** Ok */
@@ -3551,6 +3595,31 @@ export interface components {
             title: string;
             /** Topic Keys */
             topic_keys: string[];
+        };
+        /** ProfileOut */
+        ProfileOut: {
+            /** Has Cv */
+            has_cv: boolean;
+            /** Role Titles */
+            role_titles: string[];
+            /** Skills */
+            skills: string[];
+            /** Updated At */
+            updated_at: string | null;
+            /** Years Experience */
+            years_experience: number | null;
+        };
+        /**
+         * ProfileUpdate
+         * @description Only the fields you send change. Use this to fix what the CV reading got wrong.
+         */
+        ProfileUpdate: {
+            /** Role Titles */
+            role_titles?: string[] | null;
+            /** Skills */
+            skills?: string[] | null;
+            /** Years Experience */
+            years_experience?: number | null;
         };
         /**
          * ProgressStatus
@@ -7435,6 +7504,136 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["careerpilot__modules__prep__schemas__SessionOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analyse_cv: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CvIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    forget_cv: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

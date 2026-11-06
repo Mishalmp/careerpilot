@@ -123,6 +123,7 @@ modules:
     - { id: "core", title: Core, summary: "Shared plumbing: database, config, fetcher, model calls, evidence checks, backups.", x: 550, y: 400 }
     - { id: "module:research", title: Research, summary: "Finds interview topics and questions for a job: search, fetch, extract, verify quotes, then an inbox you approve.", x: 880, y: 400 }
     - { id: "module:system", title: System status, summary: "A live snapshot: database version, task counts, AI use today, search service and backup age.", x: 0, y: 400 }
+    - { id: "module:profile", title: Profile, summary: "Your CV turned into skills, role titles and years by rules; you can edit them. Used to aim research.", x: 220, y: 400 }
     - { id: "module:architecture", title: Architecture explorer, summary: "Serves these diagrams, flows and concept pages, and checks them against the code.", x: 1100, y: 400 }
     - { id: "core:fetcher", title: Safe fetcher, summary: "The only way code reads a web page: private addresses refused, size and time capped, blocked sites refused.", links: ["apps/api/src/careerpilot/core/fetcher.py"], x: 330, y: 530 }
     - { id: "core:llm", title: Model calls, summary: "Every Claude call goes through here: daily token cap, audit row, validated JSON.", links: ["apps/api/src/careerpilot/core/llm.py"], x: 550, y: 530 }

@@ -23,6 +23,7 @@ from careerpilot.modules.offers.models import FxRate
 from careerpilot.modules.outreach.models import OutreachDraft
 from careerpilot.modules.practice.models import Submission
 from careerpilot.modules.prep.models import PrepDay, PrepPlan, PrepTopic, StudySession
+from careerpilot.modules.profile.models import UserProfile
 from careerpilot.modules.research.models import ResearchFinding, ResearchRun
 from careerpilot.modules.scoring.models import JobScore
 from careerpilot.modules.stories.models import StarStory
@@ -69,6 +70,7 @@ REGISTERED_MODELS = (
     LearnReviewCard,
     LearnCheckpoint,
     LearnCheckpointItem,
+    UserProfile,
     ResearchRun,
     ResearchFinding,
     Submission,

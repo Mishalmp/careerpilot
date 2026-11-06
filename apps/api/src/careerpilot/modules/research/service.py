@@ -26,6 +26,7 @@ from careerpilot.modules.learn.enums import (
     TopicOrigin,
 )
 from careerpilot.modules.learn.schemas import LearnQuestionCreate, LearnSourceIn
+from careerpilot.modules.profile import service as profile_service
 from careerpilot.modules.research import repository, rules
 from careerpilot.modules.research.enums import FindingKind, FindingStatus, RunStatus
 from careerpilot.modules.research.models import ResearchFinding, ResearchRun
@@ -158,7 +159,10 @@ async def execute(
     prompt = load_prompt(settings.prompts_dir, "research-extract")
 
     run.status = RunStatus.RUNNING
-    run.queries = rules.plan_queries(role, company, limit=int(budgets["searches"]))
+    profile = await profile_service.get_profile(db, owner_id)
+    run.queries = rules.plan_queries(
+        role, company, skills=profile.skills, limit=int(budgets["searches"])
+    )
     await db.commit()
 
     notes: list[str] = []

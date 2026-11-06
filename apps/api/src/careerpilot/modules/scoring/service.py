@@ -1,5 +1,6 @@
 import hashlib
 import uuid
+from pathlib import Path
 from typing import Any, cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -175,3 +176,8 @@ async def scored_jobs(
 ) -> list[tuple[uuid.UUID, str, int | None]]:
     """(job, chance label, score) for every scored job, for the calibration view."""
     return await repository.scored(db, owner_id)
+
+
+def detect_skills(content_dir: Path, text: str) -> list[str]:
+    """Skills from the shared vocabulary (content/skills.yaml) found in any text, sorted."""
+    return sorted(skills_in(text, load_vocabulary(content_dir)))

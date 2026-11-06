@@ -117,7 +117,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 |---|---|---|---|---|---|
 | [~] | B01 | `GET /system/status`: API, DB, migration revision, worker heartbeat, queue depth, last runs, LLM configured, embedder loaded, backup age, disk | none | M | Test covers each field and failure value |
 | [ ] | B02 | Worker heartbeat row updated each tick; watchdog uses it instead of only `started_at` | B01 | M | Killed worker detected within 2 ticks (test) |
-| [ ] | B03 | Profile and settings in the database (skills, levels, regions, pay) with API; import from `profile.yaml` once | none | L | UI edits persist; scoring reads DB |
+| [~] | B03 | Profile and settings in the database (skills, levels, regions, pay) with API; import from `profile.yaml` once | none | L | UI edits persist; scoring reads DB |
 | [ ] | B04 | Long operations as tasks (verify, score with AI, outreach generate, intel extract, research) returning 202 and a task id | B05 | L | Web request returns fast; result appears on completion |
 | [ ] | B05 | Task progress events (JSONB log) and SSE endpoint with polling fallback and auth | B02 | L | Client shows live steps; reconnect resumes |
 | [ ] | B06 | Audit log for every write through services (who, what, before/after summary); viewer API | none | M | Test: each POST/PATCH/DELETE writes a row |
@@ -199,7 +199,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [~] | R13 | Adversarial page corpus for prompt injection; tests that nothing leaks or acts | R05 | M | All corpus pages neutralised |
 | [x] | R14 | Content rules: store link, short quote and paraphrase only; blocked sites list kept | R05 | S | Test: long quote truncated |
 | [ ] | R15 | Research quality eval: 10 sample roles with expected topics; recall metric | R05, E04 | L | Baseline recorded |
-| [ ] | R16 | CV-driven profile: paste/upload CV text, extract skills, years, role titles and seniority (code first, optional model), owner edits, saved to the profile (REQ-28); role titles feed R02 queries and the roadmap | B03, E04 | L | Fixture CVs give expected skills and titles; no hard-coded role list |
+| [~] | R16 | CV-driven profile: paste/upload CV text, extract skills, years, role titles and seniority (code first, optional model), owner edits, saved to the profile (REQ-28); role titles feed R02 queries and the roadmap | B03, E04 | L | Fixture CVs give expected skills and titles; no hard-coded role list |
 | [x] | R17 | Spike: prove SearXNG JSON search works from the fetcher with limiter settings; record the working `settings.yml`/`limiter.toml`; decide default provider | R01 | M | Spike note in ADR 0013; 20 queries return results |
 
 ## V: architecture explorer (spec: `04-architecture-explorer.md`)

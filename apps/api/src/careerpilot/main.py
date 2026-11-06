@@ -29,6 +29,7 @@ from careerpilot.modules.offers.router import router as offers_router
 from careerpilot.modules.outreach.router import router as outreach_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
+from careerpilot.modules.profile.router import router as profile_router
 from careerpilot.modules.research.router import router as research_router
 from careerpilot.modules.scoring.router import router as scoring_router
 from careerpilot.modules.stories.router import router as stories_router
@@ -110,6 +111,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(learn_router, prefix=API_PREFIX)
     app.include_router(research_router, prefix=API_PREFIX)
     app.include_router(system_router, prefix=API_PREFIX)
+    app.include_router(profile_router, prefix=API_PREFIX)
     app.include_router(architecture_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
