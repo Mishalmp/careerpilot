@@ -8,6 +8,7 @@ import httpx
 
 from careerpilot.core.fetcher import Fetcher, FetchError
 from careerpilot.core.llm import LlmError, LlmReply
+from careerpilot.core.search import SearchError, SearchHit
 
 
 class FakeLlm:
@@ -100,3 +101,39 @@ class FakeWeb:
             else page
         )
         return httpx.Response(status, text=body, headers={"content-type": content_type})
+
+
+class FakeSearch:
+    name = "fake"
+
+    def __init__(
+        self,
+        hits: list[SearchHit] | None = None,
+        *,
+        fail_after: int | None = None,
+        answers: dict[str, list[SearchHit]] | None = None,
+    ) -> None:
+        self.hits = hits if hits is not None else []
+        self.answers = answers or {}  # a query containing the key gets these hits
+        self.fail_after = fail_after
+        self.queries: list[str] = []
+
+    async def search(self, query: str, limit: int) -> list[SearchHit]:
+        if self.fail_after is not None and len(self.queries) >= self.fail_after:
+            raise SearchError("The search service could not be reached.")
+        self.queries.append(query)
+        for fragment, answer in self.answers.items():
+            if fragment in query:
+                return list(answer)
+        return list(self.hits)
+
+
+async def run_worker(app: Any) -> bool:
+    """Run one due background task with the app's fake search, model and web. False if none."""
+    from careerpilot.modules.tasks import service as tasks
+    from careerpilot.worker import make_handlers
+
+    handlers = make_handlers(
+        app.state.fetcher, app.state.settings, llm=app.state.llm, search=app.state.search
+    )
+    return await tasks.run_next(app.state.sessionmaker, handlers)

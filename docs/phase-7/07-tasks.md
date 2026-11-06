@@ -308,11 +308,11 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## A: assisted daily apply (design in `11-ai-usage-search-and-apply.md` section 7; needs the owner's go-ahead on the policy)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | A01 | Apply policy file `content/private/apply-policy.yaml`: schema, example in `content/`, loader with validation messages | R16 | M | Bad file gives a clear list of problems |
-| [ ] | A02 | Pure ranking rules: policy + job + score + company verdict -> keep/skip with reasons | A01 | M | Table tests; same input same output |
-| [ ] | A03 | `apply_queue` table and a daily task that fills it (idempotent per day) | A02, B04 | M | Rerun does not duplicate; daily limit holds |
-| [ ] | A04 | Queue API: list, open-link (records the click), mark applied, skip with reason | A03 | M | Owner isolation tests; no submit endpoint exists (test) |
-| [ ] | A05 | Queue screen: card per job (verdict, score, why, draft), keyboard friendly | A04, D13 | L | E2E + axe |
+| [x] | A01 | Apply policy file `content/private/apply-policy.yaml`: schema, example in `content/`, loader with validation messages | R16 | M | Bad file gives a clear list of problems |
+| [x] | A02 | Pure ranking rules: policy + job + score + company verdict -> keep/skip with reasons | A01 | M | Table tests; same input same output |
+| [x] | A03 | `apply_queue` table and a daily task that fills it (idempotent per day) | A02, B04 | M | Rerun does not duplicate; daily limit holds |
+| [~] | A04 | Queue API: list, approve, mark applied, skip (the click on the apply link is not recorded yet) | A03 | M | Owner isolation tests; no submit endpoint exists (test) |
+| [x] | A05 | Queue screen: card per job (verdict, score, why, draft), keyboard friendly | A04, D13 | L | E2E + axe |
 | [ ] | A06 | Policy dry run: what would the policy have picked on past days | A02 | S | Shows picks and reasons |
 | [ ] | A07 | Audit rows and a daily summary on Today | A04, B06 | S | |
 | [ ] | A08 | Measure replies per queue pick in Insights | A04 | M | Uses real outcomes only |

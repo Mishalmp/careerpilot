@@ -43,6 +43,51 @@
         "title": "AiStatus",
         "type": "object"
       },
+      "AlsoListed": {
+        "properties": {
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ListingKind"
+          },
+          "opened": {
+            "title": "Opened",
+            "type": "boolean"
+          },
+          "overlap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overlap"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2000,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "host",
+          "kind",
+          "overlap",
+          "opened"
+        ],
+        "title": "AlsoListed",
+        "type": "object"
+      },
       "AnalyticsOut": {
         "properties": {
           "calibration": {
@@ -281,6 +326,267 @@
         "title": "ApplicationUpdate",
         "type": "object"
       },
+      "ApplyItemOut": {
+        "properties": {
+          "also_listed": {
+            "items": {
+              "$ref": "#/components/schemas/AlsoListed"
+            },
+            "title": "Also Listed",
+            "type": "array"
+          },
+          "apply_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apply Url"
+          },
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "company_check": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompanyCheckSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decision_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Note"
+          },
+          "enriched_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enriched At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "interview": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InterviewNotes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jd_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jd Url"
+          },
+          "job_id": {
+            "format": "uuid",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "match_score": {
+            "title": "Match Score",
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "pay": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PayEstimate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "queued_on": {
+            "format": "date",
+            "title": "Queued On",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplyStatus"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "tracker_status": {
+            "title": "Tracker Status",
+            "type": "string"
+          },
+          "work_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Mode"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "title",
+          "company",
+          "location",
+          "work_mode",
+          "region",
+          "apply_url",
+          "jd_url",
+          "queued_on",
+          "status",
+          "tracker_status",
+          "match_score",
+          "reasons",
+          "pay",
+          "interview",
+          "also_listed",
+          "company_check",
+          "notes",
+          "enriched_at",
+          "decided_at",
+          "decision_note"
+        ],
+        "title": "ApplyItemOut",
+        "type": "object"
+      },
+      "ApplyQueueOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ApplyItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "notice": {
+            "default": "This list is a starting point, not a decision. Everything below says where it came from; open the sources before you apply. CareerPilot never submits an application for you.",
+            "title": "Notice",
+            "type": "string"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/Policy"
+          },
+          "policy_problems": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Policy Problems",
+            "type": "array"
+          },
+          "policy_source": {
+            "title": "Policy Source",
+            "type": "string"
+          },
+          "ready_count": {
+            "title": "Ready Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "ready_count",
+          "policy",
+          "policy_source",
+          "policy_problems"
+        ],
+        "title": "ApplyQueueOut",
+        "type": "object"
+      },
+      "ApplyStatus": {
+        "enum": [
+          "ready",
+          "approved",
+          "applied",
+          "skipped",
+          "blocked"
+        ],
+        "title": "ApplyStatus",
+        "type": "string"
+      },
       "AskOut": {
         "description": "`mode` says what happened:\nanswered: a written answer with citations; retrieval_only: no AI key, passages only;\nnot_in_notes: nothing relevant enough; ungrounded: the AI cited nothing, so it was withheld;\nrefused: the AI declined.",
         "properties": {
@@ -440,6 +746,19 @@
           "needs_more_sources"
         ],
         "title": "BriefOut",
+        "type": "object"
+      },
+      "BuildOut": {
+        "properties": {
+          "queued": {
+            "title": "Queued",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "queued"
+        ],
+        "title": "BuildOut",
         "type": "object"
       },
       "CalibrationGroupOut": {
@@ -862,6 +1181,42 @@
           "hit"
         ],
         "title": "CitationOut",
+        "type": "object"
+      },
+      "CompanyCheckSummary": {
+        "properties": {
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict",
+          "passed",
+          "total",
+          "flags",
+          "note"
+        ],
+        "title": "CompanyCheckSummary",
         "type": "object"
       },
       "CompanyOut": {
@@ -1475,6 +1830,24 @@
           }
         },
         "title": "DayUpdate",
+        "type": "object"
+      },
+      "DecisionIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "DecisionIn",
         "type": "object"
       },
       "Diagram": {
@@ -2171,6 +2544,38 @@
         "title": "EventType",
         "type": "string"
       },
+      "EvidenceLink": {
+        "description": "One thing that was found, with the page it came from and the words it was read from.",
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "quote"
+        ],
+        "title": "EvidenceLink",
+        "type": "object"
+      },
       "ExtractOut": {
         "properties": {
           "dropped": {
@@ -2795,6 +3200,55 @@
           "prep_topics"
         ],
         "title": "IntelTopicOut",
+        "type": "object"
+      },
+      "InterviewLevel": {
+        "enum": [
+          "posted",
+          "this_company",
+          "similar_roles"
+        ],
+        "title": "InterviewLevel",
+        "type": "string"
+      },
+      "InterviewNotes": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InterviewLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceLink"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "tried": {
+            "items": {
+              "$ref": "#/components/schemas/TriedStep"
+            },
+            "title": "Tried",
+            "type": "array"
+          }
+        },
+        "required": [
+          "level",
+          "label",
+          "points",
+          "tried"
+        ],
+        "title": "InterviewNotes",
         "type": "object"
       },
       "ItemKind": {
@@ -5377,6 +5831,14 @@
         "title": "LintOut",
         "type": "object"
       },
+      "ListingKind": {
+        "enum": [
+          "same_job",
+          "similar_role"
+        ],
+        "title": "ListingKind",
+        "type": "string"
+      },
       "LoginRequest": {
         "properties": {
           "email": {
@@ -5985,6 +6447,110 @@
         "title": "OutreachStatus",
         "type": "string"
       },
+      "PayEstimate": {
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceLink"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PayLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Low"
+          },
+          "mid": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mid"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "tried": {
+            "items": {
+              "$ref": "#/components/schemas/TriedStep"
+            },
+            "title": "Tried",
+            "type": "array"
+          }
+        },
+        "required": [
+          "level",
+          "label",
+          "currency",
+          "low",
+          "mid",
+          "high",
+          "n",
+          "evidence",
+          "tried"
+        ],
+        "title": "PayEstimate",
+        "type": "object"
+      },
+      "PayLevel": {
+        "description": "Where a pay figure came from, best evidence first.",
+        "enum": [
+          "posted",
+          "same_job_elsewhere",
+          "previous_post",
+          "similar_roles"
+        ],
+        "title": "PayLevel",
+        "type": "string"
+      },
       "PeerOut": {
         "properties": {
           "name": {
@@ -6067,6 +6633,82 @@
           "start_date"
         ],
         "title": "PlanUpdate",
+        "type": "object"
+      },
+      "Policy": {
+        "additionalProperties": false,
+        "properties": {
+          "block_if_company_suspicious": {
+            "default": true,
+            "title": "Block If Company Suspicious",
+            "type": "boolean"
+          },
+          "daily_limit": {
+            "default": 3,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Daily Limit",
+            "type": "integer"
+          },
+          "enrich_with_web": {
+            "default": true,
+            "title": "Enrich With Web",
+            "type": "boolean"
+          },
+          "max_web_pages_per_job": {
+            "default": 3,
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Max Web Pages Per Job",
+            "type": "integer"
+          },
+          "min_match_score": {
+            "default": 40,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Min Match Score",
+            "type": "integer"
+          },
+          "regions": {
+            "default": [],
+            "items": {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Regions",
+            "type": "array"
+          },
+          "require_apply_link": {
+            "default": true,
+            "title": "Require Apply Link",
+            "type": "boolean"
+          },
+          "skip_companies": {
+            "default": [],
+            "items": {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Skip Companies",
+            "type": "array"
+          },
+          "work_modes": {
+            "default": [],
+            "items": {
+              "enum": [
+                "Remote",
+                "Hybrid",
+                "Onsite"
+              ],
+              "type": "string"
+            },
+            "title": "Work Modes",
+            "type": "array"
+          }
+        },
+        "title": "Policy",
         "type": "object"
       },
       "Portal": {
@@ -7912,7 +8554,8 @@
           "discover",
           "daily_digest",
           "backup",
-          "research"
+          "research",
+          "apply_queue"
         ],
         "title": "TaskKind",
         "type": "string"
@@ -8307,6 +8950,30 @@
           }
         },
         "title": "TopicUpdate",
+        "type": "object"
+      },
+      "TriedStep": {
+        "description": "A place that was looked at, whether or not it had an answer. Nothing is hidden.",
+        "properties": {
+          "found": {
+            "title": "Found",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "found",
+          "note"
+        ],
+        "title": "TriedStep",
         "type": "object"
       },
       "UserOut": {
@@ -8749,6 +9416,315 @@
         "summary": "Change Status",
         "tags": [
           "tracker"
+        ]
+      }
+    },
+    "/api/v1/apply/build": {
+      "post": {
+        "description": "Queues a build and returns at once; the worker does the looking-up.",
+        "operationId": "build_apply_queue",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Build",
+        "tags": [
+          "apply"
+        ]
+      }
+    },
+    "/api/v1/apply/items/{item_id}/applied": {
+      "post": {
+        "description": "You applied yourself. The job becomes Applied - Pending with a follow-up date.",
+        "operationId": "mark_apply_item_applied",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Applied",
+        "tags": [
+          "apply"
+        ]
+      }
+    },
+    "/api/v1/apply/items/{item_id}/approve": {
+      "post": {
+        "description": "You read it and want to apply. The job becomes Shortlisted; nothing is sent.",
+        "operationId": "approve_apply_item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "apply"
+        ]
+      }
+    },
+    "/api/v1/apply/items/{item_id}/skip": {
+      "post": {
+        "operationId": "skip_apply_item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Skip",
+        "tags": [
+          "apply"
+        ]
+      }
+    },
+    "/api/v1/apply/queue": {
+      "get": {
+        "description": "Today's list and the last week's, with the policy that chose it.",
+        "operationId": "get_apply_queue",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyQueueOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Queue",
+        "tags": [
+          "apply"
         ]
       }
     },

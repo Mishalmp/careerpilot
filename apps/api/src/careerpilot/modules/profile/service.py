@@ -32,6 +32,10 @@ async def get_profile(db: AsyncSession, owner_id: uuid.UUID) -> ProfileOut:
     return _out(await repository.get(db, owner_id))
 
 
+async def owners_with_profile(db: AsyncSession) -> list[uuid.UUID]:
+    return await repository.owners_with_profile(db)
+
+
 async def analyse_cv(
     db: AsyncSession, owner_id: uuid.UUID, data: CvIn, content_dir: Path
 ) -> ProfileOut:

@@ -34,6 +34,9 @@ from careerpilot.modules.tracker.workflow import (
     check_transition,
 )
 
+# Other modules annotate with this instead of importing the model (the import contract forbids it).
+JobRecord = Job
+
 MAX_PAGE = 200
 _APPLIED_STAGE = 1
 

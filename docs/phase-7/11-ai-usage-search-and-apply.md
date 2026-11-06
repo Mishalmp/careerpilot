@@ -121,6 +121,35 @@ auto_submit: false                          # locked: the app has no submit acti
 - Tasks (new group A in `07-tasks.md`): A01 policy file schema and loader with validation, A02 pure ranking rules with tests, A03 apply-queue table and daily task, A04 queue API, A05 queue screen, A06 "why this job" explanation and policy dry-run ("what would have been chosen yesterday"), A07 per-day audit, A08 measure: did queue picks lead to replies (uses Insights).
 - If you still want a stronger automation later, the safe ladder is: queue (above) -> pre-filled email drafts you send yourself -> only for companies that publish a real application API or accept email applications, a one-click send after your approval. Each step stays behind your approval.
 
+### 7.1 What was built (2026-11-07): the assisted daily list
+
+The owner asked for a daily list where every job is "one step away from applying", with pay and interview information found step by step and labelled with where it came from, so nothing is trusted blindly. Built as `apps/api/src/careerpilot/modules/apply/` and the `/apply` page. **Approval triggers tracker changes and opens the apply page; it never submits a form on an external site** (terms of service, CAPTCHAs, and every form differs; the project rule "no send/submit action" still holds and a test proves the API has no such route).
+
+Daily flow (worker task `apply_queue`, built once a day after `CAREERPILOT_APPLY_HOUR`, default 9, for users whose CV profile has skills or titles; the "Build today's list" button queues one more):
+1. Read the policy file (`content/private/apply-policy.yaml`, else `content/apply-policy.example.yaml`, else defaults). A wrong file stops the build with a plain list of problems (it never silently falls back). There is deliberately no auto-submit key.
+2. Candidates: tracker jobs that are New or Shortlisted and never listed before. Policy hard rules remove some (regions, work modes, skipped companies, needs an apply link); a field the post does not state never excludes a job.
+3. Score 0-100 with `matching.py`: 60 for the share of the post's skills you have, 30 for a title like one on your CV, 10 for a post under 14 days old. Unknowns get a neutral value and the reason says so. Keep scores at or above `min_match_score`, best first, up to `daily_limit`.
+4. For each job: company check (the existing eight checks and red flags through the safe fetcher). The job is **held back** (status blocked, shown with the reason) only on hard evidence: a raised red flag or two failed checks. Missing information never holds a job back. Held-back jobs do not use the day's limit, and you can still approve one yourself.
+5. Pay, by levels; the first level with an answer wins and the levels that had none are listed ("Where I looked"):
+   1. stated in this post (salary field or description), or your own tracker estimate, labelled as yours;
+   2. the same job on another site (search hits that name the company and a similar title; a page is opened to compare skills, 60% or more in common = same job);
+   3. an earlier or similar post by the same company (your tracker, then web pages about the company);
+   4. similar roles at other companies: a market range, labelled "not this company".
+   Several figures give a range (the middle half when there are four or more) and a median. Currencies are never mixed or converted (no exchange rate is fetched); rupee figures win when present.
+6. Interview information, same idea: the post itself, this company's process on a page, typical for similar roles (labelled "not this company"). Found by rules: the sentences that best describe a process, copied from the page, with the link.
+7. "Also listed on": other sites that list the same company and role, with skills in common when the page was read. Sites that forbid automation (LinkedIn, Indeed, Glassdoor, Naukri) appear as links only: their pages are never opened and their search snippets are never used as evidence.
+
+Limits per job (cost control): at most 5 searches and `max_web_pages_per_job` pages (default 3). With 3 jobs a day that is about 15 searches a day, 450 a month, inside Tavily's free 1,000 credits.
+
+What you do: open `/apply`, read a card, follow the sources. **Approve** makes the job Shortlisted in the tracker. **Open the apply page** is a plain link; you apply yourself. **I applied** sets Applied - Pending with a follow-up in 7 days. **Skip** leaves the tracker alone and the job is not listed again.
+
+Honest limits:
+- No model reads anything in this feature, so there is no prompt-injection path and no cost, but also no understanding: pay figures come from regular expressions (tested on a table of formats, not on thousands of real pages) and can be misread; always follow the quote to the source.
+- Search quality is whatever your provider returns. A search service must be set up (`CAREERPILOT_SEARCH_PROVIDER`), otherwise only the post and your tracker are used and the card says so.
+- Not run against a live search service or real job pages yet; the tests use a fake search service and fake web. First live run: build the list with SearXNG running and read the cards critically.
+- Candidates come only from the tracker. Feeding the Discover inbox into the list is a follow-up.
+- Not built from the original design: a tailored message draft per job, the policy dry run (A06), the audit summary (A07), reply measurement (A08), recording the click on "open the apply page".
+
 ## 8. Things I changed because I was confident (2026-11-06)
 1. MCP tools renamed with a `careerpilot_` prefix; stale names in prompts and docs fixed; tests updated and extended.
 2. Two read-only MCP tools for Learn and the research inbox.

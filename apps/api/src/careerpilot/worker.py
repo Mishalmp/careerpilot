@@ -21,10 +21,12 @@ from careerpilot.core.config import Settings
 from careerpilot.core.fetcher import Fetcher
 from careerpilot.core.llm import LlmClient
 from careerpilot.core.search import SearchProvider
+from careerpilot.modules.apply import service as apply_service
 from careerpilot.modules.auth import service as auth_service
 from careerpilot.modules.digest import service as digest_service
 from careerpilot.modules.discovery import service as discovery_service
 from careerpilot.modules.discovery.adapters import AdapterError
+from careerpilot.modules.profile import service as profile_service
 from careerpilot.modules.research import service as research_service
 from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
@@ -71,7 +73,18 @@ def make_handlers(
             settings=settings,
         )
 
+    async def apply_queue(db: AsyncSession, task: Task) -> None:
+        await apply_service.build_queue(
+            db,
+            task.owner_id,
+            today=today_in(settings.timezone),
+            settings=settings,
+            search=search,
+            fetcher=fetcher,
+        )
+
     return {
+        TaskKind.APPLY_QUEUE: apply_queue,
         TaskKind.RESEARCH: research,
         TaskKind.DISCOVER: discover,
         TaskKind.DAILY_DIGEST: daily_digest,
@@ -117,6 +130,16 @@ async def schedule_due(
                     f"daily_digest:{day}",
                     {},
                     max_attempts=settings.task_max_attempts,
+                )
+        if settings.apply_enabled and local.hour >= settings.apply_hour:
+            for owner_id in await profile_service.owners_with_profile(db):
+                queued += await tasks_service.enqueue(
+                    db,
+                    owner_id,
+                    TaskKind.APPLY_QUEUE,
+                    f"apply_queue:{day}",
+                    {},
+                    max_attempts=1,  # a profile or policy problem will not fix itself
                 )
         if local.hour >= settings.backup_hour and settings.backup_key is not None:
             # One dump covers every user, so it is queued once, under the first user.

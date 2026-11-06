@@ -3,6 +3,7 @@
 from careerpilot.core.audit import AuditEvent
 from careerpilot.core.db import Base
 from careerpilot.core.llm import LlmCall
+from careerpilot.modules.apply.models import ApplyItem
 from careerpilot.modules.auth.models import AuthSession, User
 from careerpilot.modules.digest.models import Digest
 from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
@@ -39,6 +40,7 @@ from careerpilot.modules.verification.models import CompanyCheck
 
 # Importing the classes is what registers the tables; listing them keeps the import "used".
 REGISTERED_MODELS = (
+    ApplyItem,
     User,
     AuthSession,
     Company,

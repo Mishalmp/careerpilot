@@ -58,6 +58,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/apply/build": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Build
+         * @description Queues a build and returns at once; the worker does the looking-up.
+         */
+        post: operations["build_apply_queue"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apply/items/{item_id}/applied": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Applied
+         * @description You applied yourself. The job becomes Applied - Pending with a follow-up date.
+         */
+        post: operations["mark_apply_item_applied"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apply/items/{item_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve
+         * @description You read it and want to apply. The job becomes Shortlisted; nothing is sent.
+         */
+        post: operations["approve_apply_item"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apply/items/{item_id}/skip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Skip */
+        post: operations["skip_apply_item"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/apply/queue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Queue
+         * @description Today's list and the last week's, with the policy that chose it.
+         */
+        get: operations["get_apply_queue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/architecture/concepts": {
         parameters: {
             query?: never;
@@ -1624,6 +1721,20 @@ export interface components {
             /** Tokens Today */
             tokens_today: number;
         };
+        /** AlsoListed */
+        AlsoListed: {
+            /** Host */
+            host: string;
+            kind: components["schemas"]["ListingKind"];
+            /** Opened */
+            opened: boolean;
+            /** Overlap */
+            overlap: number | null;
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
         /** AnalyticsOut */
         AnalyticsOut: {
             calibration: components["schemas"]["CalibrationOut"];
@@ -1687,6 +1798,80 @@ export interface components {
             resume_version?: string | null;
             site_mode?: components["schemas"]["PortalMode"] | null;
         };
+        /** ApplyItemOut */
+        ApplyItemOut: {
+            /** Also Listed */
+            also_listed: components["schemas"]["AlsoListed"][];
+            /** Apply Url */
+            apply_url: string | null;
+            /** Company */
+            company: string;
+            company_check: components["schemas"]["CompanyCheckSummary"] | null;
+            /** Decided At */
+            decided_at: string | null;
+            /** Decision Note */
+            decision_note: string | null;
+            /** Enriched At */
+            enriched_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            interview: components["schemas"]["InterviewNotes"] | null;
+            /** Jd Url */
+            jd_url: string | null;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Location */
+            location: string | null;
+            /** Match Score */
+            match_score: number;
+            /** Notes */
+            notes: string[];
+            pay: components["schemas"]["PayEstimate"] | null;
+            /**
+             * Queued On
+             * Format: date
+             */
+            queued_on: string;
+            /** Reasons */
+            reasons: string[];
+            /** Region */
+            region: string | null;
+            status: components["schemas"]["ApplyStatus"];
+            /** Title */
+            title: string;
+            /** Tracker Status */
+            tracker_status: string;
+            /** Work Mode */
+            work_mode: string | null;
+        };
+        /** ApplyQueueOut */
+        ApplyQueueOut: {
+            /** Items */
+            items: components["schemas"]["ApplyItemOut"][];
+            /**
+             * Notice
+             * @default This list is a starting point, not a decision. Everything below says where it came from; open the sources before you apply. CareerPilot never submits an application for you.
+             */
+            notice: string;
+            policy: components["schemas"]["Policy"];
+            /** Policy Problems */
+            policy_problems: string[];
+            /** Policy Source */
+            policy_source: string;
+            /** Ready Count */
+            ready_count: number;
+        };
+        /**
+         * ApplyStatus
+         * @enum {string}
+         */
+        ApplyStatus: "ready" | "approved" | "applied" | "skipped" | "blocked";
         /**
          * AskOut
          * @description `mode` says what happened:
@@ -1740,6 +1925,11 @@ export interface components {
             tips: components["schemas"]["ItemOut"][];
             /** Topics */
             topics: components["schemas"]["IntelTopicOut"][];
+        };
+        /** BuildOut */
+        BuildOut: {
+            /** Queued */
+            queued: boolean;
         };
         /** CalibrationGroupOut */
         CalibrationGroupOut: {
@@ -1881,6 +2071,19 @@ export interface components {
             hit: components["schemas"]["HitOut"];
             /** Number */
             number: number;
+        };
+        /** CompanyCheckSummary */
+        CompanyCheckSummary: {
+            /** Flags */
+            flags: string[];
+            /** Note */
+            note: string;
+            /** Passed */
+            passed: number;
+            /** Total */
+            total: number;
+            /** Verdict */
+            verdict: string;
         };
         /** CompanyOut */
         CompanyOut: {
@@ -2078,6 +2281,11 @@ export interface components {
             /** Notes */
             notes?: string | null;
             status?: components["schemas"]["DayStatus"] | null;
+        };
+        /** DecisionIn */
+        DecisionIn: {
+            /** Note */
+            note?: string | null;
         };
         /** Diagram */
         Diagram: {
@@ -2321,6 +2529,18 @@ export interface components {
          * @enum {string}
          */
         EventType: "created" | "status_changed" | "reopened";
+        /**
+         * EvidenceLink
+         * @description One thing that was found, with the page it came from and the words it was read from.
+         */
+        EvidenceLink: {
+            /** Quote */
+            quote: string;
+            /** Title */
+            title: string;
+            /** Url */
+            url: string | null;
+        };
         /** ExtractOut */
         ExtractOut: {
             /** Dropped */
@@ -2558,6 +2778,21 @@ export interface components {
             reliability: number;
             /** Sources */
             sources: number;
+        };
+        /**
+         * InterviewLevel
+         * @enum {string}
+         */
+        InterviewLevel: "posted" | "this_company" | "similar_roles";
+        /** InterviewNotes */
+        InterviewNotes: {
+            /** Label */
+            label: string;
+            level: components["schemas"]["InterviewLevel"] | null;
+            /** Points */
+            points: components["schemas"]["EvidenceLink"][];
+            /** Tried */
+            tried: components["schemas"]["TriedStep"][];
         };
         /**
          * ItemKind
@@ -3275,6 +3510,11 @@ export interface components {
             /** Words */
             words: number;
         };
+        /**
+         * ListingKind
+         * @enum {string}
+         */
+        ListingKind: "same_job" | "similar_role";
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -3488,6 +3728,32 @@ export interface components {
          * @enum {string}
          */
         OutreachStatus: "draft" | "approved" | "sent" | "rejected";
+        /** PayEstimate */
+        PayEstimate: {
+            /** Currency */
+            currency: string | null;
+            /** Evidence */
+            evidence: components["schemas"]["EvidenceLink"][];
+            /** High */
+            high: number | null;
+            /** Label */
+            label: string;
+            level: components["schemas"]["PayLevel"] | null;
+            /** Low */
+            low: number | null;
+            /** Mid */
+            mid: number | null;
+            /** N */
+            n: number;
+            /** Tried */
+            tried: components["schemas"]["TriedStep"][];
+        };
+        /**
+         * PayLevel
+         * @description Where a pay figure came from, best evidence first.
+         * @enum {string}
+         */
+        PayLevel: "posted" | "same_job_elsewhere" | "previous_post" | "similar_roles";
         /** PeerOut */
         PeerOut: {
             /** Name */
@@ -3522,6 +3788,54 @@ export interface components {
              * Format: date
              */
             start_date: string;
+        };
+        /** Policy */
+        Policy: {
+            /**
+             * Block If Company Suspicious
+             * @default true
+             */
+            block_if_company_suspicious: boolean;
+            /**
+             * Daily Limit
+             * @default 3
+             */
+            daily_limit: number;
+            /**
+             * Enrich With Web
+             * @default true
+             */
+            enrich_with_web: boolean;
+            /**
+             * Max Web Pages Per Job
+             * @default 3
+             */
+            max_web_pages_per_job: number;
+            /**
+             * Min Match Score
+             * @default 40
+             */
+            min_match_score: number;
+            /**
+             * Regions
+             * @default []
+             */
+            regions: string[];
+            /**
+             * Require Apply Link
+             * @default true
+             */
+            require_apply_link: boolean;
+            /**
+             * Skip Companies
+             * @default []
+             */
+            skip_companies: string[];
+            /**
+             * Work Modes
+             * @default []
+             */
+            work_modes: ("Remote" | "Hybrid" | "Onsite")[];
         };
         /**
          * Portal
@@ -4160,7 +4474,7 @@ export interface components {
          * TaskKind
          * @enum {string}
          */
-        TaskKind: "discover" | "daily_digest" | "backup" | "research";
+        TaskKind: "discover" | "daily_digest" | "backup" | "research" | "apply_queue";
         /** TaskList */
         TaskList: {
             counts: components["schemas"]["TaskCounts"];
@@ -4281,6 +4595,18 @@ export interface components {
             /** Notes */
             notes?: string | null;
             status?: components["schemas"]["TopicStatus"] | null;
+        };
+        /**
+         * TriedStep
+         * @description A place that was looked at, whether or not it had an answer. Nothing is hidden.
+         */
+        TriedStep: {
+            /** Found */
+            found: boolean;
+            /** Label */
+            label: string;
+            /** Note */
+            note: string;
         };
         /** UserOut */
         UserOut: {
@@ -4487,6 +4813,179 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    build_apply_queue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_apply_item_applied: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_apply_item: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    skip_apply_item: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_apply_queue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyQueueOut"];
                 };
             };
             /** @description Validation Error */

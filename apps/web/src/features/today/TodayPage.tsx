@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen, Briefcase, CalendarClock, Inbox, Plus } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, CalendarClock, ClipboardCheck, Inbox, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
+import { useApplyQueue } from "@/features/apply/hooks";
 import { useLearnStats } from "@/features/learn/hooks";
 import { useFindings } from "@/features/learn/researchHooks";
 import { useUpdateDay } from "@/features/prep/hooks";
@@ -36,6 +37,7 @@ export function TodayPage() {
   const today = useTodayData();
   const learn = useLearnStats();
   const inbox = useFindings(1);
+  const apply = useApplyQueue(false);
 
   if (today.isPending) {
     return (
@@ -93,6 +95,15 @@ export function TodayPage() {
           />
         </Link>
       </div>
+
+      <Link href="/apply" className="block rounded-lg focus-visible:outline-offset-2">
+        <Stat
+          label="Jobs ready to review"
+          value={apply.data ? apply.data.ready_count : "-"}
+          icon={ClipboardCheck}
+          hint={apply.data && apply.data.ready_count > 0 ? "Pay, interview and company details are waiting for you" : "Build today’s list on the Apply page"}
+        />
+      </Link>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

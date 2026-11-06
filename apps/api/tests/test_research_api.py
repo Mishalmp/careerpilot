@@ -10,10 +10,8 @@ from typing import Any
 from fastapi import FastAPI
 from httpx import AsyncClient
 
-from careerpilot.core.search import SearchError, SearchHit
-from careerpilot.modules.tasks import service as tasks
-from careerpilot.worker import make_handlers
-from tests.fakes import FakeLlm, FakeWeb
+from careerpilot.core.search import SearchHit
+from tests.fakes import FakeLlm, FakeSearch, FakeWeb, run_worker
 
 BASE = "/api/v1/research"
 PAGE_A = (
@@ -24,23 +22,6 @@ PAGE_A = (
 PAGE_B = (
     "How do you design a cache invalidation strategy? Know the trade-offs of write-through caching."
 )
-
-
-class FakeSearch:
-    name = "fake"
-
-    def __init__(
-        self, hits: list[SearchHit] | None = None, *, fail_after: int | None = None
-    ) -> None:
-        self.hits = hits if hits is not None else []
-        self.fail_after = fail_after
-        self.queries: list[str] = []
-
-    async def search(self, query: str, limit: int) -> list[SearchHit]:
-        if self.fail_after is not None and len(self.queries) >= self.fail_after:
-            raise SearchError("The search service could not be reached.")
-        self.queries.append(query)
-        return list(self.hits)
 
 
 def hits() -> list[SearchHit]:
@@ -112,13 +93,6 @@ def setup(
     app.state.search = search
     app.state.llm = llm
     app.state.fetcher = FakeWeb(pages or {}).fetcher()
-
-
-async def run_worker(app: FastAPI) -> bool:
-    handlers = make_handlers(
-        app.state.fetcher, app.state.settings, llm=app.state.llm, search=app.state.search
-    )
-    return await tasks.run_next(app.state.sessionmaker, handlers)
 
 
 async def start(api: AsyncClient, job_id: str) -> dict[str, Any]:

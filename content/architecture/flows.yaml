@@ -173,3 +173,29 @@ flows:
         to: db
         label: "Store findings in your inbox"
         detail: "Nothing enters your question bank until you approve it."
+
+  - id: apply-queue
+    title: "The daily apply list"
+    summary: "How a few jobs a day are chosen and researched, and why nothing is applied for without you."
+    status: built
+    proof: [apps/api/tests/test_apply_enrich.py, apps/api/tests/test_apply_rules.py, apps/api/tests/test_apply_api.py]
+    steps:
+      - from: worker
+        to: db
+        label: "Choose jobs from your tracker"
+        detail: "Jobs still New or Shortlisted, filtered by your apply policy file and scored against your CV profile."
+      - from: worker
+        to: sites
+        label: "Check the company"
+        detail: "The company checks run through the safe fetcher. A red flag or two failed checks hold the job back, and it is shown with the reason."
+      - from: worker
+        to: search
+        label: "Look for pay and interview information"
+        detail: "In order: the post, the same job on another site, an earlier or similar post by the company, similar roles elsewhere. Each answer keeps its level, source and the words it came from. Sites that forbid automation are never opened."
+        failure:
+          label: "The search service is down or not set up"
+          detail: "The list is still built from the post and your tracker, and says the web was not searched."
+      - from: browser
+        to: api
+        label: "You read the list and press Approve"
+        detail: "The job becomes Shortlisted. You open the apply page yourself and press I applied afterwards."

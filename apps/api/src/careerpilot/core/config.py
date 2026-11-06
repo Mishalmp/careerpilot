@@ -67,6 +67,9 @@ class Settings(BaseSettings):
     worker_poll_seconds: int = Field(default=30, ge=1)
     discovery_hour: int = Field(default=7, ge=0, le=23)  # local time, once a day
     digest_hour: int = Field(default=8, ge=0, le=23)
+    # The daily apply list is built once the local hour has come, for users who have a CV profile.
+    apply_enabled: bool = True
+    apply_hour: int = Field(default=9, ge=0, le=23)
     task_max_attempts: int = Field(default=3, ge=1, le=10)
     task_stuck_minutes: int = Field(default=15, ge=1)
 

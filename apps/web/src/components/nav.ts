@@ -3,6 +3,7 @@ import {
   BookOpen,
   Briefcase,
   CalendarCheck,
+  ClipboardCheck,
   Code2,
   GraduationCap,
   Compass,
@@ -28,6 +29,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/", label: "Today", icon: CalendarCheck },
       { href: "/jobs", label: "Jobs", icon: Briefcase },
       { href: "/discover", label: "Discover", icon: Compass },
+      { href: "/apply", label: "Apply list", icon: ClipboardCheck },
     ],
   },
   {

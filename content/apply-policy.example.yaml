@@ -1,0 +1,13 @@
+# How the daily apply list is chosen. Copy this file to content/private/apply-policy.yaml to make it
+# yours (that file is never committed). Change any value and the next list follows it.
+# There is no "auto submit" setting on purpose: the app prepares and you apply.
+
+daily_limit: 3                  # how many jobs appear in the list each day (1 to 10)
+min_match_score: 40             # 0-100 from your CV skills, role titles and freshness
+regions: []                     # for example [India, "Remote (Global)"]; empty means any
+work_modes: []                  # for example [Remote, Hybrid]; empty means any
+skip_companies: []              # company names you never want to see
+require_apply_link: true        # jobs without an apply link cannot be one click away
+block_if_company_suspicious: true   # hold a job back (shown with the reason) on a red flag or two failed checks
+enrich_with_web: true           # look for the same post elsewhere, pay and interview information
+max_web_pages_per_job: 3        # how many other pages to read per job (0 to 6)
