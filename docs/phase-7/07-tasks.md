@@ -184,20 +184,20 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## R: research agent (spec in `03`, section 3)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | R01 | `SearchProvider` interface, Fake and Brave implementations, quota and cost tracking | Q02 | M | Provider swap by setting |
-| [ ] | R02 | Query planner from job title, company and JD skills (templates first; optional model); blocked domains removed | R01 | M | Snapshot tests |
+| [~] | R01 | `SearchProvider` interface, Fake and Brave implementations, quota and cost tracking | Q02 | M | Provider swap by setting |
+| [x] | R02 | Query planner from job title, company and JD skills (templates first; optional model); blocked domains removed | R01 | M | Snapshot tests |
 | [ ] | R03 | Fetch pipeline additions: robots.txt respect, per-host rate limit, page cache with TTL | none | L | Blocked by robots (test); cache hit tested |
 | [ ] | R04 | Main-content extraction to cut tokens | R03 | M | Fixture pages reduced with key facts kept |
-| [ ] | R05 | Parallel extraction workers with bounded concurrency; quote verification; findings stored | R04, E03 | L | Fabricated quote rejected |
-| [ ] | R06 | Evaluator step: relevance and specificity score per finding; code sets thresholds | R05 | M | Low-value findings flagged |
-| [ ] | R07 | Budgets per run (searches, pages, tokens, seconds) enforced and reported | R05 | M | Run stops at limits (test) |
-| [ ] | R08 | Run orchestration as a task with progress events; idempotent per job and version; resumable | B04, B05 | M | Kill and resume test |
-| [ ] | R09 | Inbox API: list grouped, approve, edit, reject, bulk approve; approval creates topics and questions | R06, L10 | M | Owner scoping tests |
+| [~] | R05 | Parallel extraction workers with bounded concurrency; quote verification; findings stored | R04, E03 | L | Fabricated quote rejected |
+| [~] | R06 | Evaluator step: relevance and specificity score per finding; code sets thresholds | R05 | M | Low-value findings flagged |
+| [~] | R07 | Budgets per run (searches, pages, tokens, seconds) enforced and reported | R05 | M | Run stops at limits (test) |
+| [~] | R08 | Run orchestration as a task with progress events; idempotent per job and version; resumable | B04, B05 | M | Kill and resume test |
+| [x] | R09 | Inbox API: list grouped, approve, edit, reject, bulk approve; approval creates topics and questions | R06, L10 | M | Owner scoping tests |
 | [ ] | R10 | Triggers: ask when a job is added; manual button; stale refresh after 30 days | R08 | S | Opt-in respected |
-| [ ] | R11 | Provenance shown for every item ("why am I seeing this") | R09 | S | Source, date, reliability in API |
-| [ ] | R12 | Failure matrix implemented (provider down, quota, zero results, paywall, injection, budget) with user messages | R08 | M | One test per row of the matrix in `05` |
-| [ ] | R13 | Adversarial page corpus for prompt injection; tests that nothing leaks or acts | R05 | M | All corpus pages neutralised |
-| [ ] | R14 | Content rules: store link, short quote and paraphrase only; blocked sites list kept | R05 | S | Test: long quote truncated |
+| [~] | R11 | Provenance shown for every item ("why am I seeing this") | R09 | S | Source, date, reliability in API |
+| [~] | R12 | Failure matrix implemented (provider down, quota, zero results, paywall, injection, budget) with user messages | R08 | M | One test per row of the matrix in `05` |
+| [~] | R13 | Adversarial page corpus for prompt injection; tests that nothing leaks or acts | R05 | M | All corpus pages neutralised |
+| [x] | R14 | Content rules: store link, short quote and paraphrase only; blocked sites list kept | R05 | S | Test: long quote truncated |
 | [ ] | R15 | Research quality eval: 10 sample roles with expected topics; recall metric | R05, E04 | L | Baseline recorded |
 | [ ] | R16 | CV-driven profile: paste/upload CV text, extract skills, years, role titles and seniority (code first, optional model), owner edits, saved to the profile (REQ-28); role titles feed R02 queries and the roadmap | B03, E04 | L | Fixture CVs give expected skills and titles; no hard-coded role list |
 | [ ] | R17 | Spike: prove SearXNG JSON search works from the fetcher with limiter settings; record the working `settings.yml`/`limiter.toml`; decide default provider | R01 | M | Spike note in ADR 0013; 20 queries return results |

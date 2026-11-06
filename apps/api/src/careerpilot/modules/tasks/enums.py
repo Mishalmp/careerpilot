@@ -5,6 +5,7 @@ class TaskKind(StrEnum):
     DISCOVER = "discover"
     DAILY_DIGEST = "daily_digest"
     BACKUP = "backup"
+    RESEARCH = "research"
 
 
 class TaskStatus(StrEnum):

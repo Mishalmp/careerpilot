@@ -1243,6 +1243,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/research/findings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Findings */
+        get: operations["list_research_findings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research/findings/{finding_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve */
+        post: operations["approve_research_finding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research/findings/{finding_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject */
+        post: operations["reject_research_finding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Runs */
+        get: operations["list_research_runs"];
+        put?: never;
+        /**
+         * Start Run
+         * @description Queues a run and returns at once; the work happens in the background.
+         */
+        post: operations["start_research_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Run */
+        get: operations["get_research_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stories": {
         parameters: {
             query?: never;
@@ -1463,6 +1552,19 @@ export interface components {
             /** Resume Version */
             resume_version?: string | null;
             site_mode?: components["schemas"]["PortalMode"] | null;
+        };
+        /**
+         * Approved
+         * @description What an approval created in the learning area.
+         */
+        Approved: {
+            /** Question Id */
+            question_id: string | null;
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
         };
         /**
          * AskOut
@@ -2095,6 +2197,55 @@ export interface components {
             /** Text */
             text: string;
         };
+        /**
+         * FindingKind
+         * @enum {string}
+         */
+        FindingKind: "topic" | "question";
+        /** FindingOut */
+        FindingOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["FindingKind"];
+            /** Quote */
+            quote: string;
+            /** Relevance */
+            relevance: number;
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Source Title */
+            source_title: string | null;
+            /** Source Url */
+            source_url: string;
+            status: components["schemas"]["FindingStatus"];
+            /** Text */
+            text: string;
+            /** Topic */
+            topic: string;
+        };
+        /** FindingPage */
+        FindingPage: {
+            /** Items */
+            items: components["schemas"]["FindingOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * FindingStatus
+         * @enum {string}
+         */
+        FindingStatus: "pending" | "approved" | "rejected";
         /** Flow */
         Flow: {
             /** Id */
@@ -3290,15 +3441,19 @@ export interface components {
             /** Requeued */
             requeued: number;
         };
-        /** RunOut */
-        RunOut: {
-            /** Kept */
-            kept: number;
-            /** Listed */
-            listed: number;
-            /** New */
-            new: number;
+        /** RunStart */
+        RunStart: {
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
         };
+        /**
+         * RunStatus
+         * @enum {string}
+         */
+        RunStatus: "queued" | "running" | "succeeded" | "partial" | "failed";
         /** ScoreOut */
         ScoreOut: {
             /** Blockers */
@@ -3608,7 +3763,7 @@ export interface components {
          * TaskKind
          * @enum {string}
          */
-        TaskKind: "discover" | "daily_digest" | "backup";
+        TaskKind: "discover" | "daily_digest" | "backup" | "research";
         /** TaskList */
         TaskList: {
             counts: components["schemas"]["TaskCounts"];
@@ -3800,6 +3955,15 @@ export interface components {
             csrf_token: string;
             user: components["schemas"]["UserOut"];
         };
+        /** RunOut */
+        careerpilot__modules__discovery__schemas__RunOut: {
+            /** Kept */
+            kept: number;
+            /** Listed */
+            listed: number;
+            /** New */
+            new: number;
+        };
         /** SessionOut */
         careerpilot__modules__prep__schemas__SessionOut: {
             /**
@@ -3822,6 +3986,44 @@ export interface components {
              * Format: uuid
              */
             topic_id: string;
+        };
+        /** RunOut */
+        careerpilot__modules__research__schemas__RunOut: {
+            /** Budgets */
+            budgets: {
+                [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Job Id
+             * Format: uuid
+             */
+            job_id: string;
+            /** Message */
+            message: string | null;
+            /**
+             * Pending Findings
+             * @default 0
+             */
+            pending_findings: number;
+            /** Queries */
+            queries: string[];
+            status: components["schemas"]["RunStatus"];
+            /** Usage */
+            usage: {
+                [key: string]: unknown;
+            };
         };
     };
     responses: never;
@@ -4500,7 +4702,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RunOut"];
+                    "application/json": components["schemas"]["careerpilot__modules__discovery__schemas__RunOut"];
                 };
             };
             /** @description Validation Error */
@@ -6768,6 +6970,208 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["careerpilot__modules__prep__schemas__SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_research_findings: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["FindingStatus"];
+                run_id?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FindingPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_research_finding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                finding_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Approved"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_research_finding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                finding_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_research_runs: {
+        parameters: {
+            query?: {
+                job_id?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_research_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunStart"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_research_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["careerpilot__modules__research__schemas__RunOut"];
                 };
             };
             /** @description Validation Error */

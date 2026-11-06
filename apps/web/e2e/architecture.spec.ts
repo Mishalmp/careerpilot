@@ -23,7 +23,6 @@ test.describe("architecture explorer", () => {
     await page.getByRole("button", { name: "List" }).click();
     await expect(page.getByText("Uses:").first()).toBeVisible();
     await expect(page.getByRole("button", { name: /Search provider/ })).toBeVisible();
-    await expect(page.getByText("Planned").first()).toBeVisible();
   });
 
   test("the modules diagram lists every backend module", async ({ page }) => {
@@ -50,10 +49,13 @@ test.describe("architecture explorer", () => {
     await expect(page.getByText(/Step \d of 4/)).toBeVisible();
   });
 
-  test("planned flows are labelled as not built", async ({ page }) => {
+  test("the research flow is shown as built, with its failure branches", async ({ page }) => {
     await page.getByRole("tab", { name: /Flows/ }).click();
     await page.getByRole("tab", { name: /Research interview topics/ }).click();
-    await expect(page.getByText("Planned, not built yet")).toBeVisible();
+    await expect(page.getByText("Planned, not built yet")).toHaveCount(0);
+    await page.getByRole("button", { name: "Next" }).click();
+    await page.getByRole("button", { name: "What if this fails?" }).click();
+    await expect(page.getByText(/search provider is down/i)).toBeVisible();
   });
 
   test("concepts can be searched and opened, with proof and related links", async ({ page }) => {

@@ -150,6 +150,26 @@ async def create_topic(
     return _topic_out(topic, 0, None)
 
 
+async def ensure_topic(
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    title: str,
+    origin: TopicOrigin,
+    summary: str | None = None,
+) -> LearnTopic:
+    """The owner's topic with this title (any case), created if missing. Does not commit: the
+    caller commits, so a topic and whatever depends on it are saved together."""
+    clean = " ".join(title.split())[:200]
+    existing = await repository.find_topic_by_title(db, owner_id, clean)
+    if existing is not None:
+        if existing.archived:
+            existing.archived = False  # approving something for an archived topic brings it back
+        return existing
+    topic = repository.add_topic(db, owner_id, title=clean, summary=summary, origin=origin)
+    await db.flush()
+    return topic
+
+
 async def update_topic(
     db: AsyncSession,
     owner_id: uuid.UUID,

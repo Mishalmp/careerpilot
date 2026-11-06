@@ -70,7 +70,16 @@ class Settings(BaseSettings):
     # Name of the Docker container running Postgres: run the tools inside it (right version).
     pg_container: str | None = None
 
-    @field_validator("anthropic_api_key", "backup_key", mode="before")
+    # Research agent: which search service to use and how much one run may spend.
+    # "searxng" (free, self-hosted; set searxng_url) or "brave" (needs brave_api_key), else "none".
+    search_provider: Literal["none", "searxng", "brave"] = "none"
+    searxng_url: str | None = None
+    brave_api_key: SecretStr | None = None
+    research_max_searches: int = Field(default=10, ge=1, le=30)
+    research_max_pages: int = Field(default=12, ge=1, le=40)
+    research_max_tokens: int = Field(default=80_000, ge=1000)
+
+    @field_validator("anthropic_api_key", "backup_key", "brave_api_key", mode="before")
     @classmethod
     def _blank_key_means_none(cls, value: object) -> object:
         return None if isinstance(value, str) and not value.strip() else value

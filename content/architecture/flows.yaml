@@ -143,15 +143,15 @@ flows:
 
   - id: research-run
     title: "Research interview topics for a job"
-    summary: "How the platform will find topics and questions for a new job. Planned."
-    status: planned
-    proof: []
+    summary: "How the platform finds topics and questions for a job, under budgets, and waits for your approval."
+    status: built
+    proof: [apps/api/tests/test_research_api.py, apps/api/tests/test_research_rules.py]
     steps:
       - from: browser
         to: api
         label: "Add a job, choose \"Research this job\""
         detail: "Returns at once with a task id; the work happens in the background."
-      - from: api
+      - from: worker
         to: search
         label: "Plan queries and search"
         detail: "Up to eight queries made from the role, company and skills; blocked sites are removed."

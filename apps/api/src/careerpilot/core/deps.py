@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from careerpilot.core.config import Settings
 from careerpilot.core.fetcher import Fetcher
 from careerpilot.core.llm import LlmClient
+from careerpilot.core.search import SearchProvider
 
 
 async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
@@ -23,6 +24,11 @@ def get_llm(request: Request) -> LlmClient | None:
     return request.app.state.llm
 
 
+def get_search(request: Request) -> SearchProvider | None:
+    """None when no search service is configured."""
+    return request.app.state.search
+
+
 def get_fetcher(request: Request) -> Fetcher:
     return request.app.state.fetcher
 
@@ -31,3 +37,4 @@ DbSession = Annotated[AsyncSession, Depends(get_session)]
 AppSettings = Annotated[Settings, Depends(get_app_settings)]
 AppLlm = Annotated[LlmClient | None, Depends(get_llm)]
 AppFetcher = Annotated[Fetcher, Depends(get_fetcher)]
+AppSearch = Annotated[SearchProvider | None, Depends(get_search)]

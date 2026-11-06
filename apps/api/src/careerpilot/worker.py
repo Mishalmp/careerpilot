@@ -19,10 +19,13 @@ from careerpilot.core.backup import BackupError, backup_tools, create_backup, pr
 from careerpilot.core.clock import today_in
 from careerpilot.core.config import Settings
 from careerpilot.core.fetcher import Fetcher
+from careerpilot.core.llm import LlmClient
+from careerpilot.core.search import SearchProvider
 from careerpilot.modules.auth import service as auth_service
 from careerpilot.modules.digest import service as digest_service
 from careerpilot.modules.discovery import service as discovery_service
 from careerpilot.modules.discovery.adapters import AdapterError
+from careerpilot.modules.research import service as research_service
 from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
 from careerpilot.modules.tasks.models import Task
@@ -31,7 +34,13 @@ from careerpilot.modules.tasks.service import Handler, TaskFailure
 log = structlog.get_logger()
 
 
-def make_handlers(fetcher: Fetcher, settings: Settings) -> Mapping[TaskKind, Handler]:
+def make_handlers(
+    fetcher: Fetcher,
+    settings: Settings,
+    *,
+    llm: LlmClient | None = None,
+    search: SearchProvider | None = None,
+) -> Mapping[TaskKind, Handler]:
     async def discover(db: AsyncSession, task: Task) -> None:
         try:
             await discovery_service.run_source(
@@ -51,7 +60,19 @@ def make_handlers(fetcher: Fetcher, settings: Settings) -> Mapping[TaskKind, Han
         except BackupError as exc:
             raise TaskFailure(str(exc)) from exc
 
+    async def research(db: AsyncSession, task: Task) -> None:
+        await research_service.execute(
+            db,
+            task.owner_id,
+            uuid.UUID(task.payload["run_id"]),
+            provider=search,
+            fetcher=fetcher,
+            llm=llm,
+            settings=settings,
+        )
+
     return {
+        TaskKind.RESEARCH: research,
         TaskKind.DISCOVER: discover,
         TaskKind.DAILY_DIGEST: daily_digest,
         TaskKind.BACKUP: backup,
@@ -132,8 +153,11 @@ async def worker_loop(
     fetcher: Fetcher,
     settings: Settings,
     stop: asyncio.Event,
+    *,
+    llm: LlmClient | None = None,
+    search: SearchProvider | None = None,
 ) -> None:
-    handlers = make_handlers(fetcher, settings)
+    handlers = make_handlers(fetcher, settings, llm=llm, search=search)
     log.info("worker_started", poll_seconds=settings.worker_poll_seconds)
     while not stop.is_set():
         try:

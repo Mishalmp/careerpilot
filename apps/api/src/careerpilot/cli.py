@@ -148,6 +148,8 @@ def _worker(_: argparse.Namespace) -> int:
     from careerpilot.core.config import get_settings
     from careerpilot.core.db import create_engine, create_sessionmaker
     from careerpilot.core.fetcher import Fetcher
+    from careerpilot.core.llm import make_llm
+    from careerpilot.core.search import make_search
     from careerpilot.worker import worker_loop
 
     async def run() -> None:
@@ -159,7 +161,14 @@ def _worker(_: argparse.Namespace) -> int:
             if hasattr(signal, name):
                 loop.add_signal_handler(getattr(signal, name), stop.set)
         try:
-            await worker_loop(create_sessionmaker(engine), Fetcher(), settings, stop)
+            await worker_loop(
+                create_sessionmaker(engine),
+                Fetcher(),
+                settings,
+                stop,
+                llm=make_llm(settings),
+                search=make_search(settings),
+            )
         finally:
             await engine.dispose()
 
