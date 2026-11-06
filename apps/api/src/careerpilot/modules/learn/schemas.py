@@ -208,3 +208,81 @@ class LearnStats(BaseModel):
     new_today_left: int
     answered_today: int
     streak_days: int
+
+
+# --- checkpoints ---
+
+
+class LearnCheckpointCreate(BaseModel):
+    topic_ids: Annotated[list[uuid.UUID], Field(max_length=100)] = []  # empty = every topic
+    size: Annotated[int, Field(ge=1, le=50)] = 10
+    minutes: Annotated[int, Field(ge=1, le=240)] | None = None  # default 1.5 minutes a question
+    pass_mark: Annotated[float, Field(ge=0.5, le=1)] = 0.8
+    seed: int | None = None  # for a repeatable exam; random when left out
+
+
+class LearnCheckpointSave(BaseModel):
+    """Autosave for one question. Only what you send changes."""
+
+    selected: Annotated[list[int], Field(max_length=5)] | None = None
+    flagged: bool | None = None
+
+
+class LearnCheckpointQuestion(BaseModel):
+    type: QuestionType
+    stem: str
+    topic_title: str
+    options: list[LearnPublicOption]
+
+
+class LearnCheckpointResult(BaseModel):
+    """Shown only after submitting."""
+
+    correct: bool
+    score: float
+    correct_positions: list[int]
+    explanation: str | None
+    options: list[LearnOptionOut]
+    sources: list[LearnSourceOut]
+
+
+class LearnCheckpointItemOut(BaseModel):
+    position: int
+    question: LearnCheckpointQuestion
+    selected: list[int] | None
+    flagged: bool
+    result: LearnCheckpointResult | None = None
+
+
+class LearnTopicScore(BaseModel):
+    topic: str
+    correct: int
+    total: int
+    score: float
+
+
+class LearnCheckpointOut(BaseModel):
+    id: uuid.UUID
+    status: str  # in_progress or submitted
+    size: int
+    minutes: int
+    pass_mark: float
+    started_at: datetime
+    deadline: datetime
+    seconds_left: int | None
+    submitted_at: datetime | None
+    expired: bool
+    score: float | None
+    passed: bool | None
+    notes: list[str]
+    per_topic: list[LearnTopicScore] | None
+    items: list[LearnCheckpointItemOut]
+
+
+class LearnCheckpointSummary(BaseModel):
+    id: uuid.UUID
+    status: str
+    size: int
+    started_at: datetime
+    score: float | None
+    passed: bool | None

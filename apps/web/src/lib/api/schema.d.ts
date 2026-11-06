@@ -738,6 +738,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/learn/checkpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Checkpoints */
+        get: operations["list_learn_checkpoints"];
+        put?: never;
+        /** Create Checkpoint */
+        post: operations["create_learn_checkpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/checkpoints/{checkpoint_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Checkpoint */
+        get: operations["get_learn_checkpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/checkpoints/{checkpoint_id}/items/{position}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Checkpoint Item */
+        put: operations["save_learn_checkpoint_item"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/checkpoints/{checkpoint_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Checkpoint */
+        post: operations["submit_learn_checkpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/learn/questions": {
         parameters: {
             query?: never;
@@ -2686,6 +2755,140 @@ export interface components {
             /** Sources */
             sources: components["schemas"]["LearnSourceOut"][];
         };
+        /** LearnCheckpointCreate */
+        LearnCheckpointCreate: {
+            /** Minutes */
+            minutes?: number | null;
+            /**
+             * Pass Mark
+             * @default 0.8
+             */
+            pass_mark: number;
+            /** Seed */
+            seed?: number | null;
+            /**
+             * Size
+             * @default 10
+             */
+            size: number;
+            /**
+             * Topic Ids
+             * @default []
+             */
+            topic_ids: string[];
+        };
+        /** LearnCheckpointItemOut */
+        LearnCheckpointItemOut: {
+            /** Flagged */
+            flagged: boolean;
+            /** Position */
+            position: number;
+            question: components["schemas"]["LearnCheckpointQuestion"];
+            result?: components["schemas"]["LearnCheckpointResult"] | null;
+            /** Selected */
+            selected: number[] | null;
+        };
+        /** LearnCheckpointOut */
+        LearnCheckpointOut: {
+            /**
+             * Deadline
+             * Format: date-time
+             */
+            deadline: string;
+            /** Expired */
+            expired: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Items */
+            items: components["schemas"]["LearnCheckpointItemOut"][];
+            /** Minutes */
+            minutes: number;
+            /** Notes */
+            notes: string[];
+            /** Pass Mark */
+            pass_mark: number;
+            /** Passed */
+            passed: boolean | null;
+            /** Per Topic */
+            per_topic: components["schemas"]["LearnTopicScore"][] | null;
+            /** Score */
+            score: number | null;
+            /** Seconds Left */
+            seconds_left: number | null;
+            /** Size */
+            size: number;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Status */
+            status: string;
+            /** Submitted At */
+            submitted_at: string | null;
+        };
+        /** LearnCheckpointQuestion */
+        LearnCheckpointQuestion: {
+            /** Options */
+            options: components["schemas"]["LearnPublicOption"][];
+            /** Stem */
+            stem: string;
+            /** Topic Title */
+            topic_title: string;
+            type: components["schemas"]["QuestionType"];
+        };
+        /**
+         * LearnCheckpointResult
+         * @description Shown only after submitting.
+         */
+        LearnCheckpointResult: {
+            /** Correct */
+            correct: boolean;
+            /** Correct Positions */
+            correct_positions: number[];
+            /** Explanation */
+            explanation: string | null;
+            /** Options */
+            options: components["schemas"]["LearnOptionOut"][];
+            /** Score */
+            score: number;
+            /** Sources */
+            sources: components["schemas"]["LearnSourceOut"][];
+        };
+        /**
+         * LearnCheckpointSave
+         * @description Autosave for one question. Only what you send changes.
+         */
+        LearnCheckpointSave: {
+            /** Flagged */
+            flagged?: boolean | null;
+            /** Selected */
+            selected?: number[] | null;
+        };
+        /** LearnCheckpointSummary */
+        LearnCheckpointSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Passed */
+            passed: boolean | null;
+            /** Score */
+            score: number | null;
+            /** Size */
+            size: number;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Status */
+            status: string;
+        };
         /** LearnOptionIn */
         LearnOptionIn: {
             /** Is Correct */
@@ -2943,6 +3146,17 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+        };
+        /** LearnTopicScore */
+        LearnTopicScore: {
+            /** Correct */
+            correct: number;
+            /** Score */
+            score: number;
+            /** Topic */
+            topic: string;
+            /** Total */
+            total: number;
         };
         /**
          * LearnTopicStatus
@@ -5643,6 +5857,178 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_learn_checkpoints: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnCheckpointSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_learn_checkpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnCheckpointCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnCheckpointOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learn_checkpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                checkpoint_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnCheckpointOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_learn_checkpoint_item: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                checkpoint_id: string;
+                position: number;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnCheckpointSave"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnCheckpointOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_learn_checkpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                checkpoint_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnCheckpointOut"];
                 };
             };
             /** @description Validation Error */

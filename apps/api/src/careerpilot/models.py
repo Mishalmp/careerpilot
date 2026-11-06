@@ -10,6 +10,8 @@ from careerpilot.modules.intel.models import IntelItem, IntelSource
 from careerpilot.modules.knowledge.models import Chunk, Document
 from careerpilot.modules.learn.models import (
     LearnAttempt,
+    LearnCheckpoint,
+    LearnCheckpointItem,
     LearnOption,
     LearnQuestion,
     LearnReviewCard,
@@ -65,6 +67,8 @@ REGISTERED_MODELS = (
     LearnSource,
     LearnAttempt,
     LearnReviewCard,
+    LearnCheckpoint,
+    LearnCheckpointItem,
     ResearchRun,
     ResearchFinding,
     Submission,

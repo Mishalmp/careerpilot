@@ -4,16 +4,20 @@ Services own the transaction. The answer flow is idempotent: the client sends a 
 answer, and sending the same token again returns the stored result instead of scoring twice.
 """
 
+import math
+import secrets
 import statistics
 import uuid
 from collections import defaultdict
 from datetime import UTC, date, datetime, timedelta
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.core.errors import ProblemError
+from careerpilot.modules.learn import checkpoint as checkpoint_builder
 from careerpilot.modules.learn import repository, rules, scheduler
 from careerpilot.modules.learn.enums import (
     AUTO_GRADED,
@@ -26,6 +30,8 @@ from careerpilot.modules.learn.enums import (
 )
 from careerpilot.modules.learn.models import (
     LearnAttempt,
+    LearnCheckpoint,
+    LearnCheckpointItem,
     LearnQuestion,
     LearnReviewCard,
     LearnTopic,
@@ -33,6 +39,13 @@ from careerpilot.modules.learn.models import (
 from careerpilot.modules.learn.schemas import (
     LearnAnswerIn,
     LearnAnswerOut,
+    LearnCheckpointCreate,
+    LearnCheckpointItemOut,
+    LearnCheckpointOut,
+    LearnCheckpointQuestion,
+    LearnCheckpointResult,
+    LearnCheckpointSave,
+    LearnCheckpointSummary,
     LearnOptionOut,
     LearnPublicOption,
     LearnQuestionCreate,
@@ -44,6 +57,7 @@ from careerpilot.modules.learn.schemas import (
     LearnStats,
     LearnTopicCreate,
     LearnTopicOut,
+    LearnTopicScore,
     LearnTopicUpdate,
 )
 
@@ -625,3 +639,287 @@ async def stats(db: AsyncSession, owner_id: uuid.UUID, now: datetime, timezone: 
         answered_today=answered_today,
         streak_days=streak(days, today),
     )
+
+
+# --- checkpoint exams ---
+
+TOPIC_WEIGHT = {1: 3.0, 2: 2.0, 3: 1.0}  # high priority topics get more questions
+
+
+def _snapshot(question: LearnQuestion, topic_title: str) -> dict[str, Any]:
+    return {
+        "stem": question.stem,
+        "type": question.type.value,
+        "topic_title": topic_title,
+        "explanation": question.explanation,
+        "options": [
+            {
+                "position": o.position,
+                "text": o.text,
+                "is_correct": o.is_correct,
+                "rationale": o.rationale,
+            }
+            for o in question.options
+        ],
+        "sources": [
+            {
+                "url": s.url,
+                "title": s.title,
+                "quote": s.quote,
+                "fetched_on": s.fetched_on.isoformat() if s.fetched_on else None,
+                "reliability": s.reliability,
+            }
+            for s in question.sources
+        ],
+    }
+
+
+def _options_of(item: LearnCheckpointItem) -> list[dict[str, Any]]:
+    return list(item.snapshot["options"])
+
+
+def _grade_item(item: LearnCheckpointItem) -> rules.McqResult:
+    correct = frozenset(int(o["position"]) for o in _options_of(item) if o["is_correct"])
+    return rules.grade_mcq(correct, frozenset(item.selected or []))
+
+
+def _item_out(item: LearnCheckpointItem, *, submitted: bool) -> LearnCheckpointItemOut:
+    snap = item.snapshot
+    options = _options_of(item)
+    result = None
+    if submitted:
+        result = LearnCheckpointResult(
+            correct=bool(item.correct),
+            score=item.score or 0.0,
+            correct_positions=[int(o["position"]) for o in options if o["is_correct"]],
+            explanation=snap.get("explanation"),
+            options=[
+                LearnOptionOut(
+                    position=int(o["position"]),
+                    text=str(o["text"]),
+                    is_correct=bool(o["is_correct"]),
+                    rationale=o.get("rationale"),
+                )
+                for o in options
+            ],
+            sources=[LearnSourceOut.model_validate(s) for s in snap.get("sources", [])],
+        )
+    return LearnCheckpointItemOut(
+        position=item.position,
+        question=LearnCheckpointQuestion(
+            type=QuestionType(str(snap["type"])),
+            stem=str(snap["stem"]),
+            topic_title=str(snap["topic_title"]),
+            options=[
+                LearnPublicOption(position=int(o["position"]), text=str(o["text"])) for o in options
+            ],
+        ),
+        selected=item.selected,
+        flagged=item.flagged,
+        result=result,
+    )
+
+
+def _checkpoint_out(checkpoint: LearnCheckpoint, now: datetime) -> LearnCheckpointOut:
+    submitted = checkpoint.status == "submitted"
+    per_topic = None
+    if checkpoint.per_topic is not None:
+        per_topic = [LearnTopicScore(topic=t, **v) for t, v in checkpoint.per_topic.items()]
+    left = None if submitted else max(0, int((checkpoint.deadline - now).total_seconds()))
+    return LearnCheckpointOut(
+        id=checkpoint.id,
+        status=checkpoint.status,
+        size=checkpoint.size,
+        minutes=checkpoint.minutes,
+        pass_mark=checkpoint.pass_mark,
+        started_at=checkpoint.started_at,
+        deadline=checkpoint.deadline,
+        seconds_left=left,
+        submitted_at=checkpoint.submitted_at,
+        expired=checkpoint.expired,
+        score=checkpoint.score,
+        passed=checkpoint.passed,
+        notes=list(checkpoint.notes or []),
+        per_topic=per_topic,
+        items=[_item_out(i, submitted=submitted) for i in checkpoint.items],
+    )
+
+
+async def create_checkpoint(
+    db: AsyncSession, owner_id: uuid.UUID, data: LearnCheckpointCreate, now: datetime
+) -> LearnCheckpointOut:
+    """Build an exam from the questions you have studied and start the clock. If one is already
+    running (not expired), that one is returned instead of starting another."""
+    active = await repository.active_checkpoint(db, owner_id)
+    if active is not None:
+        if now <= active.deadline:
+            return _checkpoint_out(active, now)
+        await _finalize(db, active, now, expired=True)
+    rows = await repository.studied_questions(db, owner_id, data.topic_ids)
+    if not rows:
+        raise ProblemError(
+            422,
+            "Nothing to examine yet",
+            "A checkpoint uses verified multiple-choice questions you have already answered. "
+            "Review some questions first.",
+        )
+    last_seen = await repository.last_in_checkpoint(db, owner_id)
+    by_id = {q.id: (q, t) for q, t in rows}
+    candidates = [
+        checkpoint_builder.Candidate(
+            id=str(q.id),
+            topic_id=str(t.id),
+            type=q.type,
+            difficulty=q.difficulty,
+            seen_days_ago=(now - last_seen[q.id]).days if q.id in last_seen else None,
+        )
+        for q, t in rows
+    ]
+    seed = data.seed if data.seed is not None else secrets.randbelow(2**31)
+    spec = checkpoint_builder.Spec(
+        size=data.size,
+        seed=seed,
+        mix={"choice": 1.0},
+        topic_weights={str(t.id): TOPIC_WEIGHT[t.priority] for _, t in rows},
+    )
+    built = checkpoint_builder.build(candidates, spec)
+    minutes = data.minutes or max(1, math.ceil(1.5 * len(built.question_ids)))
+    checkpoint = repository.add_checkpoint(
+        db,
+        owner_id,
+        size=len(built.question_ids),
+        minutes=minutes,
+        pass_mark=data.pass_mark,
+        seed=seed,
+        topic_ids=[str(t) for t in data.topic_ids],
+        notes=built.notes,
+        started_at=now,
+        deadline=now + timedelta(minutes=minutes),
+    )
+    checkpoint.items = []
+    for position, question_id in enumerate(built.question_ids):
+        question, topic = by_id[uuid.UUID(question_id)]
+        checkpoint.items.append(
+            LearnCheckpointItem(
+                owner_id=owner_id,
+                position=position,
+                question_id=question.id,
+                topic_id=topic.id,
+                snapshot=_snapshot(question, topic.title),
+            )
+        )
+    await db.commit()
+    await db.refresh(checkpoint)
+    return _checkpoint_out(checkpoint, now)
+
+
+async def _finalize(
+    db: AsyncSession, checkpoint: LearnCheckpoint, now: datetime, *, expired: bool
+) -> None:
+    """Mark the answers, store the score and per-topic result, and bring weak questions back."""
+    total = 0.0
+    topics: dict[str, dict[str, Any]] = {}
+    for item in checkpoint.items:
+        marked = _grade_item(item)
+        item.score = marked.score
+        item.correct = marked.correct
+        total += marked.score
+        title = str(item.snapshot["topic_title"])
+        entry = topics.setdefault(title, {"correct": 0, "total": 0, "points": 0.0})
+        entry["total"] += 1
+        entry["correct"] += 1 if marked.correct else 0
+        entry["points"] += marked.score
+        if not marked.correct:
+            card = await repository.get_card(db, checkpoint.owner_id, item.question_id)
+            if card is not None and card.reps > 0 and card.due_at > now:
+                card.due_at = now  # a missed question is due for review again now
+    score = total / len(checkpoint.items) if checkpoint.items else 0.0
+    checkpoint.score = round(score, 4)
+    checkpoint.passed = score >= checkpoint.pass_mark
+    checkpoint.per_topic = {
+        title: {
+            "correct": v["correct"],
+            "total": v["total"],
+            "score": round(v["points"] / v["total"], 4),
+        }
+        for title, v in sorted(topics.items())
+    }
+    checkpoint.status = "submitted"
+    checkpoint.submitted_at = min(now, checkpoint.deadline) if expired else now
+    checkpoint.expired = expired
+    await db.commit()
+    await db.refresh(checkpoint)
+
+
+async def _load(
+    db: AsyncSession, owner_id: uuid.UUID, checkpoint_id: uuid.UUID, now: datetime
+) -> LearnCheckpoint:
+    checkpoint = await repository.get_checkpoint(db, owner_id, checkpoint_id)
+    if checkpoint is None:
+        raise _not_found("Checkpoint")
+    if checkpoint.status == "in_progress" and now > checkpoint.deadline:
+        await _finalize(db, checkpoint, now, expired=True)  # time ran out: score what was saved
+    return checkpoint
+
+
+async def get_checkpoint(
+    db: AsyncSession, owner_id: uuid.UUID, checkpoint_id: uuid.UUID, now: datetime
+) -> LearnCheckpointOut:
+    return _checkpoint_out(await _load(db, owner_id, checkpoint_id, now), now)
+
+
+async def save_checkpoint_item(
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    checkpoint_id: uuid.UUID,
+    position: int,
+    data: LearnCheckpointSave,
+    now: datetime,
+) -> LearnCheckpointOut:
+    checkpoint = await _load(db, owner_id, checkpoint_id, now)
+    if checkpoint.status != "in_progress":
+        raise ProblemError(
+            409, "Time is up", "This checkpoint is finished; answers can no longer change."
+        )
+    item = next((i for i in checkpoint.items if i.position == position), None)
+    if item is None:
+        raise _not_found("Question")
+    if "selected" in data.model_fields_set and data.selected is not None:
+        valid = {int(o["position"]) for o in _options_of(item)}
+        if len(set(data.selected)) != len(data.selected) or not set(data.selected) <= valid:
+            raise ProblemError(
+                422, "Invalid answer", "Those options do not belong to this question."
+            )
+        item.selected = sorted(data.selected)
+    if "flagged" in data.model_fields_set and data.flagged is not None:
+        item.flagged = data.flagged
+    await db.commit()
+    await db.refresh(checkpoint)
+    return _checkpoint_out(checkpoint, now)
+
+
+async def submit_checkpoint(
+    db: AsyncSession, owner_id: uuid.UUID, checkpoint_id: uuid.UUID, now: datetime
+) -> LearnCheckpointOut:
+    """Score the exam. Submitting twice returns the same result."""
+    checkpoint = await _load(db, owner_id, checkpoint_id, now)
+    if checkpoint.status == "in_progress":
+        await _finalize(db, checkpoint, now, expired=False)
+    return _checkpoint_out(checkpoint, now)
+
+
+async def list_checkpoints(
+    db: AsyncSession, owner_id: uuid.UUID, limit: int
+) -> list[LearnCheckpointSummary]:
+    rows = await repository.list_checkpoints(db, owner_id, limit)
+    return [
+        LearnCheckpointSummary(
+            id=c.id,
+            status=c.status,
+            size=c.size,
+            started_at=c.started_at,
+            score=c.score,
+            passed=c.passed,
+        )
+        for c in rows
+    ]

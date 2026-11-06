@@ -1,5 +1,6 @@
 import uuid
 from datetime import date, datetime
+from typing import Any
 
 from sqlalchemy import (
     Boolean,
@@ -190,3 +191,60 @@ class LearnReviewCard(Base):
     first_review_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     reps: Mapped[int] = mapped_column(Integer, default=0)
     lapses: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class LearnCheckpoint(Base):
+    """A timed exam built from questions you have already studied. Items are snapshots, so editing
+    a question later cannot change an exam that is running or finished."""
+
+    __tablename__ = "learn_checkpoints"
+    __table_args__ = (
+        CheckConstraint("pass_mark BETWEEN 0.5 AND 1", name="pass_mark_range"),
+        CheckConstraint("status IN ('in_progress', 'submitted')", name="status_values"),
+        Index("ix_learn_checkpoints_owner_started", "owner_id", "started_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    status: Mapped[str] = mapped_column(Text, default="in_progress")
+    size: Mapped[int] = mapped_column(Integer)
+    minutes: Mapped[int] = mapped_column(Integer)
+    pass_mark: Mapped[float] = mapped_column(Float)
+    seed: Mapped[int] = mapped_column(Integer)
+    topic_ids: Mapped[list[str]] = mapped_column(JSONB, default=list)  # empty = all topics
+    notes: Mapped[list[str]] = mapped_column(
+        JSONB, default=list
+    )  # e.g. "fewer questions than asked"
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    deadline: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    expired: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    score: Mapped[float | None] = mapped_column(Float)
+    passed: Mapped[bool | None] = mapped_column(Boolean)
+    per_topic: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+
+    items: Mapped[list["LearnCheckpointItem"]] = relationship(
+        order_by="LearnCheckpointItem.position", lazy="selectin", cascade="all, delete-orphan"
+    )
+
+
+class LearnCheckpointItem(Base):
+    __tablename__ = "learn_checkpoint_items"
+    __table_args__ = (
+        UniqueConstraint("checkpoint_id", "position", name="uq_learn_checkpoint_items_position"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    checkpoint_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("learn_checkpoints.id", ondelete="CASCADE"), index=True
+    )
+    position: Mapped[int] = mapped_column(SmallInteger)
+    # Not a foreign key on purpose: the exam must survive the question being deleted.
+    question_id: Mapped[uuid.UUID] = mapped_column(Uuid)
+    topic_id: Mapped[uuid.UUID] = mapped_column(Uuid)
+    snapshot: Mapped[dict[str, Any]] = mapped_column(JSONB)  # question text, options with answers
+    selected: Mapped[list[int] | None] = mapped_column(JSONB)
+    flagged: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    score: Mapped[float | None] = mapped_column(Float)
+    correct: Mapped[bool | None] = mapped_column(Boolean)

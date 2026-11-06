@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Flame, GraduationCap, ListChecks, Play, Plus, Timer } from "lucide-react";
+import { BookOpen, ClipboardCheck, Flame, GraduationCap, ListChecks, Play, Plus, Timer } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -70,6 +70,11 @@ export function LearnHome() {
         description="Topics and questions you choose, reviewed on a schedule so they stay in memory."
         actions={
           <>
+            <Button asChild>
+              <Link href="/learn/checkpoints">
+                <ClipboardCheck aria-hidden="true" /> Checkpoints
+              </Link>
+            </Button>
             <Button onClick={() => setAdding(true)}>
               <Plus aria-hidden="true" /> Add topic
             </Button>

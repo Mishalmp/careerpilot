@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from careerpilot.modules.learn.enums import QuestionStatus, QuestionType
 from careerpilot.modules.learn.models import (
     LearnAttempt,
+    LearnCheckpoint,
+    LearnCheckpointItem,
     LearnOption,
     LearnQuestion,
     LearnReviewCard,
@@ -313,3 +315,75 @@ async def cards_for_mastery(
         )
     )
     return [(topic_id, card) for topic_id, card in rows.all()]
+
+
+# --- checkpoints ---
+
+
+async def studied_questions(
+    db: AsyncSession, owner_id: uuid.UUID, topic_ids: Sequence[uuid.UUID]
+) -> Sequence[tuple[LearnQuestion, LearnTopic]]:
+    """Verified multiple-choice questions you have answered at least once (so "studied")."""
+    statement = (
+        select(LearnQuestion, LearnTopic)
+        .join(LearnTopic, LearnTopic.id == LearnQuestion.topic_id)
+        .join(LearnReviewCard, LearnReviewCard.question_id == LearnQuestion.id)
+        .where(
+            LearnQuestion.owner_id == owner_id,
+            LearnQuestion.status == QuestionStatus.VERIFIED,
+            LearnQuestion.type.in_([QuestionType.MCQ_SINGLE, QuestionType.MCQ_MULTI]),
+            LearnReviewCard.reps > 0,
+            LearnTopic.archived.is_(False),
+        )
+    )
+    if topic_ids:
+        statement = statement.where(LearnQuestion.topic_id.in_(topic_ids))
+    rows = await db.execute(statement)
+    return [(question, topic) for question, topic in rows.all()]
+
+
+async def last_in_checkpoint(db: AsyncSession, owner_id: uuid.UUID) -> dict[uuid.UUID, datetime]:
+    """When each question last appeared in a checkpoint."""
+    rows = await db.execute(
+        select(LearnCheckpointItem.question_id, func.max(LearnCheckpoint.started_at))
+        .join(LearnCheckpoint, LearnCheckpoint.id == LearnCheckpointItem.checkpoint_id)
+        .where(LearnCheckpointItem.owner_id == owner_id)
+        .group_by(LearnCheckpointItem.question_id)
+    )
+    return {question_id: when for question_id, when in rows.all()}
+
+
+def add_checkpoint(db: AsyncSession, owner_id: uuid.UUID, **fields: Any) -> LearnCheckpoint:
+    checkpoint = LearnCheckpoint(owner_id=owner_id, **fields)
+    db.add(checkpoint)
+    return checkpoint
+
+
+async def get_checkpoint(
+    db: AsyncSession, owner_id: uuid.UUID, checkpoint_id: uuid.UUID
+) -> LearnCheckpoint | None:
+    return await db.scalar(
+        select(LearnCheckpoint).where(
+            LearnCheckpoint.owner_id == owner_id, LearnCheckpoint.id == checkpoint_id
+        )
+    )
+
+
+async def active_checkpoint(db: AsyncSession, owner_id: uuid.UUID) -> LearnCheckpoint | None:
+    return await db.scalar(
+        select(LearnCheckpoint)
+        .where(LearnCheckpoint.owner_id == owner_id, LearnCheckpoint.status == "in_progress")
+        .order_by(LearnCheckpoint.started_at.desc())
+    )
+
+
+async def list_checkpoints(
+    db: AsyncSession, owner_id: uuid.UUID, limit: int
+) -> Sequence[LearnCheckpoint]:
+    rows = await db.scalars(
+        select(LearnCheckpoint)
+        .where(LearnCheckpoint.owner_id == owner_id)
+        .order_by(LearnCheckpoint.started_at.desc())
+        .limit(min(limit, MAX_LIMIT))
+    )
+    return rows.all()

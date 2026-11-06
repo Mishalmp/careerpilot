@@ -12,6 +12,10 @@ from careerpilot.modules.learn.enums import QuestionStatus, QuestionType
 from careerpilot.modules.learn.schemas import (
     LearnAnswerIn,
     LearnAnswerOut,
+    LearnCheckpointCreate,
+    LearnCheckpointOut,
+    LearnCheckpointSave,
+    LearnCheckpointSummary,
     LearnQuestionCreate,
     LearnQuestionOut,
     LearnQuestionUpdate,
@@ -138,3 +142,48 @@ async def review_queue(
 @router.get("/stats", operation_id="get_learn_stats")
 async def learn_stats(session: Authenticated, db: DbSession, settings: AppSettings) -> LearnStats:
     return await service.stats(db, session.user_id, _now(), settings.timezone)
+
+
+@router.post(
+    "/checkpoints", operation_id="create_learn_checkpoint", status_code=status.HTTP_201_CREATED
+)
+async def create_checkpoint(
+    body: LearnCheckpointCreate, session: Authenticated, db: DbSession
+) -> LearnCheckpointOut:
+    return await service.create_checkpoint(db, session.user_id, body, _now())
+
+
+@router.get("/checkpoints", operation_id="list_learn_checkpoints")
+async def list_checkpoints(
+    session: Authenticated, db: DbSession, limit: Annotated[int, Query(ge=1, le=100)] = 20
+) -> list[LearnCheckpointSummary]:
+    return await service.list_checkpoints(db, session.user_id, limit)
+
+
+@router.get("/checkpoints/{checkpoint_id}", operation_id="get_learn_checkpoint")
+async def get_checkpoint(
+    checkpoint_id: uuid.UUID, session: Authenticated, db: DbSession
+) -> LearnCheckpointOut:
+    return await service.get_checkpoint(db, session.user_id, checkpoint_id, _now())
+
+
+@router.put(
+    "/checkpoints/{checkpoint_id}/items/{position}", operation_id="save_learn_checkpoint_item"
+)
+async def save_checkpoint_item(
+    checkpoint_id: uuid.UUID,
+    position: int,
+    body: LearnCheckpointSave,
+    session: Authenticated,
+    db: DbSession,
+) -> LearnCheckpointOut:
+    return await service.save_checkpoint_item(
+        db, session.user_id, checkpoint_id, position, body, _now()
+    )
+
+
+@router.post("/checkpoints/{checkpoint_id}/submit", operation_id="submit_learn_checkpoint")
+async def submit_checkpoint(
+    checkpoint_id: uuid.UUID, session: Authenticated, db: DbSession
+) -> LearnCheckpointOut:
+    return await service.submit_checkpoint(db, session.user_id, checkpoint_id, _now())

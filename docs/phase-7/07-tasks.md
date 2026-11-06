@@ -144,7 +144,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [~] | L02 | Migration + models: `tracks`, `topics` (from `prep_topics`), `topic_edges` (prerequisites), tags | L01 | M | Drift test green; up/down tested |
 | [x] | L03 | Migration + models: `questions`, `question_options`, `question_sources` | L02 | M | Constraints per type enforced by CHECKs |
 | [x] | L04 | Migration + models: `attempts`, `review_cards` (FSRS state) | L03 | M | One card per (user, question) unique |
-| [ ] | L05 | Migration + models: `checkpoints`, `checkpoint_items`, `checkpoint_attempts` | L03 | M | Snapshot of questions stored per attempt |
+| [x] | L05 | Migration + models: `checkpoints`, `checkpoint_items`, `checkpoint_attempts` | L03 | M | Snapshot of questions stored per attempt |
 | [ ] | L06 | Migration + models: `research_runs`, `research_findings` | L03 | M | Status enums and budgets columns |
 | [ ] | L07 | Idempotent data migration of existing topics, study sessions and guide questions into the new model; old endpoints keep working | L02-L04 | L | Row counts equal; reversible |
 | [x] | L08 | FSRS scheduler service (py-fsrs pinned) with rating-to-interval tests on known sequences | L04 | M | Matches reference intervals |
@@ -158,7 +158,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [x] | L16 | Review queue: due cards, daily cap, interleave topics, new-card limit | L08 | M | Order and caps tested |
 | [x] | L17 | Quiz sessions: start by topic/mixed/weak; answer with idempotency token; results | L10 | M | Double submit safe |
 | [x] | L18 | Checkpoint builder (pure): coverage by topic weight, difficulty mix, type mix, exclusion window, seeds for reproducibility | L10 | L | Property tests: coverage and no repeats |
-| [ ] | L19 | Checkpoint API: create, start (timer), autosave, submit once, report with per-topic result and weak topics feeding reviews | L18, L05 | L | Expiry and double submit tested |
+| [x] | L19 | Checkpoint API: create, start (timer), autosave, submit once, report with per-topic result and weak topics feeding reviews | L18, L05 | L | Expiry and double submit tested |
 | [ ] | L20 | Roadmap service: editable plan (weeks, days) from topics and job gaps (job skills minus mastered topics) | L02 | L | Gap list matches fixtures |
 | [~] | L21 | Mastery and progress analytics (retrievability average per topic, coverage, streak, minutes) | L08 | M | Values match hand calculation |
 | [~] | L22 | Due counts for Today and sidebar badges | L16 | S | Counts equal queue |
@@ -177,7 +177,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [~] | LU06 | Review session UI (spaced repetition) with rating feedback and next-due preview | LU04, L16 | M | |
 | [x] | LU07 | Research inbox UI: grouped findings, source and quote, approve/edit/reject, bulk approve | R09 | L | |
 | [ ] | LU08 | Add knowledge manually: paste text or link, convert to topics and questions (with AI optional) | R05, L13 | M | |
-| [ ] | LU09 | Checkpoint setup, exam screen (timer, flag, navigator), report with topic breakdown and "what to review" | L19 | L | Timer survives reload |
+| [x] | LU09 | Checkpoint setup, exam screen (timer, flag, navigator), report with topic breakdown and "what to review" | L19 | L | Timer survives reload |
 | [ ] | LU10 | Question bank browser: filter by topic, type, status, source; bulk edit | L10 | M | |
 | [ ] | LU11 | Learning insights panel (mastery map, streak, time) | L21, D16 | M | |
 
