@@ -257,10 +257,10 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## T: testing (strategy in `10-test-strategy.md`)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | T01 | Playwright setup: browsers, config, fixtures (seeded DB, login helper, API server on test DB, per-worker isolation) | none | L | `npm run e2e` runs one test |
-| [ ] | T02 | E2E smoke: login, add job, move status, run a problem, ask (fake model), view Insights | T01 | M | Green on CI |
+| [x] | T01 | Playwright setup: browsers, config, fixtures (seeded DB, login helper, API server on test DB, per-worker isolation) | none | L | `npm run e2e` runs one test |
+| [~] | T02 | E2E smoke: login, add job, move status, run a problem, ask (fake model), view Insights | T01 | M | Green on CI |
 | [ ] | T03 | E2E per page, added with each P task | T02 | L | Listed in `10` |
-| [ ] | T04 | axe sweep of every route in both themes | T01, D19 | M | Zero serious violations |
+| [~] | T04 | axe sweep of every route in both themes | T01, D19 | M | Zero serious violations |
 | [ ] | T05 | Visual regression suite for key pages | T01 | M | Baselines |
 | [ ] | T06 | Cross-browser run (Chromium, Firefox, WebKit) | T02 | S | Matrix green |
 | [ ] | T07 | API fuzz from OpenAPI (schemathesis) with auth | none | M | No 500s |

@@ -54,6 +54,7 @@ known-third-party = ["alembic"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "S105", "S106", "E501"]
+"scripts/prepare_e2e.py" = ["S105"]  # a test-only password for the throwaway E2E database
 "alembic/versions/*" = ["E501"]  # generated enum lists are long
 "src/careerpilot/mcp_server.py" = ["E501"]  # tool descriptions and prompts are prose for the model
 "src/careerpilot/modules/outreach/lint.py" = ["RUF001"]  # it must recognise typographic dashes and quotes
