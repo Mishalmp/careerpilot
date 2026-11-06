@@ -305,8 +305,21 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | W08 | Changelog and release notes | none | S | |
 | [~] | W09 | Portability guide `docs/setup/`: new machine on Windows/macOS/Linux, `.env` creation, running native and with Docker, deploying to a server, zipping backups and restoring on another machine, troubleshooting (REQ-30) | K03 | M | A clean checkout follows it to a running app (tested at least on Windows + one container run) |
 
+## A: assisted daily apply (design in `11-ai-usage-search-and-apply.md` section 7; needs the owner's go-ahead on the policy)
+| Done | ID | Task | Deps | Size | Done when |
+|---|---|---|---|---|---|
+| [ ] | A01 | Apply policy file `content/private/apply-policy.yaml`: schema, example in `content/`, loader with validation messages | R16 | M | Bad file gives a clear list of problems |
+| [ ] | A02 | Pure ranking rules: policy + job + score + company verdict -> keep/skip with reasons | A01 | M | Table tests; same input same output |
+| [ ] | A03 | `apply_queue` table and a daily task that fills it (idempotent per day) | A02, B04 | M | Rerun does not duplicate; daily limit holds |
+| [ ] | A04 | Queue API: list, open-link (records the click), mark applied, skip with reason | A03 | M | Owner isolation tests; no submit endpoint exists (test) |
+| [ ] | A05 | Queue screen: card per job (verdict, score, why, draft), keyboard friendly | A04, D13 | L | E2E + axe |
+| [ ] | A06 | Policy dry run: what would the policy have picked on past days | A02 | S | Shows picks and reasons |
+| [ ] | A07 | Audit rows and a daily summary on Today | A04, B06 | S | |
+| [ ] | A08 | Measure replies per queue pick in Insights | A04 | M | Uses real outcomes only |
+
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)
 - 2026-11-06: plan created.
 - 2026-11-06: docs 02-05 written; task ids in them cross-checked against this file; V02 now includes the `export-architecture` command; requirement ids are REQ-nn.
 - 2026-11-06: Learning backend slice built (L03, L04, L08, L09, L10, L16, L17, L18; L02 and L21/L22 partly). Deviations from `03`: tables are prefixed `learn_` (learn_topics, learn_questions, learn_options, learn_sources, learn_attempts, learn_review_cards); there is no `tracks` table yet (topics carry an optional `area`; add tracks only when a third use appears, rule 1); topic prerequisites (`topic_edges`) are not built yet. Written/explain/scenario answers are rated by the learner (graded_by=self) until the model grader (L14, needs a key) exists. Learn schemas are prefixed `Learn` to avoid OpenAPI name collisions with prep/intel.
+- 2026-11-07: added doc 11 (AI access, model context, search APIs, security, assisted apply) and task group A. Done: per-task model choice, MCP prefix and two read tools, Tavily adapter, three reviewed official skills (see `.claude/skills/PROVENANCE.md`).

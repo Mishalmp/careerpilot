@@ -22,6 +22,7 @@ After Phases 0 to 6 the app works but looks like a developer prototype. The owne
 | [08-ai-development-playbook.md](08-ai-development-playbook.md) | How AI is used to build this product: lifecycle, roles, the 15 intake questions, guardrails, session handoff, definitions of ready and done. |
 | [09-product-spec.md](09-product-spec.md) | The foundation A to Z: purpose, domain objects, each feature's inputs, outputs, rules, edge cases, routes, API conventions, targets, scalability path. |
 | [10-test-strategy.md](10-test-strategy.md) | Test layers, data, LLM evals, AI QA agents, CI gates, the test-case catalogue, failure drills. |
+| [11-ai-usage-search-and-apply.md](11-ai-usage-search-and-apply.md) | AI access without a key, costs, model/context rules, MCP and RAG rules, security checklist, free and cheap search APIs with verified rates, and the assisted daily-apply design. |
 | [STATUS.md](STATUS.md) | Where work stopped and what is next. Update before ending any session. |
 | [assets/](assets) | Logo concept files (mark, wordmark light and dark). |
 

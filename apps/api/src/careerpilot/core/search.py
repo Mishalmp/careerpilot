@@ -1,12 +1,13 @@
 """Web search behind one small interface, so the provider can be swapped by a setting.
 
-Providers: SearXNG (free, self-hosted; docs/phase-7 decision D2) and Brave Search (optional, needs a
-key). The service address comes from settings, never from page content, so these calls do not go
-through the SSRF-guarded fetcher (which would refuse a local SearXNG). Results are only *links*:
-every page is then fetched through `core.fetcher.Fetcher`.
+Providers: SearXNG (free, self-hosted; decision D2), Tavily (1,000 free credits a month, no card)
+and Brave Search (optional, needs a key). The service address comes from settings, never from page
+content, so these calls do not go through the SSRF-guarded fetcher (which would refuse a local
+SearXNG). Results are only *links*: every page is then fetched through `core.fetcher.Fetcher`.
 
-unverified against the live services (no network in tests): response shapes follow each provider's
-public documentation as understood on 2026-11-06; task R17 proves SearXNG, R01 notes Brave.
+Verification status (2026-11-06): SearXNG was run live and its JSON parsed (task R17). Tavily's
+request and response shape was read from its official API reference but not called with a key.
+Brave's shape comes from memory of its documentation and is the least verified.
 """
 
 from dataclasses import dataclass
@@ -15,6 +16,7 @@ from typing import Any, Protocol
 import httpx
 
 from careerpilot.core.config import Settings
+from careerpilot.core.fetcher import BLOCKED_DOMAINS
 
 TIMEOUT_SECONDS = 15.0
 MAX_RESULTS = 10
@@ -135,10 +137,60 @@ class BraveSearch:
         )
 
 
+class TavilySearch:
+    """Tavily (https://docs.tavily.com, checked 2026-11-06): POST /search, Bearer key, a `basic`
+    search costs 1 credit (the free plan has 1,000 a month). 401 bad key, 429 rate limit, 432/433
+    plan limit. Sites we never fetch are excluded in the request itself."""
+
+    name = "tavily"
+    ENDPOINT = "https://api.tavily.com/search"
+
+    def __init__(self, api_key: str, transport: httpx.AsyncBaseTransport | None = None) -> None:
+        self._key = api_key
+        self._transport = transport
+
+    async def search(self, query: str, limit: int = 5) -> list[SearchHit]:
+        body = {
+            "query": query,
+            "max_results": min(limit, MAX_RESULTS),
+            "search_depth": "basic",
+            "exclude_domains": sorted(BLOCKED_DOMAINS),
+        }
+        try:
+            async with httpx.AsyncClient(
+                transport=self._transport, timeout=TIMEOUT_SECONDS
+            ) as client:
+                response = await client.post(
+                    self.ENDPOINT, json=body, headers={"Authorization": f"Bearer {self._key}"}
+                )
+        except httpx.HTTPError as exc:
+            raise SearchError("The search service could not be reached.") from exc
+        if response.status_code == 401:
+            raise SearchError("Tavily refused the API key.")
+        if response.status_code == 429:
+            raise SearchError("Tavily is rate limiting this app. Try again in a minute.")
+        if response.status_code in (432, 433):
+            raise SearchError("The Tavily plan limit for this month is used up.")
+        if response.status_code != 200:
+            raise SearchError(
+                f"The search service answered with an error ({response.status_code})."
+            )
+        try:
+            data = response.json()
+        except ValueError as exc:
+            raise SearchError("The search service did not return JSON.") from exc
+        rows = data.get("results") if isinstance(data, dict) else None  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+        return _hits(
+            rows, title="title", url="url", snippet="content", limit=min(limit, MAX_RESULTS)
+        )
+
+
 def make_search(settings: Settings) -> SearchProvider | None:
     """None when no provider is configured; research then explains how to set one up."""
     if settings.search_provider == "searxng" and settings.searxng_url:
         return SearxngSearch(settings.searxng_url)
+    if settings.search_provider == "tavily" and settings.tavily_api_key:
+        return TavilySearch(settings.tavily_api_key.get_secret_value())
     if settings.search_provider == "brave" and settings.brave_api_key:
         return BraveSearch(settings.brave_api_key.get_secret_value())
     return None

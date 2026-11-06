@@ -23,14 +23,14 @@ The whole server is `apps/api/src/careerpilot/mcp_server.py`. About 470 lines, a
 ## The three things a server can offer
 | Kind | Who decides to use it | Here |
 |---|---|---|
-| **Tools** | The model | `search_jobs`, `get_job`, `list_due_followups`, `get_prep_plan_today`, `list_problems`, `search_knowledge`, and the guarded writes `add_job`, `update_application_status`, `log_study_session`, `add_note` |
+| **Tools** | The model | Every tool is named `careerpilot_<action>` so it cannot collide with another server's tools: `careerpilot_search_jobs`, `careerpilot_get_job`, `careerpilot_list_due_followups`, `careerpilot_get_prep_plan_today`, `careerpilot_list_problems`, `careerpilot_search_knowledge`, `careerpilot_get_learning_status`, `careerpilot_list_research_inbox`, and the guarded writes `careerpilot_add_job`, `careerpilot_update_application_status`, `careerpilot_log_study_session`, `careerpilot_add_note` |
 | **Resources** | The app or user attaches them | `careerpilot://prep/today`, `careerpilot://job/{job_id}` |
 | **Prompts** | The user picks them | `daily_review`, `mock_interview` |
 
 A tool is a plain async function. The SDK builds its input schema from the type hints and its description from the docstring, so those two are the interface:
 
 ```python
-@server.tool(annotations=READ)
+@server.tool(name="careerpilot_list_due_followups", annotations=READ)
 async def list_due_followups(limit: int = 10) -> list[dict[str, Any]]:
     """Open applications whose follow-up date is today or earlier."""
 ```
@@ -68,7 +68,7 @@ Then try: "Run my daily review", "Add a job: Acme, Backend Engineer", or "Log 30
 ```python
 async with Client(server) as client:
     tools = await client.list_tools()
-    result = await client.call_tool("search_jobs", {"query": "acme"})
+    result = await client.call_tool("careerpilot_search_jobs", {"query": "acme"})
 ```
 You can also run `uv run mcp dev` against a small script of your own to open the MCP Inspector in a browser.
 

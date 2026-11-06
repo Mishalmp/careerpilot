@@ -95,3 +95,22 @@ async def test_a_network_failure_is_reported() -> None:
     with pytest.raises(LlmError) as error:
         await client_for(handler).complete(system="s", user="u", max_tokens=10)
     assert error.value.status == 502 and "Could not reach" in error.value.message
+
+
+async def test_a_per_call_model_overrides_the_default_and_nothing_else_changes() -> None:
+    seen: list[dict[str, Any]] = []
+
+    def handler(request: httpx2.Request) -> httpx2.Response:
+        seen.append(json.loads(request.content))
+        return httpx2.Response(200, json=message([{"type": "text", "text": "ok"}]))
+
+    client = client_for(handler)
+    await client.complete(system="s", user="u", max_tokens=10)
+    await client.complete(system="s", user="u", max_tokens=10, model="claude-haiku-5-5")
+    assert [b["model"] for b in seen] == ["claude-sonnet-5-5", "claude-haiku-5-5"]
+    # Same safe request shape on both models: no thinking, temperature or prefill fields (those return
+    # errors on some models); depth is controlled only with effort.
+    for body in seen:
+        assert body["output_config"] == {"effort": "low"}
+        assert not {"thinking", "temperature", "top_p", "top_k"} & set(body)
+        assert body["messages"][-1]["role"] == "user"

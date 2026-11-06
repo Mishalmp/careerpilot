@@ -65,7 +65,9 @@ class LlmError(Exception):
 class LlmClient(Protocol):
     model: str
 
-    async def complete(self, *, system: str, user: str, max_tokens: int) -> LlmReply: ...
+    async def complete(
+        self, *, system: str, user: str, max_tokens: int, model: str | None = None
+    ) -> LlmReply: ...
 
 
 class AnthropicClient:
@@ -88,10 +90,12 @@ class AnthropicClient:
             http_client=http_client,
         )
 
-    async def complete(self, *, system: str, user: str, max_tokens: int) -> LlmReply:
+    async def complete(
+        self, *, system: str, user: str, max_tokens: int, model: str | None = None
+    ) -> LlmReply:
         try:
             response = await self._client.messages.create(
-                model=self.model,
+                model=model or self.model,
                 max_tokens=max_tokens,
                 system=system,
                 messages=[{"role": "user", "content": user}],
@@ -157,16 +161,20 @@ async def call_llm(
             f"Today's {settings.llm_daily_token_cap:,}-token cap is used up. "
             "Raise llm_daily_token_cap to continue.",
         )
+    # Cheap model for bulk reading prompts, the main model for everything else.
+    light = purpose.split("@")[0] in settings.llm_light_prompts
+    model = settings.llm_model_light if light else None
+    used_model = model or llm.model
     started = time.perf_counter()
     elapsed = lambda: int((time.perf_counter() - started) * 1000)  # noqa: E731
     try:
-        reply = await llm.complete(system=system, user=user, max_tokens=max_tokens)
+        reply = await llm.complete(system=system, user=user, max_tokens=max_tokens, model=model)
     except LlmError as exc:
         db.add(
             LlmCall(
                 owner_id=owner_id,
                 purpose=purpose,
-                model=llm.model,
+                model=used_model,
                 latency_ms=elapsed(),
                 status="error",
                 error=exc.message,
@@ -178,7 +186,7 @@ async def call_llm(
         LlmCall(
             owner_id=owner_id,
             purpose=purpose,
-            model=llm.model,
+            model=used_model,
             input_tokens=reply.input_tokens,
             output_tokens=reply.output_tokens,
             latency_ms=elapsed(),

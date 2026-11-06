@@ -5,7 +5,13 @@
 import httpx
 import pytest
 
-from careerpilot.core.search import BraveSearch, SearchError, SearchHit, SearxngSearch
+from careerpilot.core.search import (
+    BraveSearch,
+    SearchError,
+    SearchHit,
+    SearxngSearch,
+    TavilySearch,
+)
 from careerpilot.modules.research import rules
 
 
@@ -153,3 +159,47 @@ async def test_brave_parses_results_and_sends_the_key() -> None:
 async def test_brave_errors(status: int, fragment: str) -> None:
     with pytest.raises(SearchError, match=fragment):
         await BraveSearch("k", transport(status, {})).search("q", 3)
+
+
+async def test_tavily_sends_a_bearer_key_a_basic_search_and_the_blocked_site_list() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(
+            200,
+            json={
+                "results": [
+                    {"title": "T", "url": "https://t.example/x", "content": "c", "score": 0.9}
+                ]
+            },
+        )
+
+    found = await TavilySearch("tvly-secret", httpx.MockTransport(handler)).search("q", 4)
+    assert [h.url for h in found] == ["https://t.example/x"]
+    request = seen[0]
+    assert request.method == "POST"
+    assert request.headers["Authorization"] == "Bearer tvly-secret"
+    import json
+
+    body = json.loads(request.content)
+    assert body["query"] == "q"
+    assert body["max_results"] == 4
+    assert body["search_depth"] == "basic"  # 1 credit, not the 2-credit advanced search
+    assert "linkedin.com" in body["exclude_domains"]
+    assert "tvly-secret" not in request.content.decode()  # the key is only in the header
+
+
+@pytest.mark.parametrize(
+    ("status", "fragment"),
+    [
+        (401, "refused the API key"),
+        (429, "rate limiting"),
+        (432, "plan limit"),
+        (433, "plan limit"),
+        (500, "answered with an error"),
+    ],
+)
+async def test_tavily_errors_have_plain_messages(status: int, fragment: str) -> None:
+    with pytest.raises(SearchError, match=fragment):
+        await TavilySearch("k", transport(status, {})).search("q", 3)

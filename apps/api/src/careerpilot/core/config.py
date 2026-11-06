@@ -46,6 +46,16 @@ class Settings(BaseSettings):
     # Optional: with no key, "Ask my notes" returns the matching passages without a written answer.
     anthropic_api_key: SecretStr | None = Field(default=None, validation_alias="ANTHROPIC_API_KEY")
     llm_model: str = "claude-sonnet-5-5"
+    # Bulk reading (pages, job descriptions) goes to a much cheaper model; judgement (answers with
+    # citations, mock interviews, grading) stays on llm_model. Prices per million tokens, from
+    # Anthropic's pricing page, 2026-11-06: Haiku 5.5 0.10 in / 0.50 out, Sonnet 5.5 2 in / 10 out.
+    llm_model_light: str = "claude-haiku-5-5"
+    llm_light_prompts: list[str] = [
+        "research-extract",
+        "intel-extract",
+        "company-pages",
+        "jd-reading",
+    ]
     llm_daily_token_cap: int = Field(default=200_000, ge=1)
 
     # Outreach stays personal: at most this many messages can be approved per day.
@@ -72,14 +82,17 @@ class Settings(BaseSettings):
 
     # Research agent: which search service to use and how much one run may spend.
     # "searxng" (free, self-hosted; set searxng_url) or "brave" (needs brave_api_key), else "none".
-    search_provider: Literal["none", "searxng", "brave"] = "none"
+    search_provider: Literal["none", "searxng", "tavily", "brave"] = "none"
     searxng_url: str | None = None
     brave_api_key: SecretStr | None = None
+    tavily_api_key: SecretStr | None = None
     research_max_searches: int = Field(default=10, ge=1, le=30)
     research_max_pages: int = Field(default=12, ge=1, le=40)
     research_max_tokens: int = Field(default=80_000, ge=1000)
 
-    @field_validator("anthropic_api_key", "backup_key", "brave_api_key", mode="before")
+    @field_validator(
+        "anthropic_api_key", "backup_key", "brave_api_key", "tavily_api_key", mode="before"
+    )
     @classmethod
     def _blank_key_means_none(cls, value: object) -> object:
         return None if isinstance(value, str) and not value.strip() else value

@@ -33,8 +33,12 @@ class FakeLlm:
         self.input_tokens, self.output_tokens = input_tokens, output_tokens
         self.calls: list[dict[str, Any]] = []
 
-    async def complete(self, *, system: str, user: str, max_tokens: int) -> LlmReply:
-        self.calls.append({"system": system, "user": user, "max_tokens": max_tokens})
+    async def complete(
+        self, *, system: str, user: str, max_tokens: int, model: str | None = None
+    ) -> LlmReply:
+        self.calls.append(
+            {"system": system, "user": user, "max_tokens": max_tokens, "model": model}
+        )
         if self.error:
             raise self.error
         text = self.replies[min(len(self.calls), len(self.replies)) - 1]
