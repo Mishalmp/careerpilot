@@ -1,0 +1,175 @@
+# Step-by-step flows for the explorer's flow player. Steps use node ids from systems.yaml (overview).
+# A step may have a `failure`: what goes wrong there and what the system does about it.
+# `proof` names test files that show the behaviour (a test checks they exist).
+
+flows:
+  - id: sign-in
+    title: "Sign in and session"
+    summary: "How a login becomes a session that is safe against cross-site requests."
+    status: built
+    proof: [apps/api/tests/test_auth.py, apps/api/tests/test_security.py]
+    steps:
+      - from: browser
+        to: web
+        label: "Submit the login form"
+        detail: "The browser sends email and password to the web app over a normal form POST handled by JavaScript."
+      - from: web
+        to: api
+        label: "Forward /api/v1/auth/login"
+        detail: "The web app proxies the request, so the browser only ever talks to one origin and no CORS is needed."
+        failure:
+          label: "Too many wrong passwords"
+          detail: "After five failures in a window the API answers 429 with Retry-After. The counter is in memory today and resets on restart (task B08 moves it to the database)."
+      - from: api
+        to: db
+        label: "Check the password hash and create a session row"
+        detail: "The password is verified against a slow salted hash. A session id is stored; only an opaque random value goes to the browser."
+      - from: api
+        to: browser
+        label: "Set the cookie and return a CSRF token"
+        detail: "The cookie is HttpOnly and SameSite=Lax. The CSRF token is returned in the body and sent back in a header on every unsafe request."
+        failure:
+          label: "A request arrives without the CSRF header"
+          detail: "The Authenticated dependency rejects it with 403 before any code runs. A test walks every route and fails if one is unprotected."
+
+  - id: add-job
+    title: "Add a job"
+    summary: "From the form to a de-duplicated job with an application and a history."
+    status: built
+    proof: [apps/api/tests/test_tracker_api.py]
+    steps:
+      - from: browser
+        to: api
+        label: "POST /jobs with company and role"
+        detail: "The form validates required fields and links (http or https only) before sending."
+      - from: api
+        to: db
+        label: "Look for the same job by fingerprint"
+        detail: "A fingerprint of company, role and link (without tracking parameters) is checked per owner."
+        failure:
+          label: "It is already tracked"
+          detail: "The API returns the existing job and the dialog says so with a link, instead of creating a duplicate."
+      - from: api
+        to: db
+        label: "Insert company, job, application and first event in one transaction"
+        detail: "The service owns the commit. Either everything is saved or nothing is."
+        failure:
+          label: "Two requests race"
+          detail: "A unique constraint catches the loser, which then returns the winner's job."
+
+  - id: answer-question
+    title: "Answer a question"
+    summary: "How one answer becomes a marked result and the next review date, safely even if sent twice."
+    status: built
+    proof: [apps/api/tests/test_learn_api.py, apps/api/tests/test_learn_scheduler.py]
+    steps:
+      - from: browser
+        to: api
+        label: "POST the answer with a token the browser made"
+        detail: "The token is a random id for this one answer. It is what makes a repeat harmless."
+        failure:
+          label: "The same token arrives twice (double click, retry after a timeout)"
+          detail: "The first answer is stored; the second returns that stored result and is marked already answered. Two at the same instant are resolved by a unique constraint."
+      - from: api
+        to: api
+        label: "Mark it and turn it into a grade"
+        detail: "Multiple choice is marked by code (partial credit for several-answer questions, never negative). Correct, how sure you were and how long you took become Again, Hard, Good or Easy."
+      - from: api
+        to: db
+        label: "Update the schedule and store the attempt in one transaction"
+        detail: "The FSRS scheduler computes the next due date from the card's memory state. The card and the attempt are saved together."
+      - from: api
+        to: browser
+        label: "Reveal the answer"
+        detail: "Only now are the correct option, explanation and sources sent. Before answering, the questions endpoint never includes them."
+
+  - id: ask-notes
+    title: "Ask my notes"
+    summary: "A question becomes a cited answer, or an honest \"not in your notes\"."
+    status: built
+    proof: [apps/api/tests/test_knowledge_api.py, apps/api/tests/test_rag_eval.py]
+    steps:
+      - from: browser
+        to: api
+        label: "Ask a question"
+        detail: "The question is embedded locally into a vector."
+      - from: api
+        to: db
+        label: "Hybrid search"
+        detail: "Vector similarity and full-text search each rank passages; the two rankings are merged with reciprocal rank fusion."
+        failure:
+          label: "Nothing is similar enough"
+          detail: "Below the similarity threshold the best passages are returned with no written answer, and the page says it is not in your notes."
+      - from: api
+        to: claude
+        label: "Write an answer from the passages only"
+        detail: "Passages are wrapped as untrusted data. The model must cite passage ids."
+        failure:
+          label: "The model cites a passage that does not exist, or nothing"
+          detail: "The answer is withheld and the passages are shown instead. Without an API key the passages are always shown."
+      - from: api
+        to: browser
+        label: "Return the answer with citations"
+        detail: "Citations link to the exact passages."
+
+  - id: background-task
+    title: "Background task lifecycle"
+    summary: "How work runs outside a request and survives crashes."
+    status: built
+    proof: [apps/api/tests/test_tasks_worker.py]
+    steps:
+      - from: api
+        to: db
+        label: "Enqueue a task row with an idempotent key"
+        detail: "Same key, same task: enqueuing twice does not duplicate work."
+      - from: worker
+        to: db
+        label: "Claim with FOR UPDATE SKIP LOCKED"
+        detail: "Several workers can ask at once; each gets different rows without waiting for the others."
+      - from: worker
+        to: sites
+        label: "Do the work (for example fetch a job board)"
+        detail: "Network access goes through the safe fetcher: private addresses are refused, size and time are capped."
+        failure:
+          label: "The site is down or the handler raises"
+          detail: "A message written for you is stored, the task is retried with growing delays, and after the last attempt it is marked failed with a Retry button."
+      - from: worker
+        to: db
+        label: "Mark done, or fail with a reason"
+        detail: "A watchdog returns tasks stuck in running (a crashed worker) to the queue."
+        failure:
+          label: "The worker is killed mid-task"
+          detail: "The task stays running until the watchdog frees it, then another run starts. Handlers are idempotent, so repeating is safe."
+
+  - id: research-run
+    title: "Research interview topics for a job"
+    summary: "How the platform will find topics and questions for a new job. Planned."
+    status: planned
+    proof: []
+    steps:
+      - from: browser
+        to: api
+        label: "Add a job, choose \"Research this job\""
+        detail: "Returns at once with a task id; the work happens in the background."
+      - from: api
+        to: search
+        label: "Plan queries and search"
+        detail: "Up to eight queries made from the role, company and skills; blocked sites are removed."
+        failure:
+          label: "The search provider is down or over quota"
+          detail: "The run ends as partial with a clear message; you can still paste a page by hand."
+      - from: worker
+        to: sites
+        label: "Fetch pages"
+        detail: "Only through the safe fetcher; robots.txt is respected; each host is rate-limited."
+      - from: worker
+        to: claude
+        label: "Extract topics and questions with quotes"
+        detail: "Page text is untrusted data. A quote must appear in the page or the item is dropped."
+        failure:
+          label: "A page contains instructions aimed at the model"
+          detail: "They are treated as data. Output must match a fixed shape, quotes must verify, and nothing runs from page text."
+      - from: worker
+        to: db
+        label: "Store findings in your inbox"
+        detail: "Nothing enters your question bank until you approve it."

@@ -1,0 +1,128 @@
+# Diagrams for the architecture explorer. Hand-written: titles, summaries, positions.
+# Facts that code can state are NOT written here: the module diagram's arrows are computed from
+# the real imports, and a test fails if a module on disk has no node here (or the reverse).
+# status: built | planned    kind: ui | service | store | external | module | core
+
+overview:
+  title: "System overview"
+  summary: "What runs where, and what talks to what."
+  nodes:
+    - id: browser
+      kind: ui
+      status: built
+      title: "Browser (Chrome)"
+      summary: "Where you use the app. Also runs the code runner for practice problems."
+      x: 0
+      y: 180
+    - id: runner
+      kind: ui
+      status: built
+      title: "Code runner"
+      summary: "Python, JavaScript, TypeScript and SQL run in browser workers under their own security policy. Your code never runs on the server."
+      links: ["apps/web/next.config.ts"]
+      x: 0
+      y: 380
+    - id: web
+      kind: service
+      status: built
+      title: "Web app (Next.js)"
+      summary: "Pages and the design system. Forwards /api requests to the API so the session cookie stays same-origin."
+      links: ["apps/web/src"]
+      x: 260
+      y: 180
+    - id: api
+      kind: service
+      status: built
+      title: "API (FastAPI)"
+      summary: "All business rules. Every route needs a session; unsafe requests also need a CSRF token. Modules keep their internals private."
+      links: ["apps/api/src/careerpilot/main.py"]
+      x: 540
+      y: 180
+    - id: worker
+      kind: service
+      status: built
+      title: "Worker"
+      summary: "Runs background tasks (job-board discovery, daily digest, backups). Claims tasks from the database; retries with backoff."
+      links: ["apps/api/src/careerpilot/worker.py"]
+      x: 540
+      y: 420
+    - id: mcp
+      kind: service
+      status: built
+      title: "MCP server"
+      summary: "Lets Claude Desktop or Claude Code use your tracker through typed tools. Writes preview first; nothing is ever sent or deleted."
+      links: ["apps/api/src/careerpilot/mcp_server.py"]
+      x: 540
+      y: 0
+    - id: db
+      kind: store
+      status: built
+      title: "PostgreSQL + pgvector"
+      summary: "The only database. Relational data, full-text search, vectors for notes search, and the task queue."
+      links: ["apps/api/alembic"]
+      x: 860
+      y: 310
+    - id: claude
+      kind: external
+      status: built
+      title: "Claude API"
+      summary: "Used only where a model helps (reading pages, answers with citations, mock interviews). Every call is budgeted and logged."
+      links: ["apps/api/src/careerpilot/core/llm.py"]
+      x: 860
+      y: 0
+    - id: search
+      kind: external
+      status: planned
+      title: "Search provider"
+      summary: "SearXNG (free, self-hosted) or Brave Search for the research agent. Planned."
+      x: 860
+      y: 150
+    - id: sites
+      kind: external
+      status: built
+      title: "Company sites and job boards"
+      summary: "Fetched only through one safe fetcher that blocks private addresses and sites that forbid automation."
+      links: ["apps/api/src/careerpilot/core/fetcher.py"]
+      x: 860
+      y: 520
+  edges:
+    - { from: browser, to: web, label: "HTTPS pages" }
+    - { from: browser, to: runner, label: "runs your code" }
+    - { from: web, to: api, label: "/api proxy" }
+    - { from: api, to: db, label: "SQL" }
+    - { from: worker, to: db, label: "claims tasks" }
+    - { from: api, to: claude, label: "budgeted calls" }
+    - { from: worker, to: claude, label: "budgeted calls" }
+    - { from: api, to: sites, label: "safe fetch" }
+    - { from: worker, to: sites, label: "safe fetch" }
+    - { from: mcp, to: db, label: "via services" }
+    - { from: api, to: search, label: "planned" }
+
+modules:
+  title: "Backend modules"
+  summary: "One folder per feature. Arrows are real imports, computed from the code; a module may only import another module's service, schemas and dependencies."
+  nodes:
+    - { id: "module:today", title: Today, summary: "The daily summary page: prep, follow-ups, pipeline.", x: 0, y: 0 }
+    - { id: "module:analytics", title: Insights, summary: "Funnel, pace and calibration from your history.", x: 220, y: 0 }
+    - { id: "module:digest", title: Digest, summary: "The daily summary built by the worker.", x: 440, y: 0 }
+    - { id: "module:tracker", title: Tracker, summary: "Jobs, companies, applications, status rules, contacts.", x: 660, y: 0 }
+    - { id: "module:prep", title: Prep, summary: "The 45-day plan and its topics (being replaced by Learn).", x: 880, y: 0 }
+    - { id: "module:learn", title: Learn, summary: "Topics, questions, answering, spaced repetition, review queue.", x: 1100, y: 0 }
+    - { id: "module:verification", title: Company check, summary: "Eight checks and four red flags with quoted evidence; the verdict is computed by code.", x: 0, y: 130 }
+    - { id: "module:scoring", title: Fit score, summary: "Scores a job against your profile with versioned weights.", x: 220, y: 130 }
+    - { id: "module:outreach", title: Outreach, summary: "Drafts that need your approval. There is no send action.", x: 440, y: 130 }
+    - { id: "module:intel", title: Interview intel, summary: "Rounds, topics and questions from sources with verified quotes.", x: 660, y: 130 }
+    - { id: "module:mock", title: Mock interviews, summary: "A scored interviewer on a job or topic.", x: 880, y: 130 }
+    - { id: "module:practice", title: Practice, summary: "Problems and submissions for the in-browser runner.", x: 1100, y: 130 }
+    - { id: "module:knowledge", title: Notes search, summary: "Chunks, embeddings, hybrid search and cited answers.", x: 0, y: 260 }
+    - { id: "module:discovery", title: Discovery, summary: "Follows public job boards; new listings wait in an inbox.", x: 220, y: 260 }
+    - { id: "module:tasks", title: Tasks, summary: "The background queue: idempotent keys, retries, watchdog.", x: 440, y: 260 }
+    - { id: "module:offers", title: Offers, summary: "Compares offers in rupees with dated exchange rates.", x: 660, y: 260 }
+    - { id: "module:stories", title: Stories, summary: "A bank of STAR interview stories with hints.", x: 880, y: 260 }
+    - { id: "module:auth", title: Auth, summary: "Sign-in, sessions, CSRF.", x: 1100, y: 260 }
+    - { id: "core", title: Core, summary: "Shared plumbing: database, config, fetcher, model calls, evidence checks, backups.", x: 550, y: 400 }
+    - { id: "module:architecture", title: Architecture explorer, summary: "Serves these diagrams, flows and concept pages, and checks them against the code.", x: 1100, y: 400 }
+    - { id: "core:fetcher", title: Safe fetcher, summary: "The only way code reads a web page: private addresses refused, size and time capped, blocked sites refused.", links: ["apps/api/src/careerpilot/core/fetcher.py"], x: 330, y: 530 }
+    - { id: "core:llm", title: Model calls, summary: "Every Claude call goes through here: daily token cap, audit row, validated JSON.", links: ["apps/api/src/careerpilot/core/llm.py"], x: 550, y: 530 }
+    - { id: "core:evidence", title: Quote check, summary: "A quote a model gives must appear in the fetched page before it is stored.", links: ["apps/api/src/careerpilot/core/evidence.py"], x: 770, y: 530 }
+    - { id: "core:backup", title: Backups, summary: "Encrypted backups; restore goes into a new database, never the live one.", links: ["apps/api/src/careerpilot/core/backup.py"], x: 990, y: 530 }

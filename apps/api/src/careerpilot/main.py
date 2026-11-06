@@ -14,6 +14,7 @@ from careerpilot.core.llm import make_llm
 from careerpilot.core.logging import configure_logging
 from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
 from careerpilot.modules.analytics.router import router as analytics_router
+from careerpilot.modules.architecture.router import router as architecture_router
 from careerpilot.modules.auth.router import router as auth_router
 from careerpilot.modules.auth.throttle import LoginThrottle
 from careerpilot.modules.digest.router import router as digest_router
@@ -96,6 +97,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(offers_router, prefix=API_PREFIX)
     app.include_router(stories_router, prefix=API_PREFIX)
     app.include_router(learn_router, prefix=API_PREFIX)
+    app.include_router(architecture_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

@@ -971,6 +971,115 @@
         "title": "ComponentOut",
         "type": "object"
       },
+      "ConceptDetail": {
+        "properties": {
+          "appears_in": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Appears In",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "proof": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Proof",
+            "type": "array"
+          },
+          "related": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Related",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "level",
+          "related",
+          "appears_in",
+          "proof",
+          "body"
+        ],
+        "title": "ConceptDetail",
+        "type": "object"
+      },
+      "ConceptSummary": {
+        "properties": {
+          "appears_in": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Appears In",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "proof": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Proof",
+            "type": "array"
+          },
+          "related": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Related",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "level",
+          "related",
+          "appears_in",
+          "proof"
+        ],
+        "title": "ConceptSummary",
+        "type": "object"
+      },
       "ContactCreate": {
         "properties": {
           "email": {
@@ -1265,6 +1374,137 @@
           }
         },
         "title": "DayUpdate",
+        "type": "object"
+      },
+      "Diagram": {
+        "properties": {
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramEdge"
+            },
+            "title": "Edges",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/DiagramNode"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "nodes",
+          "edges"
+        ],
+        "title": "Diagram",
+        "type": "object"
+      },
+      "DiagramEdge": {
+        "properties": {
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "target"
+        ],
+        "title": "DiagramEdge",
+        "type": "object"
+      },
+      "DiagramNode": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "ui",
+              "service",
+              "store",
+              "external",
+              "module",
+              "core"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "links": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "status": {
+            "default": "built",
+            "enum": [
+              "built",
+              "planned"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "summary",
+          "x",
+          "y"
+        ],
+        "title": "DiagramNode",
         "type": "object"
       },
       "Difficulty": {
@@ -1878,6 +2118,110 @@
           "text"
         ],
         "title": "FactIn",
+        "type": "object"
+      },
+      "Flow": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "proof": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Proof",
+            "type": "array"
+          },
+          "status": {
+            "default": "built",
+            "enum": [
+              "built",
+              "planned"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/FlowStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "steps"
+        ],
+        "title": "Flow",
+        "type": "object"
+      },
+      "FlowFailure": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "detail"
+        ],
+        "title": "FlowFailure",
+        "type": "object"
+      },
+      "FlowStep": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "failure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FlowFailure"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "label",
+          "detail"
+        ],
+        "title": "FlowStep",
         "type": "object"
       },
       "FollowUp": {
@@ -7427,6 +7771,223 @@
         "summary": "Change Status",
         "tags": [
           "tracker"
+        ]
+      }
+    },
+    "/api/v1/architecture/concepts": {
+      "get": {
+        "operationId": "list_architecture_concepts",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConceptSummary"
+                  },
+                  "title": "Response List Architecture Concepts",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Concepts",
+        "tags": [
+          "architecture"
+        ]
+      }
+    },
+    "/api/v1/architecture/concepts/{concept_id}": {
+      "get": {
+        "operationId": "get_architecture_concept",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "concept_id",
+            "required": true,
+            "schema": {
+              "title": "Concept Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConceptDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Concept",
+        "tags": [
+          "architecture"
+        ]
+      }
+    },
+    "/api/v1/architecture/diagrams": {
+      "get": {
+        "operationId": "list_architecture_diagrams",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Diagram"
+                  },
+                  "title": "Response List Architecture Diagrams",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Diagrams",
+        "tags": [
+          "architecture"
+        ]
+      }
+    },
+    "/api/v1/architecture/flows": {
+      "get": {
+        "operationId": "list_architecture_flows",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Flow"
+                  },
+                  "title": "Response List Architecture Flows",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Flows",
+        "tags": [
+          "architecture"
         ]
       }
     },

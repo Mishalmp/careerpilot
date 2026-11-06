@@ -58,6 +58,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/architecture/concepts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Concepts */
+        get: operations["list_architecture_concepts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/architecture/concepts/{concept_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Concept */
+        get: operations["get_architecture_concept"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/architecture/diagrams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Diagrams */
+        get: operations["list_architecture_diagrams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/architecture/flows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Flows */
+        get: operations["list_architecture_flows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -1641,6 +1709,44 @@ export interface components {
             /** Weight */
             weight: number;
         };
+        /** ConceptDetail */
+        ConceptDetail: {
+            /** Appears In */
+            appears_in: string[];
+            /** Body */
+            body: string;
+            /** Id */
+            id: string;
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "beginner" | "intermediate" | "advanced";
+            /** Proof */
+            proof: string[];
+            /** Related */
+            related: string[];
+            /** Title */
+            title: string;
+        };
+        /** ConceptSummary */
+        ConceptSummary: {
+            /** Appears In */
+            appears_in: string[];
+            /** Id */
+            id: string;
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "beginner" | "intermediate" | "advanced";
+            /** Proof */
+            proof: string[];
+            /** Related */
+            related: string[];
+            /** Title */
+            title: string;
+        };
         /** ContactCreate */
         ContactCreate: {
             /** Email */
@@ -1728,6 +1834,57 @@ export interface components {
             /** Notes */
             notes?: string | null;
             status?: components["schemas"]["DayStatus"] | null;
+        };
+        /** Diagram */
+        Diagram: {
+            /** Edges */
+            edges: components["schemas"]["DiagramEdge"][];
+            /** Id */
+            id: string;
+            /** Nodes */
+            nodes: components["schemas"]["DiagramNode"][];
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+        };
+        /** DiagramEdge */
+        DiagramEdge: {
+            /** Label */
+            label?: string | null;
+            /** Source */
+            source: string;
+            /** Target */
+            target: string;
+        };
+        /** DiagramNode */
+        DiagramNode: {
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "ui" | "service" | "store" | "external" | "module" | "core";
+            /**
+             * Links
+             * @default []
+             */
+            links: string[];
+            /**
+             * Status
+             * @default built
+             * @enum {string}
+             */
+            status: "built" | "planned";
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /**
          * Difficulty
@@ -1937,6 +2094,47 @@ export interface components {
             source_url?: string | null;
             /** Text */
             text: string;
+        };
+        /** Flow */
+        Flow: {
+            /** Id */
+            id: string;
+            /**
+             * Proof
+             * @default []
+             */
+            proof: string[];
+            /**
+             * Status
+             * @default built
+             * @enum {string}
+             */
+            status: "built" | "planned";
+            /** Steps */
+            steps: components["schemas"]["FlowStep"][];
+            /** Summary */
+            summary: string;
+            /** Title */
+            title: string;
+        };
+        /** FlowFailure */
+        FlowFailure: {
+            /** Detail */
+            detail: string;
+            /** Label */
+            label: string;
+        };
+        /** FlowStep */
+        FlowStep: {
+            /** Detail */
+            detail: string;
+            failure?: components["schemas"]["FlowFailure"] | null;
+            /** Label */
+            label: string;
+            /** Source */
+            source: string;
+            /** Target */
+            target: string;
         };
         /** FollowUp */
         FollowUp: {
@@ -3726,6 +3924,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_architecture_concepts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConceptSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_architecture_concept: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                concept_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConceptDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_architecture_diagrams: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Diagram"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_architecture_flows: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Flow"][];
                 };
             };
             /** @description Validation Error */

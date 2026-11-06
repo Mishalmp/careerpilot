@@ -205,23 +205,23 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## V: architecture explorer (spec: `04-architecture-explorer.md`)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | V01 | Content schema in `content/architecture/` (nodes, edges, flows, concepts) with loader and validation | none | M | Invalid file fails test |
-| [ ] | V02 | API and CLI `careerpilot export-architecture`: architecture graph, concept index, ERD from SQLAlchemy metadata, routes, tasks, prompts, MCP tools written to `content/architecture/generated/` | V01 | M | Owner-independent; tests; generated files equal a fresh export |
-| [ ] | V03 | Drift tests: modules, routers, tables, ADRs vs the content | V02 | M | Adding a module without a node fails |
-| [ ] | V04 | `/architecture` shell with tabs | D13 | S | Route renders |
-| [ ] | V05 | React Flow wrapper: pan, zoom, minimap, node panel, keyboard access, theming, reduced motion | D04, V04 | L | Keyboard can reach every node |
-| [ ] | V06 | Diagram: system context | V05 | M | Matches `04` |
-| [ ] | V07 | Diagram: backend modules and allowed dependencies from import-linter contracts | V05 | M | Generated from contracts |
-| [ ] | V08 | Flow player (play, step, back) with flows: login and CSRF; add job; ask notes; company check; research run; discovery and queue; backup and restore; mock turn | V05 | L | Each flow has step text and linked test |
-| [ ] | V09 | ERD view with module filter and live row counts | V02, V05 | M | |
-| [ ] | V10 | Concept pages (What, Why, In this app, Failure modes, Try it, Proving test) | W01 | L | 14 pages render |
+| [x] | V01 | Content schema in `content/architecture/` (nodes, edges, flows, concepts) with loader and validation | none | M | Invalid file fails test |
+| [x] | V02 | API and CLI `careerpilot export-architecture`: architecture graph, concept index, ERD from SQLAlchemy metadata, routes, tasks, prompts, MCP tools written to `content/architecture/generated/` | V01 | M | Owner-independent; tests; generated files equal a fresh export |
+| [x] | V03 | Drift tests: modules, routers, tables, ADRs vs the content | V02 | M | Adding a module without a node fails |
+| [x] | V04 | `/architecture` shell with tabs | D13 | S | Route renders |
+| [x] | V05 | React Flow wrapper: pan, zoom, minimap, node panel, keyboard access, theming, reduced motion | D04, V04 | L | Keyboard can reach every node |
+| [x] | V06 | Diagram: system context | V05 | M | Matches `04` |
+| [x] | V07 | Diagram: backend modules and allowed dependencies from import-linter contracts | V05 | M | Generated from contracts |
+| [~] | V08 | Flow player (play, step, back) with flows: login and CSRF; add job; ask notes; company check; research run; discovery and queue; backup and restore; mock turn | V05 | L | Each flow has step text and linked test |
+| [~] | V09 | ERD view with module filter and live row counts | V02, V05 | M | |
+| [x] | V10 | Concept pages (What, Why, In this app, Failure modes, Try it, Proving test) | W01 | L | 14 pages render |
 | [ ] | V11 | Try-it widgets: chunking, rank fusion, SSRF checker, quote verifier, backoff calculator, FSRS simulator | V10 | L | Each calls real code via API |
 | [ ] | V12 | Live status panel (from B01) | B01, V04 | M | Shows real values |
 | [ ] | V13 | Failure drills page: scenario, what happens, proving test, how to simulate in dev | W02, T11 | M | Each drill links a passing test |
-| [ ] | V14 | ADR viewer and decision timeline | V01 | M | All ADRs listed |
+| [~] | V14 | ADR viewer and decision timeline | V01 | M | All ADRs listed |
 | [ ] | V15 | Search across architecture content in the command palette | D11, V10 | S | |
 | [ ] | V16 | Export diagrams as SVG and PNG | V05 | S | |
-| [ ] | V17 | Text alternative for every diagram; keyboard narrated walk-through | V05 | M | axe clean |
+| [~] | V17 | Text alternative for every diagram; keyboard narrated walk-through | V05 | M | axe clean |
 | [ ] | V18 | **(owner)** Review the explorer; list changes | V06-V14 | S | |
 
 ## H: system hardening and redesigns (rationale in `05-system-review.md`)
@@ -295,7 +295,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## W: writing and teaching content
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | W01 | Turn `06-concepts-primer.md` into `content/architecture/concepts/*.md` (14 pages) | V01 | L | Loader validates |
+| [x] | W01 | Turn `06-concepts-primer.md` into `content/architecture/concepts/*.md` (14 pages) | V01 | L | Loader validates |
 | [ ] | W02 | Failure-mode docs from `05` as drill content | V01 | M | |
 | [ ] | W03 | Glossary (terms, one line each, linked) | W01 | S | |
 | [ ] | W04 | Code tour: module by module "where to look" | V01 | M | |

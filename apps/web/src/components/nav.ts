@@ -10,6 +10,7 @@ import {
   type LucideIcon,
   MessageSquareText,
   Mic,
+  Network,
   Sparkles,
   Star,
   Wallet,
@@ -48,7 +49,10 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: "System",
-    items: [{ href: "/tasks", label: "Tasks", icon: ListChecks }],
+    items: [
+      { href: "/architecture", label: "How it works", icon: Network },
+      { href: "/tasks", label: "Tasks", icon: ListChecks },
+    ],
   },
 ];
 
