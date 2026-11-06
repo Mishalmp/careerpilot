@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="CareerPilot">
+  <title>CareerPilot</title>
+  <rect width="64" height="64" rx="14" fill="#0090ff"/>
+  <path d="M13 30.5 51 14 41 51 31 39.5z" fill="#ffffff"/>
+  <path d="M31 39.5 51 14 24.5 35.5z" fill="#ffffff" fill-opacity="0.65"/>
+  <path d="M31 39.5V50l5.5-6.8z" fill="#ffffff" fill-opacity="0.8"/>
+</svg>

@@ -4,6 +4,8 @@ Job application tracker, interview prep, an in-browser practice editor, and a pl
 
 Status: Phase 6. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Follow companies' public job boards (Greenhouse, Lever, Ashby): new listings wait in an inbox until you add them to the tracker, and a daily digest summarises the day. Insights show your funnel and prep progress, an offer calculator compares offers in rupees, a story bank holds interview stories, and encrypted nightly backups can be restored into a fresh database. Learn how the last two are built in [docs/learn](docs/learn).
 
+**Next (Phase 7, planned, not built):** new blue design system with light and dark modes, a learning platform that researches interview topics for each job, an interactive architecture explorer, and a hardening pass. Everything is specified in [docs/phase-7](docs/phase-7/README.md); resume from [docs/phase-7/STATUS.md](docs/phase-7/STATUS.md).
+
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
 

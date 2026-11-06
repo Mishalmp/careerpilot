@@ -4,6 +4,8 @@ One local-first platform to track job applications, research companies, prepare 
 
 Written 2026-11-03 for Mishal MP. Status: plan, awaiting approval. Nothing is built yet.
 
+> **Update 2026-11-06:** Phases 0 to 6 are built. The next programme (new UI, learning platform, architecture explorer, system review, AI-driven testing) is planned in [docs/phase-7/](docs/phase-7/README.md); read `docs/phase-7/STATUS.md` first when resuming. Where that plan changes a decision below (for example long operations as tasks), the ADRs and the phase-7 documents take precedence.
+
 ---
 
 ## 0. Decisions in one screen

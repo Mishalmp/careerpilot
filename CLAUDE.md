@@ -1,6 +1,8 @@
 # CareerPilot: working rules
 
-Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [README.md](README.md).
+**Resuming work? Read [docs/phase-7/STATUS.md](docs/phase-7/STATUS.md) first**, then the task list in `docs/phase-7/07-tasks.md`. Update STATUS.md before ending any session.
+
+Read [plan.md](plan.md) first; decisions live in `docs/adr/`. Commands are in [README.md](README.md). The owner is an intermediate engineer who wants concepts explained: say what concept a change uses and how it can fail (teaching notes: `docs/phase-7/06-concepts-primer.md`).
 
 ## Rules (from plan section 1)
 1. No abstraction until three real uses, except the interfaces the ADRs name.
