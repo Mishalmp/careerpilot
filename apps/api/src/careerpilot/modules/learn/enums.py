@@ -28,7 +28,7 @@ class QuestionOrigin(StrEnum):
     GENERATED = "generated"
 
 
-class TopicStatus(StrEnum):
+class LearnTopicStatus(StrEnum):
     NOT_STARTED = "not_started"
     LEARNING = "learning"
     PRACTISING = "practising"

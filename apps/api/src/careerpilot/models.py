@@ -8,6 +8,14 @@ from careerpilot.modules.digest.models import Digest
 from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
 from careerpilot.modules.intel.models import IntelItem, IntelSource
 from careerpilot.modules.knowledge.models import Chunk, Document
+from careerpilot.modules.learn.models import (
+    LearnAttempt,
+    LearnOption,
+    LearnQuestion,
+    LearnReviewCard,
+    LearnSource,
+    LearnTopic,
+)
 from careerpilot.modules.mock.models import MockSession
 from careerpilot.modules.offers.models import FxRate
 from careerpilot.modules.outreach.models import OutreachDraft
@@ -50,6 +58,12 @@ REGISTERED_MODELS = (
     Digest,
     FxRate,
     StarStory,
+    LearnTopic,
+    LearnQuestion,
+    LearnOption,
+    LearnSource,
+    LearnAttempt,
+    LearnReviewCard,
     Submission,
     Document,
     Chunk,

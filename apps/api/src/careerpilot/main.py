@@ -21,6 +21,7 @@ from careerpilot.modules.discovery.router import router as discovery_router
 from careerpilot.modules.intel.router import router as intel_router
 from careerpilot.modules.knowledge.embeddings import make_embedder
 from careerpilot.modules.knowledge.router import router as knowledge_router
+from careerpilot.modules.learn.router import router as learn_router
 from careerpilot.modules.mock.router import router as mock_router
 from careerpilot.modules.offers.router import router as offers_router
 from careerpilot.modules.outreach.router import router as outreach_router
@@ -94,6 +95,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(analytics_router, prefix=API_PREFIX)
     app.include_router(offers_router, prefix=API_PREFIX)
     app.include_router(stories_router, prefix=API_PREFIX)
+    app.include_router(learn_router, prefix=API_PREFIX)
     app.include_router(today_router, prefix=API_PREFIX)
     return app
 

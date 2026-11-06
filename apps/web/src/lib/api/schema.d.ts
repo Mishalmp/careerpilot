@@ -670,6 +670,130 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/learn/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Questions */
+        get: operations["list_learn_questions"];
+        put?: never;
+        /** Create Question */
+        post: operations["create_learn_question"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/questions/{question_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Question */
+        get: operations["get_learn_question"];
+        put?: never;
+        post?: never;
+        /** Delete Question */
+        delete: operations["delete_learn_question"];
+        options?: never;
+        head?: never;
+        /** Update Question */
+        patch: operations["update_learn_question"];
+        trace?: never;
+    };
+    "/api/v1/learn/questions/{question_id}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Answer Question */
+        post: operations["answer_learn_question"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Review Queue */
+        get: operations["get_learn_review_queue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Learn Stats */
+        get: operations["get_learn_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Topics */
+        get: operations["list_learn_topics"];
+        put?: never;
+        /** Create Topic */
+        post: operations["create_learn_topic"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/learn/topics/{topic_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Topic */
+        delete: operations["delete_learn_topic"];
+        options?: never;
+        head?: never;
+        /** Update Topic */
+        patch: operations["update_learn_topic"];
+        trace?: never;
+    };
     "/api/v1/mock/sessions": {
         parameters: {
             query?: never;
@@ -1881,6 +2005,11 @@ export interface components {
             /** Sender Name */
             sender_name: string;
         };
+        /**
+         * GradedBy
+         * @enum {string}
+         */
+        GradedBy: "code" | "model" | "self";
         /** GuideInfoOut */
         GuideInfoOut: {
             /** Name */
@@ -2208,6 +2337,339 @@ export interface components {
             language: components["schemas"]["Language"];
             /** Starter */
             starter: string;
+        };
+        /**
+         * LearnAnswerIn
+         * @description `token` is made by the client for each answer; sending the same one again is harmless.
+         */
+        LearnAnswerIn: {
+            /**
+             * Confidence
+             * @default 2
+             */
+            confidence: number;
+            /** Seconds */
+            seconds?: number | null;
+            /** Selected */
+            selected?: number[] | null;
+            /** Self Score */
+            self_score?: number | null;
+            /** Text */
+            text?: string | null;
+            /**
+             * Token
+             * Format: uuid
+             */
+            token: string;
+        };
+        /** LearnAnswerOut */
+        LearnAnswerOut: {
+            /**
+             * Already Answered
+             * @default false
+             */
+            already_answered: boolean;
+            /** Correct */
+            correct: boolean;
+            /** Correct Positions */
+            correct_positions: number[];
+            /** Explanation */
+            explanation: string | null;
+            graded_by: components["schemas"]["GradedBy"];
+            /**
+             * Next Due
+             * Format: date-time
+             */
+            next_due: string;
+            /** Options */
+            options: components["schemas"]["LearnOptionOut"][];
+            rating: components["schemas"]["Rating"];
+            /** Score */
+            score: number;
+            /** Sources */
+            sources: components["schemas"]["LearnSourceOut"][];
+        };
+        /** LearnOptionIn */
+        LearnOptionIn: {
+            /** Is Correct */
+            is_correct: boolean;
+            /** Rationale */
+            rationale?: string | null;
+            /** Text */
+            text: string;
+        };
+        /** LearnOptionOut */
+        LearnOptionOut: {
+            /** Is Correct */
+            is_correct: boolean;
+            /** Position */
+            position: number;
+            /** Rationale */
+            rationale: string | null;
+            /** Text */
+            text: string;
+        };
+        /** LearnPublicOption */
+        LearnPublicOption: {
+            /** Position */
+            position: number;
+            /** Text */
+            text: string;
+        };
+        /** LearnQuestionCreate */
+        LearnQuestionCreate: {
+            /**
+             * Difficulty
+             * @default 3
+             */
+            difficulty: number;
+            /** Explanation */
+            explanation?: string | null;
+            /**
+             * Options
+             * @default []
+             */
+            options: components["schemas"]["LearnOptionIn"][];
+            /** Practice Slug */
+            practice_slug?: string | null;
+            /** Rubric */
+            rubric?: string[] | null;
+            /**
+             * Sources
+             * @default []
+             */
+            sources: components["schemas"]["LearnSourceIn"][];
+            /** Stem */
+            stem: string;
+            /**
+             * Tags
+             * @default []
+             */
+            tags: string[];
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
+            type: components["schemas"]["QuestionType"];
+        };
+        /**
+         * LearnQuestionOut
+         * @description The full question, including the answers. For editing and review, never for answering.
+         */
+        LearnQuestionOut: {
+            /** Difficulty */
+            difficulty: number;
+            /** Explanation */
+            explanation: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Options */
+            options: components["schemas"]["LearnOptionOut"][];
+            origin: components["schemas"]["QuestionOrigin"];
+            /** Practice Slug */
+            practice_slug: string | null;
+            /** Rubric */
+            rubric: string[] | null;
+            /** Sources */
+            sources: components["schemas"]["LearnSourceOut"][];
+            status: components["schemas"]["QuestionStatus"];
+            /** Stem */
+            stem: string;
+            /** Tags */
+            tags: string[];
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
+            type: components["schemas"]["QuestionType"];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** LearnQuestionPage */
+        LearnQuestionPage: {
+            /** Items */
+            items: components["schemas"]["LearnQuestionOut"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * LearnQuestionToAnswer
+         * @description What the learner sees while answering: no correct flags, rationales or explanation.
+         */
+        LearnQuestionToAnswer: {
+            /** Difficulty */
+            difficulty: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is New */
+            is_new: boolean;
+            /** Options */
+            options: components["schemas"]["LearnPublicOption"][];
+            /** Practice Slug */
+            practice_slug?: string | null;
+            /** Rubric */
+            rubric?: string[] | null;
+            status: components["schemas"]["QuestionStatus"];
+            /** Stem */
+            stem: string;
+            /**
+             * Topic Id
+             * Format: uuid
+             */
+            topic_id: string;
+            /** Topic Title */
+            topic_title: string;
+            type: components["schemas"]["QuestionType"];
+        };
+        /**
+         * LearnQuestionUpdate
+         * @description Only the fields you send change. Changing options or type is a re-create, not an edit.
+         */
+        LearnQuestionUpdate: {
+            /** Difficulty */
+            difficulty?: number | null;
+            /** Explanation */
+            explanation?: string | null;
+            status?: components["schemas"]["QuestionStatus"] | null;
+            /** Stem */
+            stem?: string | null;
+            /** Tags */
+            tags?: string[] | null;
+            /** Topic Id */
+            topic_id?: string | null;
+        };
+        /** LearnReviewQueue */
+        LearnReviewQueue: {
+            /** Due */
+            due: number;
+            /** Items */
+            items: components["schemas"]["LearnQuestionToAnswer"][];
+            /** New Available */
+            new_available: number;
+        };
+        /** LearnSourceIn */
+        LearnSourceIn: {
+            /** Fetched On */
+            fetched_on?: string | null;
+            /** Quote */
+            quote: string;
+            /** Title */
+            title?: string | null;
+            /** Url */
+            url: string;
+        };
+        /** LearnSourceOut */
+        LearnSourceOut: {
+            /** Fetched On */
+            fetched_on: string | null;
+            /** Quote */
+            quote: string;
+            /** Reliability */
+            reliability: number | null;
+            /** Title */
+            title: string | null;
+            /** Url */
+            url: string;
+        };
+        /** LearnStats */
+        LearnStats: {
+            /** Answered Today */
+            answered_today: number;
+            /** Due Now */
+            due_now: number;
+            /** New Today Left */
+            new_today_left: number;
+            /** Questions */
+            questions: number;
+            /** Streak Days */
+            streak_days: number;
+            /** Topics */
+            topics: number;
+        };
+        /** LearnTopicCreate */
+        LearnTopicCreate: {
+            /** Area */
+            area?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Priority
+             * @default 2
+             */
+            priority: number;
+            /** Summary */
+            summary?: string | null;
+            /** Title */
+            title: string;
+        };
+        /** LearnTopicOut */
+        LearnTopicOut: {
+            /** Archived */
+            archived: boolean;
+            /** Area */
+            area: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Mastery */
+            mastery?: number | null;
+            /** Notes */
+            notes: string | null;
+            origin: components["schemas"]["TopicOrigin"];
+            /** Priority */
+            priority: number;
+            /**
+             * Question Count
+             * @default 0
+             */
+            question_count: number;
+            status: components["schemas"]["LearnTopicStatus"];
+            /** Summary */
+            summary: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * LearnTopicStatus
+         * @enum {string}
+         */
+        LearnTopicStatus: "not_started" | "learning" | "practising" | "mastered";
+        /**
+         * LearnTopicUpdate
+         * @description Only the fields you send change.
+         */
+        LearnTopicUpdate: {
+            /** Archived */
+            archived?: boolean | null;
+            /** Area */
+            area?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Priority */
+            priority?: number | null;
+            status?: components["schemas"]["LearnTopicStatus"] | null;
+            /** Summary */
+            summary?: string | null;
+            /** Title */
+            title?: string | null;
         };
         /** LintOut */
         LintOut: {
@@ -2542,6 +3004,21 @@ export interface components {
          * @enum {string}
          */
         ProgressStatus: "unsolved" | "attempted" | "solved";
+        /**
+         * QuestionOrigin
+         * @enum {string}
+         */
+        QuestionOrigin: "manual" | "guide" | "research" | "generated";
+        /**
+         * QuestionStatus
+         * @enum {string}
+         */
+        QuestionStatus: "draft" | "verified" | "unverified" | "archived";
+        /**
+         * QuestionType
+         * @enum {string}
+         */
+        QuestionType: "mcq_single" | "mcq_multi" | "short" | "practical" | "explain" | "scenario";
         /** QuestionsOut */
         QuestionsOut: {
             /**
@@ -2579,6 +3056,12 @@ export interface components {
             /** To Inr */
             to_inr: string;
         };
+        /**
+         * Rating
+         * @description How well a card was remembered. Same four grades as FSRS.
+         * @enum {string}
+         */
+        Rating: "again" | "hard" | "good" | "easy";
         /** ReadingOut */
         ReadingOut: {
             /** Dropped Flags */
@@ -2994,6 +3477,11 @@ export interface components {
             /** Total Days */
             total_days: number;
         };
+        /**
+         * TopicOrigin
+         * @enum {string}
+         */
+        TopicOrigin: "manual" | "seed" | "research" | "guide";
         /** TopicOut */
         TopicOut: {
             /** Area */
@@ -4629,6 +5117,417 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_learn_questions: {
+        parameters: {
+            query?: {
+                topic_id?: string | null;
+                status?: components["schemas"]["QuestionStatus"] | null;
+                type?: components["schemas"]["QuestionType"] | null;
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnQuestionPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_learn_question: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnQuestionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learn_question: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_learn_question: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_learn_question: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnQuestionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    answer_learn_question: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnAnswerIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnAnswerOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learn_review_queue: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnReviewQueue"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_learn_stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnStats"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_learn_topics: {
+        parameters: {
+            query?: {
+                archived?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnTopicOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_learn_topic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnTopicCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnTopicOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_learn_topic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_learn_topic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LearnTopicUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearnTopicOut"];
                 };
             };
             /** @description Validation Error */

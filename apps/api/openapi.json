@@ -2087,6 +2087,15 @@
         "title": "GenerateRequest",
         "type": "object"
       },
+      "GradedBy": {
+        "enum": [
+          "code",
+          "model",
+          "self"
+        ],
+        "title": "GradedBy",
+        "type": "string"
+      },
       "GuideInfoOut": {
         "properties": {
           "name": {
@@ -3406,6 +3415,1053 @@
         "title": "LanguageSpec",
         "type": "object"
       },
+      "LearnAnswerIn": {
+        "description": "`token` is made by the client for each answer; sending the same one again is harmless.",
+        "properties": {
+          "confidence": {
+            "default": 2,
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Confidence",
+            "type": "integer"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected"
+          },
+          "self_score": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Self Score"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "token": {
+            "format": "uuid",
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "LearnAnswerIn",
+        "type": "object"
+      },
+      "LearnAnswerOut": {
+        "properties": {
+          "already_answered": {
+            "default": false,
+            "title": "Already Answered",
+            "type": "boolean"
+          },
+          "correct": {
+            "title": "Correct",
+            "type": "boolean"
+          },
+          "correct_positions": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Correct Positions",
+            "type": "array"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "graded_by": {
+            "$ref": "#/components/schemas/GradedBy"
+          },
+          "next_due": {
+            "format": "date-time",
+            "title": "Next Due",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/LearnOptionOut"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "rating": {
+            "$ref": "#/components/schemas/Rating"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/LearnSourceOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "correct",
+          "score",
+          "rating",
+          "graded_by",
+          "correct_positions",
+          "explanation",
+          "options",
+          "sources",
+          "next_due"
+        ],
+        "title": "LearnAnswerOut",
+        "type": "object"
+      },
+      "LearnOptionIn": {
+        "properties": {
+          "is_correct": {
+            "title": "Is Correct",
+            "type": "boolean"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rationale"
+          },
+          "text": {
+            "maxLength": 500,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "is_correct"
+        ],
+        "title": "LearnOptionIn",
+        "type": "object"
+      },
+      "LearnOptionOut": {
+        "properties": {
+          "is_correct": {
+            "title": "Is Correct",
+            "type": "boolean"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rationale"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "text",
+          "is_correct",
+          "rationale"
+        ],
+        "title": "LearnOptionOut",
+        "type": "object"
+      },
+      "LearnPublicOption": {
+        "properties": {
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "text"
+        ],
+        "title": "LearnPublicOption",
+        "type": "object"
+      },
+      "LearnQuestionCreate": {
+        "properties": {
+          "difficulty": {
+            "default": 3,
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "options": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/LearnOptionIn"
+            },
+            "maxItems": 5,
+            "title": "Options",
+            "type": "array"
+          },
+          "practice_slug": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z0-9-]{1,80}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Slug"
+          },
+          "rubric": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 300,
+                  "type": "string"
+                },
+                "maxItems": 6,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric"
+          },
+          "sources": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/LearnSourceIn"
+            },
+            "maxItems": 5,
+            "title": "Sources",
+            "type": "array"
+          },
+          "stem": {
+            "maxLength": 2000,
+            "title": "Stem",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Tags",
+            "type": "array"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/QuestionType"
+          }
+        },
+        "required": [
+          "topic_id",
+          "type",
+          "stem"
+        ],
+        "title": "LearnQuestionCreate",
+        "type": "object"
+      },
+      "LearnQuestionOut": {
+        "description": "The full question, including the answers. For editing and review, never for answering.",
+        "properties": {
+          "difficulty": {
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/LearnOptionOut"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/QuestionOrigin"
+          },
+          "practice_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Slug"
+          },
+          "rubric": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/LearnSourceOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/QuestionStatus"
+          },
+          "stem": {
+            "title": "Stem",
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "topic_id",
+          "type",
+          "stem",
+          "explanation",
+          "difficulty",
+          "status",
+          "origin",
+          "rubric",
+          "practice_slug",
+          "tags",
+          "options",
+          "sources",
+          "updated_at"
+        ],
+        "title": "LearnQuestionOut",
+        "type": "object"
+      },
+      "LearnQuestionPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LearnQuestionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "LearnQuestionPage",
+        "type": "object"
+      },
+      "LearnQuestionToAnswer": {
+        "description": "What the learner sees while answering: no correct flags, rationales or explanation.",
+        "properties": {
+          "difficulty": {
+            "title": "Difficulty",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_new": {
+            "title": "Is New",
+            "type": "boolean"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/LearnPublicOption"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "practice_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Slug"
+          },
+          "rubric": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric"
+          },
+          "status": {
+            "$ref": "#/components/schemas/QuestionStatus"
+          },
+          "stem": {
+            "title": "Stem",
+            "type": "string"
+          },
+          "topic_id": {
+            "format": "uuid",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "topic_title": {
+            "title": "Topic Title",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/QuestionType"
+          }
+        },
+        "required": [
+          "id",
+          "topic_id",
+          "topic_title",
+          "type",
+          "stem",
+          "difficulty",
+          "status",
+          "options",
+          "is_new"
+        ],
+        "title": "LearnQuestionToAnswer",
+        "type": "object"
+      },
+      "LearnQuestionUpdate": {
+        "description": "Only the fields you send change. Changing options or type is a re-create, not an edit.",
+        "properties": {
+          "difficulty": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stem": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stem"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 30,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          },
+          "topic_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Id"
+          }
+        },
+        "title": "LearnQuestionUpdate",
+        "type": "object"
+      },
+      "LearnReviewQueue": {
+        "properties": {
+          "due": {
+            "title": "Due",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LearnQuestionToAnswer"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "new_available": {
+            "title": "New Available",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "due",
+          "new_available",
+          "items"
+        ],
+        "title": "LearnReviewQueue",
+        "type": "object"
+      },
+      "LearnSourceIn": {
+        "properties": {
+          "fetched_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched On"
+          },
+          "quote": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "url": {
+            "maxLength": 2000,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "quote"
+        ],
+        "title": "LearnSourceIn",
+        "type": "object"
+      },
+      "LearnSourceOut": {
+        "properties": {
+          "fetched_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched On"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "reliability": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reliability"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "quote",
+          "fetched_on",
+          "reliability"
+        ],
+        "title": "LearnSourceOut",
+        "type": "object"
+      },
+      "LearnStats": {
+        "properties": {
+          "answered_today": {
+            "title": "Answered Today",
+            "type": "integer"
+          },
+          "due_now": {
+            "title": "Due Now",
+            "type": "integer"
+          },
+          "new_today_left": {
+            "title": "New Today Left",
+            "type": "integer"
+          },
+          "questions": {
+            "title": "Questions",
+            "type": "integer"
+          },
+          "streak_days": {
+            "title": "Streak Days",
+            "type": "integer"
+          },
+          "topics": {
+            "title": "Topics",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "topics",
+          "questions",
+          "due_now",
+          "new_today_left",
+          "answered_today",
+          "streak_days"
+        ],
+        "title": "LearnStats",
+        "type": "object"
+      },
+      "LearnTopicCreate": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "priority": {
+            "default": 2,
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "LearnTopicCreate",
+        "type": "object"
+      },
+      "LearnTopicOut": {
+        "properties": {
+          "archived": {
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mastery": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mastery"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/TopicOrigin"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "question_count": {
+            "default": 0,
+            "title": "Question Count",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LearnTopicStatus"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "area",
+          "priority",
+          "status",
+          "origin",
+          "notes",
+          "archived",
+          "updated_at"
+        ],
+        "title": "LearnTopicOut",
+        "type": "object"
+      },
+      "LearnTopicStatus": {
+        "enum": [
+          "not_started",
+          "learning",
+          "practising",
+          "mastered"
+        ],
+        "title": "LearnTopicStatus",
+        "type": "string"
+      },
+      "LearnTopicUpdate": {
+        "description": "Only the fields you send change.",
+        "properties": {
+          "archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived"
+          },
+          "area": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "maximum": 3.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LearnTopicStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "LearnTopicUpdate",
+        "type": "object"
+      },
       "LintOut": {
         "properties": {
           "flags": {
@@ -4361,6 +5417,38 @@
         "title": "ProgressStatus",
         "type": "string"
       },
+      "QuestionOrigin": {
+        "enum": [
+          "manual",
+          "guide",
+          "research",
+          "generated"
+        ],
+        "title": "QuestionOrigin",
+        "type": "string"
+      },
+      "QuestionStatus": {
+        "enum": [
+          "draft",
+          "verified",
+          "unverified",
+          "archived"
+        ],
+        "title": "QuestionStatus",
+        "type": "string"
+      },
+      "QuestionType": {
+        "enum": [
+          "mcq_single",
+          "mcq_multi",
+          "short",
+          "practical",
+          "explain",
+          "scenario"
+        ],
+        "title": "QuestionType",
+        "type": "string"
+      },
       "QuestionsOut": {
         "properties": {
           "note": {
@@ -4447,6 +5535,17 @@
         ],
         "title": "RateOut",
         "type": "object"
+      },
+      "Rating": {
+        "description": "How well a card was remembered. Same four grades as FSRS.",
+        "enum": [
+          "again",
+          "hard",
+          "good",
+          "easy"
+        ],
+        "title": "Rating",
+        "type": "string"
       },
       "ReadingOut": {
         "properties": {
@@ -5734,6 +6833,16 @@
         ],
         "title": "TodayPrep",
         "type": "object"
+      },
+      "TopicOrigin": {
+        "enum": [
+          "manual",
+          "seed",
+          "research",
+          "guide"
+        ],
+        "title": "TopicOrigin",
+        "type": "string"
       },
       "TopicOut": {
         "properties": {
@@ -8915,6 +10024,795 @@
         "summary": "Knowledge Status",
         "tags": [
           "knowledge"
+        ]
+      }
+    },
+    "/api/v1/learn/questions": {
+      "get": {
+        "operationId": "list_learn_questions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "topic_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Topic Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/QuestionStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/QuestionType"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnQuestionPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Questions",
+        "tags": [
+          "learn"
+        ]
+      },
+      "post": {
+        "operationId": "create_learn_question",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearnQuestionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnQuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Question",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/questions/{question_id}": {
+      "delete": {
+        "operationId": "delete_learn_question",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Question",
+        "tags": [
+          "learn"
+        ]
+      },
+      "get": {
+        "operationId": "get_learn_question",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnQuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Question",
+        "tags": [
+          "learn"
+        ]
+      },
+      "patch": {
+        "operationId": "update_learn_question",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearnQuestionUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnQuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Question",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/questions/{question_id}/answer": {
+      "post": {
+        "operationId": "answer_learn_question",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearnAnswerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnAnswerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Answer Question",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/review": {
+      "get": {
+        "operationId": "get_learn_review_queue",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnReviewQueue"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Queue",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/stats": {
+      "get": {
+        "operationId": "get_learn_stats",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnStats"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Learn Stats",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/topics": {
+      "get": {
+        "operationId": "list_learn_topics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Archived",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LearnTopicOut"
+                  },
+                  "title": "Response List Learn Topics",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Topics",
+        "tags": [
+          "learn"
+        ]
+      },
+      "post": {
+        "operationId": "create_learn_topic",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearnTopicCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnTopicOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Topic",
+        "tags": [
+          "learn"
+        ]
+      }
+    },
+    "/api/v1/learn/topics/{topic_id}": {
+      "delete": {
+        "operationId": "delete_learn_topic",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Topic",
+        "tags": [
+          "learn"
+        ]
+      },
+      "patch": {
+        "operationId": "update_learn_topic",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "topic_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Topic Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LearnTopicUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnTopicOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Topic",
+        "tags": [
+          "learn"
         ]
       }
     },

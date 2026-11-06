@@ -141,27 +141,27 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
 | [ ] | L01 | ADR 0017 learning model; freeze spec | Q02 | M | ADR committed |
-| [ ] | L02 | Migration + models: `tracks`, `topics` (from `prep_topics`), `topic_edges` (prerequisites), tags | L01 | M | Drift test green; up/down tested |
-| [ ] | L03 | Migration + models: `questions`, `question_options`, `question_sources` | L02 | M | Constraints per type enforced by CHECKs |
-| [ ] | L04 | Migration + models: `attempts`, `review_cards` (FSRS state) | L03 | M | One card per (user, question) unique |
+| [~] | L02 | Migration + models: `tracks`, `topics` (from `prep_topics`), `topic_edges` (prerequisites), tags | L01 | M | Drift test green; up/down tested |
+| [x] | L03 | Migration + models: `questions`, `question_options`, `question_sources` | L02 | M | Constraints per type enforced by CHECKs |
+| [x] | L04 | Migration + models: `attempts`, `review_cards` (FSRS state) | L03 | M | One card per (user, question) unique |
 | [ ] | L05 | Migration + models: `checkpoints`, `checkpoint_items`, `checkpoint_attempts` | L03 | M | Snapshot of questions stored per attempt |
 | [ ] | L06 | Migration + models: `research_runs`, `research_findings` | L03 | M | Status enums and budgets columns |
 | [ ] | L07 | Idempotent data migration of existing topics, study sessions and guide questions into the new model; old endpoints keep working | L02-L04 | L | Row counts equal; reversible |
-| [ ] | L08 | FSRS scheduler service (py-fsrs pinned) with rating-to-interval tests on known sequences | L04 | M | Matches reference intervals |
-| [ ] | L09 | Rating rules from answers: correctness, confidence, time -> Again/Hard/Good/Easy (pure) | L08 | S | Table-driven tests |
-| [ ] | L10 | Question CRUD API with per-type validation (mcq single/multi, short answer, practical, explain, scenario) | L03 | L | Invalid shapes rejected; owner scoping tests |
+| [x] | L08 | FSRS scheduler service (py-fsrs pinned) with rating-to-interval tests on known sequences | L04 | M | Matches reference intervals |
+| [x] | L09 | Rating rules from answers: correctness, confidence, time -> Again/Hard/Good/Easy (pure) | L08 | S | Table-driven tests |
+| [x] | L10 | Question CRUD API with per-type validation (mcq single/multi, short answer, practical, explain, scenario) | L03 | L | Invalid shapes rejected; owner scoping tests |
 | [ ] | L11 | Grounding validator: source quote must verify; correct option must be supported by quote; else reject or mark `unverified` | L10 | M | Fabricated question rejected |
 | [ ] | L12 | Dedupe: normalised hash plus embedding similarity; merge suggestion | L10 | M | Near-duplicates detected at threshold |
 | [ ] | L13 | MCQ generator workflow: generate, blind answer by second call, grounding check, store `draft` | L11, E04 | L | Eval: wrong-key rate under target |
 | [ ] | L14 | Short-answer grader: rubric criteria, deterministic pre-checks, LLM grade, per-criterion feedback | E05, L10 | L | Agrees with hand labels |
 | [ ] | L15 | Practical questions: link to practice problems; "create a problem" validated in the browser runner (reference solution must pass its tests) before saving | L10 | L | Invalid LLM problem cannot be saved |
-| [ ] | L16 | Review queue: due cards, daily cap, interleave topics, new-card limit | L08 | M | Order and caps tested |
-| [ ] | L17 | Quiz sessions: start by topic/mixed/weak; answer with idempotency token; results | L10 | M | Double submit safe |
-| [ ] | L18 | Checkpoint builder (pure): coverage by topic weight, difficulty mix, type mix, exclusion window, seeds for reproducibility | L10 | L | Property tests: coverage and no repeats |
+| [x] | L16 | Review queue: due cards, daily cap, interleave topics, new-card limit | L08 | M | Order and caps tested |
+| [x] | L17 | Quiz sessions: start by topic/mixed/weak; answer with idempotency token; results | L10 | M | Double submit safe |
+| [x] | L18 | Checkpoint builder (pure): coverage by topic weight, difficulty mix, type mix, exclusion window, seeds for reproducibility | L10 | L | Property tests: coverage and no repeats |
 | [ ] | L19 | Checkpoint API: create, start (timer), autosave, submit once, report with per-topic result and weak topics feeding reviews | L18, L05 | L | Expiry and double submit tested |
 | [ ] | L20 | Roadmap service: editable plan (weeks, days) from topics and job gaps (job skills minus mastered topics) | L02 | L | Gap list matches fixtures |
-| [ ] | L21 | Mastery and progress analytics (retrievability average per topic, coverage, streak, minutes) | L08 | M | Values match hand calculation |
-| [ ] | L22 | Due counts for Today and sidebar badges | L16 | S | Counts equal queue |
+| [~] | L21 | Mastery and progress analytics (retrievability average per topic, coverage, streak, minutes) | L08 | M | Values match hand calculation |
+| [~] | L22 | Due counts for Today and sidebar badges | L16 | S | Counts equal queue |
 | [ ] | L23 | MCP read tools: due reviews, topic mastery, checkpoint results | L16, H17 | M | In-memory MCP tests |
 | [ ] | L24 | Import existing guide questions as source `guide` questions | L10 | M | Idempotent import |
 | [ ] | L25 | Learning event log (view, answer, hint, skip) for debugging and analytics | L04 | S | Events written in tests |
@@ -309,3 +309,4 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 (Append dated entries here when the plan changes: what, why.)
 - 2026-11-06: plan created.
 - 2026-11-06: docs 02-05 written; task ids in them cross-checked against this file; V02 now includes the `export-architecture` command; requirement ids are REQ-nn.
+- 2026-11-06: Learning backend slice built (L03, L04, L08, L09, L10, L16, L17, L18; L02 and L21/L22 partly). Deviations from `03`: tables are prefixed `learn_` (learn_topics, learn_questions, learn_options, learn_sources, learn_attempts, learn_review_cards); there is no `tracks` table yet (topics carry an optional `area`; add tracks only when a third use appears, rule 1); topic prerequisites (`topic_edges`) are not built yet. Written/explain/scenario answers are rated by the learner (graded_by=self) until the model grader (L14, needs a key) exists. Learn schemas are prefixed `Learn` to avoid OpenAPI name collisions with prep/intel.
