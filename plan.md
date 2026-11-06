@@ -118,7 +118,7 @@ Single user (you). Journeys the design must make fast:
                         Browser (Next.js app, localhost:3100)
                            |  REST + SSE (generated TypeScript client)
                            v
- +-------------------- FastAPI API (localhost:8000) -----------------------+
+ +-------------------- FastAPI API (localhost:8010) -----------------------+
  |  routers -> services -> repositories (owner_id scoped) -> PostgreSQL     |
  |      |                                                                   |
  |      +-- enqueues jobs (same DB transaction) ---------------+            |
@@ -167,7 +167,7 @@ Single user (you). Journeys the design must make fast:
 | No LangChain or agent framework | LangChain, LlamaIndex | You are here to learn; typed Python loops are simpler to test and debug |
 
 ### 4.3 Process model and ports
-`api` (8000), `worker` (no port), `web` (3100, since 3000 is often taken by other dev servers), `postgres` (5433 on the host, localhost only). MCP runs per client over stdio, or on 8765 over HTTP when enabled. Docker Compose runs only Postgres; the rest run natively with `uv` and `pnpm` for fast iteration (npm instead of pnpm, which is not installed; see ADR 0006).
+`api` (8010, since 8000 is used by another project), `worker` (no port), `web` (3100, since 3000 is often taken by other dev servers), `postgres` (5433 on the host, localhost only). MCP runs per client over stdio, or on 8765 over HTTP when enabled. Docker Compose runs only Postgres; the rest run natively with `uv` and `pnpm` for fast iteration (npm instead of pnpm, which is not installed; see ADR 0006).
 
 ---
 

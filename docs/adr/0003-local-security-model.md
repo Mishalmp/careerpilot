@@ -11,7 +11,7 @@ The API listens on localhost, but any website open in the same browser can send 
 - Server-side sessions: a random token in an HttpOnly, SameSite=Lax cookie; only the SHA-256 hash is stored.
 - CSRF: every protected route depends on `current_session`, which requires the `X-CSRF-Token` header on any state-changing method. A hostile page cannot read the token or set the header.
 - Origin check on all state-changing requests; Host header allow-list (`TrustedHostMiddleware`).
-- The browser only talks to the Next.js app (port 3100); Next rewrites `/api/*` to the backend (port 8000). The cookie is same-origin and the API needs no CORS.
+- The browser only talks to the Next.js app (port 3100); Next rewrites `/api/*` to the backend (port 8010). The cookie is same-origin and the API needs no CORS.
 - Failed-login throttle is in memory (resets on restart; the owner can be locked out by anyone who can reach the API, acceptable on localhost).
 - Validation errors drop the submitted value so passwords are never echoed or logged.
 

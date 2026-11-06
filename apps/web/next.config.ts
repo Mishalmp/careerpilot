@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 // Server-side only. The browser always talks to this app, which forwards /api to the backend,
 // so the session cookie is same-origin and the backend needs no CORS.
-const apiOrigin = process.env.API_ORIGIN ?? "http://127.0.0.1:8000";
+const apiOrigin = process.env.API_ORIGIN ?? "http://127.0.0.1:8010";
 
 // The practice runner executes the learner's own (or pasted) code in workers. Each worker script
 // is served with its own Content-Security-Policy, and a worker's policy is the one on its script's

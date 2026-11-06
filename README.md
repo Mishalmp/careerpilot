@@ -18,6 +18,11 @@ uv run python -m careerpilot.cli create-user --email you@example.com
 uv run python -m careerpilot.cli seed-prep        # optional: the Prep page also has a Load button
 ```
 
+**On Windows (cmd or PowerShell):**
+- `cp` does not exist there: use `copy .env.example .env`, and only if `.env` is not there yet (it holds your settings).
+- If `pip install uv` leaves `uv` "not recognized", the program is installed but its folder is not on your PATH. Put `python -m` in front instead, and use that everywhere below: `python -m uv sync`, `python -m uv run alembic upgrade head`, and so on.
+- `create-user` asks for a password of at least 12 characters.
+
 Optional: index your notes for search (the first run downloads a ~130 MB model; see [docs/learn/rag.md](docs/learn/rag.md)).
 Written answers need an Anthropic API key in `.env` (`ANTHROPIC_API_KEY=...`); without one you still get the matching passages.
 ```bash
@@ -36,12 +41,12 @@ The first `npm install` also copies the Python and SQL runtimes into `apps/web/p
 
 Two terminals:
 ```bash
-cd apps/api && uv run uvicorn careerpilot.main:app_factory --factory --reload
+cd apps/api && uv run uvicorn careerpilot.main:app_factory --factory --reload --port 8010
 ```
 ```bash
 cd apps/web && npm install && npm run dev
 ```
-Open http://localhost:3100. The web app forwards `/api` to the backend on port 8000 (set `API_ORIGIN` to use another). Postgres is on host port 5433.
+Open http://localhost:3100. The web app forwards `/api` to the backend on port 8010 (set `API_ORIGIN` to use another; 8000 is avoided because other Docker projects often use it). Postgres is on host port 5433.
 
 While the API is up it also runs the background worker (daily job-board reads and digest; see the Tasks screen). To run the worker alone: `uv run python -m careerpilot.cli worker`. Set `CAREERPILOT_WORKER_ENABLED=false` to turn it off.
 
