@@ -109,9 +109,9 @@ Everything the owner asked for, restated as numbered requirements (REQ-nn) that 
 
 **Search source (verified 2026-11-06 from search results; confirm on the vendors' own pages before paying)**
 - Brave Search API: reports say the old free tier was replaced in early 2026 by about 5 USD of monthly credit (roughly 1,000 queries), a card is required, and overage is billed.
-- SearXNG (open source, self-hosted metasearch): free; JSON output must be enabled in `settings.yml`; its bot limiter can return 429 to API clients unless configured; reliability depends on upstream engines. Not yet tested here.
+- SearXNG (open source, self-hosted metasearch): free; JSON output must be enabled in `settings.yml`; its bot limiter can return 429 to API clients unless configured; reliability depends on upstream engines. **Tested 2026-11-06**: the `searxng/searxng` container with `docker/searxng/settings.yml` (JSON on, limiter off) returned 38 real results for a research query, and our adapter parsed them; DuckDuckGo answered with a CAPTCHA (engines vary), others answered.
 - Anthropic web search tool: 10 USD per 1,000 searches plus tokens.
-- Decision D2 (resolved): the `SearchProvider` interface ships with a Fake, a **SearXNG** adapter (default, free, runs in the compose `tools` profile) and a **Brave** adapter (optional, when the owner adds a key). Manual paste always works. Task R01 starts with a spike that proves SearXNG JSON works with the limiter configured; if it is unreliable, Brave's monthly credit becomes the default.
+- Decision D2 (resolved): the `SearchProvider` interface ships with a Fake, a **SearXNG** adapter (default, free, runs in the compose `tools` profile) and a **Brave** adapter (optional, when the owner adds a key). Manual paste always works. Task R17 (the spike) is done and SearXNG works; Brave stays optional. Result quality of free engines varies by day, so keep manual paste available.
 
 **Decisions resolved (owner said "your choice" or accepted defaults)**
 | ID | Result |

@@ -1,0 +1,18 @@
+# SearXNG settings for CareerPilot's research agent (local, single user).
+# JSON output is required by the app; the bot limiter is off because only this app (on a private
+# network) calls it. Do NOT expose this container to the internet with the limiter off.
+use_default_settings: true
+
+general:
+  instance_name: "CareerPilot search"
+
+search:
+  formats:
+    - html
+    - json
+
+server:
+  # Local only: change this if you ever expose the service.
+  secret_key: "careerpilot-local-searxng-not-a-secret"
+  limiter: false
+  image_proxy: false

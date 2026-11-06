@@ -1,3 +1,10 @@
+# Profiles:
+#   (none)  only Postgres: use this for native development (README "First run").
+#   app     Postgres + migrations + API + worker + web: the whole product in containers.
+#   tools   optional extras (SearXNG, the free search service for the research agent).
+# Start everything:  docker compose --profile app up -d --build
+# Ports can be changed in .env (API_PORT, WEB_PORT). If you open the app from a different address,
+# set RUNNER_ORIGINS in .env to that address and rebuild the web image (see docs/setup).
 services:
   postgres:
     image: pgvector/pgvector:pg16
@@ -15,5 +22,82 @@ services:
       timeout: 3s
       retries: 10
 
+  # One-shot: brings the database to the latest schema, then exits. Safe to run again.
+  migrate:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: careerpilot-api
+    command: ["alembic", "upgrade", "head"]
+    environment: &api-env
+      CAREERPILOT_DATABASE_URL: postgresql+asyncpg://careerpilot:${POSTGRES_PASSWORD}@postgres:5432/${CAREERPILOT_DB_NAME:-careerpilot}
+      CAREERPILOT_ALLOWED_HOSTS: '["localhost","127.0.0.1","api"]'
+      CAREERPILOT_ALLOWED_ORIGINS: '["http://localhost:${WEB_PORT:-3100}","http://127.0.0.1:${WEB_PORT:-3100}"]'
+      CAREERPILOT_WORKER_ENABLED: "false" # the worker runs as its own service below
+      CAREERPILOT_SEARCH_PROVIDER: ${CAREERPILOT_SEARCH_PROVIDER:-none}
+      CAREERPILOT_SEARXNG_URL: ${CAREERPILOT_SEARXNG_URL:-http://searxng:8080}
+      CAREERPILOT_BRAVE_API_KEY: ${CAREERPILOT_BRAVE_API_KEY:-}
+      CAREERPILOT_BACKUP_KEY: ${CAREERPILOT_BACKUP_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    profiles: ["app"]
+    image: careerpilot-api
+    environment: *api-env
+    ports:
+      - "127.0.0.1:${API_PORT:-8010}:8010"
+    volumes:
+      - modelcache:/app/.cache
+      - backups:/app/backups
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  worker:
+    profiles: ["app"]
+    image: careerpilot-api
+    command: ["python", "-m", "careerpilot.cli", "worker"]
+    environment: *api-env
+    volumes:
+      - modelcache:/app/.cache
+      - backups:/app/backups
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    profiles: ["app"]
+    build:
+      context: apps/web
+      dockerfile: ../../docker/web.Dockerfile
+      args:
+        API_ORIGIN: http://api:8010
+        RUNNER_ORIGINS: ${RUNNER_ORIGINS:-http://localhost:3100,http://127.0.0.1:3100}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3100}:3100"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Free search service for the research agent. JSON output is switched on in docker/searxng.
+  searxng:
+    profiles: ["tools"]
+    image: searxng/searxng:latest
+    volumes:
+      - ./docker/searxng/settings.yml:/etc/searxng/settings.yml:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  modelcache:
+  backups:

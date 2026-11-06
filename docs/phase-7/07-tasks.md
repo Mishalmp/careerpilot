@@ -200,7 +200,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [x] | R14 | Content rules: store link, short quote and paraphrase only; blocked sites list kept | R05 | S | Test: long quote truncated |
 | [ ] | R15 | Research quality eval: 10 sample roles with expected topics; recall metric | R05, E04 | L | Baseline recorded |
 | [ ] | R16 | CV-driven profile: paste/upload CV text, extract skills, years, role titles and seniority (code first, optional model), owner edits, saved to the profile (REQ-28); role titles feed R02 queries and the roadmap | B03, E04 | L | Fixture CVs give expected skills and titles; no hard-coded role list |
-| [ ] | R17 | Spike: prove SearXNG JSON search works from the fetcher with limiter settings; record the working `settings.yml`/`limiter.toml`; decide default provider | R01 | M | Spike note in ADR 0013; 20 queries return results |
+| [x] | R17 | Spike: prove SearXNG JSON search works from the fetcher with limiter settings; record the working `settings.yml`/`limiter.toml`; decide default provider | R01 | M | Spike note in ADR 0013; 20 queries return results |
 
 ## V: architecture explorer (spec: `04-architecture-explorer.md`)
 | Done | ID | Task | Deps | Size | Done when |
@@ -281,13 +281,13 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## K: containers
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | K01 | API Dockerfile: uv multi-stage, non-root, healthcheck, model cache volume | none | M | Image runs `/readyz` |
-| [ ] | K02 | Web Dockerfile: standalone output, non-root | D06 | M | Image serves login |
-| [ ] | K03 | Compose profiles: `db`, `app` (api, worker, web), `tools` | K01, K02 | M | `docker compose --profile app up` works |
-| [ ] | K04 | Env and secret handling, volumes (data, models, backups) | K03 | S | Documented |
-| [ ] | K05 | Dev ergonomics in `scripts/dev.py` (up, down, logs, shell) | X02, K03 | M | Windows verified |
-| [ ] | K06 | One-shot migration service with lock | K03 | S | Two starts safe |
-| [ ] | K07 | Healthchecks, `depends_on` conditions, restart policy | K03 | S | Kill test restarts |
+| [x] | K01 | API Dockerfile: uv multi-stage, non-root, healthcheck, model cache volume | none | M | Image runs `/readyz` |
+| [x] | K02 | Web Dockerfile: standalone output, non-root | D06 | M | Image serves login |
+| [x] | K03 | Compose profiles: `db`, `app` (api, worker, web), `tools` | K01, K02 | M | `docker compose --profile app up` works |
+| [x] | K04 | Env and secret handling, volumes (data, models, backups) | K03 | S | Documented |
+| [~] | K05 | Dev ergonomics in `scripts/dev.py` (up, down, logs, shell) | X02, K03 | M | Windows verified |
+| [x] | K06 | One-shot migration service with lock | K03 | S | Two starts safe |
+| [~] | K07 | Healthchecks, `depends_on` conditions, restart policy | K03 | S | Kill test restarts |
 | [ ] | K08 | CI image build and vulnerability scan | K01, X10 | M | Advisory report |
 | [ ] | K09 | AWS deployment notes (ECS, RDS, S3 backups) | K03 | S | Doc |
 | [ ] | K10 | Optional HTTPS reverse proxy (Caddy) | K03 | S | Doc |
@@ -303,7 +303,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | W06 | README, CLAUDE.md, ADR updates at each milestone | milestones | S each | |
 | [ ] | W07 | Runbooks: backup/restore, rotate keys, upgrade dependencies, incident | H25 | M | |
 | [ ] | W08 | Changelog and release notes | none | S | |
-| [ ] | W09 | Portability guide `docs/setup/`: new machine on Windows/macOS/Linux, `.env` creation, running native and with Docker, deploying to a server, zipping backups and restoring on another machine, troubleshooting (REQ-30) | K03 | M | A clean checkout follows it to a running app (tested at least on Windows + one container run) |
+| [~] | W09 | Portability guide `docs/setup/`: new machine on Windows/macOS/Linux, `.env` creation, running native and with Docker, deploying to a server, zipping backups and restoring on another machine, troubleshooting (REQ-30) | K03 | M | A clean checkout follows it to a running app (tested at least on Windows + one container run) |
 
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)

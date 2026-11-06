@@ -137,7 +137,13 @@ def backup_tools(settings: Settings) -> Tools:
 
 def _client_major(command: str, connection: Connection) -> int:
     out = _run([command, "--version"], connection).decode(errors="replace")
-    match = re.search(r"(\d+)(?:\.\d+)*", out.split(")")[-1])
+    return parse_client_major(out, command)
+
+
+def parse_client_major(output: str, command: str = "pg_dump") -> int:
+    """The major version from `pg_dump --version`, whatever the packager appends, for example
+    `pg_dump (PostgreSQL) 16.15 (Debian 16.15-1.pgdg13+2)` or `... 17beta1`."""
+    match = re.search(r"\(PostgreSQL\)\s+(\d+)", output) or re.search(r"(\d+)\.\d+", output)
     if match is None:
         raise BackupError(f"Could not read the version of {command}.")
     return int(match.group(1))

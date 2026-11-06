@@ -268,3 +268,22 @@ def test_a_missing_dump_tool_is_explained(settings: Any, tmp_path: Path) -> None
         create_backup(
             settings.database_url, tmp_path, generate_key(), tools=Tools(dump="no-such-pg-dump")
         )
+
+
+@pytest.mark.parametrize(
+    ("output", "major"),
+    [
+        ("pg_dump (PostgreSQL) 16.15 (Debian 16.15-1.pgdg13+2)", 16),
+        ("pg_dump (PostgreSQL) 17.1", 17),
+        ("pg_dump (PostgreSQL) 17beta1", 17),
+        ("pg_dump (PostgreSQL) 15.4 (Ubuntu 15.4-0ubuntu0.23.04.1)", 15),
+        ("pg_dump (PostgreSQL) 14.9 (Homebrew)", 14),
+    ],
+)
+def test_the_client_version_is_read_whatever_the_packager_adds(output: str, major: int) -> None:
+    assert backup.parse_client_major(output) == major
+
+
+def test_an_unreadable_version_is_an_error() -> None:
+    with pytest.raises(BackupError, match="Could not read the version"):
+        backup.parse_client_major("something else entirely")

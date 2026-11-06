@@ -6,6 +6,9 @@ Status: Phase 6. Track jobs, follow the 45-day prep plan, practise 28 problems i
 
 **Next (Phase 7, planned, not built):** new blue design system with light and dark modes, a learning platform that researches interview topics for each job, an interactive architecture explorer, and a hardening pass. Everything is specified in [docs/phase-7](docs/phase-7/README.md); resume from [docs/phase-7/STATUS.md](docs/phase-7/STATUS.md).
 
+## Run it anywhere
+Whole product in containers (API, worker, web, Postgres), or native for development: step-by-step for Windows, macOS and Linux, backups you can carry to another machine, and a new-laptop checklist are in [docs/setup](docs/setup/README.md).
+
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).
 

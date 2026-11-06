@@ -1,0 +1,16 @@
+# Keep secrets, personal documents, local state and build output out of every image.
+.env
+.git
+resume-kit/
+backups/
+content/private/
+**/node_modules
+**/.next
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+apps/web/e2e/.results
+apps/web/e2e/.report
+apps/web/e2e/.shots
+.cache/
