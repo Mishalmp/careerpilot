@@ -4,6 +4,7 @@ import {
   Briefcase,
   CalendarCheck,
   Code2,
+  GraduationCap,
   Compass,
   ListChecks,
   type LucideIcon,
@@ -30,6 +31,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Prepare",
     items: [
+      { href: "/learn", label: "Learn", icon: GraduationCap },
       { href: "/prep", label: "Prep", icon: BookOpen },
       { href: "/practice", label: "Practice", icon: Code2 },
       { href: "/mock", label: "Mock", icon: Mic },

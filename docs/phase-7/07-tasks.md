@@ -169,12 +169,12 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## L-UI: learning screens (P08)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | LU01 | Learn home: today's plan, reviews due, weak topics, research inbox, recent checkpoint | L16, L21, D13 | L | Page checklist 1-2 |
+| [~] | LU01 | Learn home: today's plan, reviews due, weak topics, research inbox, recent checkpoint | L16, L21, D13 | L | Page checklist 1-2 |
 | [ ] | LU02 | Roadmap editor: add/remove/reorder topics, set target date, see gaps for chosen jobs | L20 | L | Edits persist |
-| [ ] | LU03 | Topic page: summary, sources, questions list, mastery, notes, add question | L10 | L | |
-| [ ] | LU04 | Question card components: MCQ single/multi, short answer, practical (embedded editor), explain, scenario | D08, L10 | L | Keyboard answerable |
-| [ ] | LU05 | Quiz runner: progress bar, confidence selector, instant feedback with explanation and source | LU04, L17 | L | Resumes after reload |
-| [ ] | LU06 | Review session UI (spaced repetition) with rating feedback and next-due preview | LU04, L16 | M | |
+| [~] | LU03 | Topic page: summary, sources, questions list, mastery, notes, add question | L10 | L | |
+| [~] | LU04 | Question card components: MCQ single/multi, short answer, practical (embedded editor), explain, scenario | D08, L10 | L | Keyboard answerable |
+| [~] | LU05 | Quiz runner: progress bar, confidence selector, instant feedback with explanation and source | LU04, L17 | L | Resumes after reload |
+| [~] | LU06 | Review session UI (spaced repetition) with rating feedback and next-due preview | LU04, L16 | M | |
 | [ ] | LU07 | Research inbox UI: grouped findings, source and quote, approve/edit/reject, bulk approve | R09 | L | |
 | [ ] | LU08 | Add knowledge manually: paste text or link, convert to topics and questions (with AI optional) | R05, L13 | M | |
 | [ ] | LU09 | Checkpoint setup, exam screen (timer, flag, navigator), report with topic breakdown and "what to review" | L19 | L | Timer survives reload |
