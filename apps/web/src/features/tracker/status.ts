@@ -20,25 +20,32 @@ export const STATUSES: Status[] = [
   "Job Closed",
 ];
 
-// Colour by meaning, as in the workbook: blue = early, amber = waiting, purple = interviewing,
-// green = good outcome, red = bad outcome, grey = parked.
+// Colour by meaning (never colour alone: the label is always shown): blue = early, amber = waiting,
+// violet = interviewing, green = good outcome, red = bad outcome, grey = parked.
+const EARLY = "bg-accent-soft text-accent-text";
+const WAITING = "bg-warning-soft text-warning-text";
+const INTERVIEW = "bg-violet-soft text-violet-text";
+const GOOD = "bg-success-soft text-success-text";
+const BAD = "bg-danger-soft text-danger-text";
+const PARKED = "bg-surface-hover text-muted-foreground";
+
 const TONE: Record<Status, string> = {
-  New: "bg-sky-100 text-sky-900 dark:bg-sky-900/40 dark:text-sky-200",
-  Shortlisted: "bg-sky-200 text-sky-950 dark:bg-sky-800/50 dark:text-sky-100",
-  "Applied - Pending": "bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200",
-  "Follow-up Sent": "bg-amber-200 text-amber-950 dark:bg-amber-800/50 dark:text-amber-100",
-  "Interview Confirmed": "bg-violet-100 text-violet-900 dark:bg-violet-900/40 dark:text-violet-200",
-  "Technical Round": "bg-violet-200 text-violet-950 dark:bg-violet-800/50 dark:text-violet-100",
-  "Next Round": "bg-violet-200 text-violet-950 dark:bg-violet-800/50 dark:text-violet-100",
-  "HR Round": "bg-violet-200 text-violet-950 dark:bg-violet-800/50 dark:text-violet-100",
-  "Manager Round": "bg-violet-300 text-violet-950 dark:bg-violet-700/50 dark:text-violet-100",
-  "Offer Received": "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-200",
-  "Offer Accepted": "bg-emerald-300 text-emerald-950 dark:bg-emerald-700/60 dark:text-emerald-50",
-  Rejected: "bg-red-100 text-red-900 dark:bg-red-900/40 dark:text-red-200",
-  "No Response": "bg-zinc-200 text-zinc-800 dark:bg-zinc-700/60 dark:text-zinc-200",
-  "On Hold": "bg-zinc-200 text-zinc-800 dark:bg-zinc-700/60 dark:text-zinc-200",
-  Withdrawn: "bg-zinc-200 text-zinc-800 dark:bg-zinc-700/60 dark:text-zinc-200",
-  "Job Closed": "bg-zinc-300 text-zinc-800 dark:bg-zinc-600/60 dark:text-zinc-200",
+  New: EARLY,
+  Shortlisted: EARLY,
+  "Applied - Pending": WAITING,
+  "Follow-up Sent": WAITING,
+  "Interview Confirmed": INTERVIEW,
+  "Technical Round": INTERVIEW,
+  "Next Round": INTERVIEW,
+  "HR Round": INTERVIEW,
+  "Manager Round": INTERVIEW,
+  "Offer Received": GOOD,
+  "Offer Accepted": GOOD,
+  Rejected: BAD,
+  "No Response": PARKED,
+  "On Hold": PARKED,
+  Withdrawn: PARKED,
+  "Job Closed": PARKED,
 };
 
 export function statusTone(status: Status): string {

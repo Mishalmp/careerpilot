@@ -35,6 +35,8 @@
   --color-danger-soft: var(--danger-soft);
   --color-danger-text: var(--danger-text);
   --color-danger-solid: var(--danger-solid);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-text: var(--violet-text);
   --color-sidebar: var(--sidebar);
   --color-sidebar-border: var(--sidebar-border);
   --color-overlay: var(--overlay);
@@ -59,7 +61,6 @@
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: 1.5;
-    font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
   }
   /* Visible keyboard focus everywhere; components may refine but never remove it. */

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import { Modal } from "@/components/Modal";
@@ -7,7 +8,10 @@ import { button, input, muted, primaryButton } from "@/components/ui";
 import { ApiError } from "@/lib/api/client";
 import type { JobSummary, Status } from "@/lib/api/types";
 
+import { cn } from "@/lib/utils";
+
 import { useChangeStatus } from "./hooks";
+import { statusTone } from "./status";
 
 type Ask = { job: JobSummary; status: Status; reopen: boolean; message: string };
 
@@ -120,6 +124,7 @@ function NoteDialog({
   );
 }
 
+/** The status as a coloured pill that is also the control: one element, native and accessible. */
 export function StatusSelect({
   job,
   onChange,
@@ -131,18 +136,26 @@ export function StatusSelect({
   statuses: Status[];
   label: string;
 }) {
+  const current = job.application.status;
   return (
-    <select
-      aria-label={label}
-      value={job.application.status}
-      onChange={(event) => onChange(event.target.value as Status)}
-      className="rounded border border-input bg-background px-2 py-1 text-xs"
-    >
-      {statuses.map((status) => (
-        <option key={status} value={status}>
-          {status}
-        </option>
-      ))}
-    </select>
+    <span className="relative inline-flex items-center">
+      <select
+        aria-label={label}
+        value={current}
+        onChange={(event) => onChange(event.target.value as Status)}
+        className={cn(
+          "h-7 max-w-full cursor-pointer appearance-none rounded-full border-0 py-0 pl-2.5 pr-6 text-xs font-medium",
+          "transition-opacity hover:opacity-80",
+          statusTone(current),
+        )}
+      >
+        {statuses.map((status) => (
+          <option key={status} value={status} className="bg-popover text-foreground">
+            {status}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-1.5 size-3.5 opacity-70" aria-hidden="true" />
+    </span>
   );
 }

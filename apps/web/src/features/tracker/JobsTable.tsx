@@ -2,26 +2,27 @@
 
 import Link from "next/link";
 
-import { muted } from "@/components/ui";
+import { dateOnly, todayLocal } from "@/lib/dates";
 import type { JobSummary, Status } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 
 import { StatusSelect } from "./StatusChanger";
 import { STATUSES } from "./status";
-import { StatusBadge } from "./StatusBadge";
-import { todayLocal } from "@/lib/dates";
-
 
 export function FollowUp({ job }: { job: JobSummary }) {
   const date = job.application.next_followup_on;
-  if (!date) return <span className={muted}>-</span>;
+  if (!date) return <span className="text-muted-foreground">-</span>;
   const overdue = date < todayLocal();
   return (
-    <span className={overdue ? "font-medium text-danger-text " : ""}>
+    <span className={cn(overdue && "font-medium text-danger-text")}>
       {date}
       {overdue && " (overdue)"}
     </span>
   );
 }
+
+const TH = "px-3 py-2 text-xs font-medium text-muted-foreground";
+const TD = "px-3 py-[calc(var(--row-h)/4)] align-middle";
 
 export function JobsTable({
   jobs,
@@ -31,47 +32,45 @@ export function JobsTable({
   onStatus: (job: JobSummary, status: Status) => void;
 }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[56rem] text-left text-sm">
+    <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
+      <table className="w-full min-w-[52rem] text-left text-[length:var(--text-base)]">
         <caption className="sr-only">Tracked jobs, newest activity first</caption>
-        <thead className="border-b border-border-subtle text-xs uppercase text-muted-foreground">
+        <thead className="border-b border-border-subtle bg-surface-muted">
           <tr>
-            <th scope="col" className="py-2 pr-3">Company and role</th>
-            <th scope="col" className="py-2 pr-3">Status</th>
-            <th scope="col" className="py-2 pr-3">Where</th>
-            <th scope="col" className="py-2 pr-3">Est. CTC</th>
-            <th scope="col" className="py-2 pr-3">Follow-up</th>
-            <th scope="col" className="py-2">Updated</th>
+            <th scope="col" className={TH}>Company and role</th>
+            <th scope="col" className={TH}>Status</th>
+            <th scope="col" className={TH}>Where</th>
+            <th scope="col" className={TH}>Est. CTC</th>
+            <th scope="col" className={TH}>Follow-up</th>
+            <th scope="col" className={TH}>Updated</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border-subtle">
           {jobs.map((job) => (
-            <tr key={job.id} className="border-b border-border-subtle align-top">
-              <td className="py-2 pr-3">
-                <Link href={`/jobs/${job.id}`} className="font-medium underline-offset-2 hover:underline">
+            <tr key={job.id} className="transition-colors hover:bg-surface-muted">
+              <td className={TD}>
+                <Link
+                  href={`/jobs/${job.id}`}
+                  className="font-medium text-foreground underline-offset-2 hover:text-accent-text hover:underline"
+                >
                   {job.company.name}
                 </Link>
-                <div className={muted}>{job.title}</div>
+                <div className="text-muted-foreground">{job.title}</div>
               </td>
-              <td className="space-y-1 py-2 pr-3">
-                <StatusBadge status={job.application.status} />
-                <div>
-                  <StatusSelect
-                    job={job}
-                    statuses={STATUSES}
-                    label={`Change status of ${job.title} at ${job.company.name}`}
-                    onChange={(status) => onStatus(job, status)}
-                  />
-                </div>
+              <td className={TD}>
+                <StatusSelect
+                  job={job}
+                  statuses={STATUSES}
+                  label={`Change status of ${job.title} at ${job.company.name}`}
+                  onChange={(status) => onStatus(job, status)}
+                />
               </td>
-              <td className="py-2 pr-3">
-                {[job.location_text, job.work_mode].filter(Boolean).join(" · ") || "-"}
-              </td>
-              <td className="py-2 pr-3">{job.est_ctc_lpa ? `${job.est_ctc_lpa} LPA` : "-"}</td>
-              <td className="py-2 pr-3">
+              <td className={TD}>{[job.location_text, job.work_mode].filter(Boolean).join(" · ") || "-"}</td>
+              <td className={TD}>{job.est_ctc_lpa ? `${job.est_ctc_lpa} LPA` : "-"}</td>
+              <td className={TD}>
                 <FollowUp job={job} />
               </td>
-              <td className="py-2">{new Date(job.updated_at).toLocaleDateString("en-CA")}</td>
+              <td className={cn(TD, "text-muted-foreground")}>{dateOnly(job.updated_at)}</td>
             </tr>
           ))}
         </tbody>

@@ -37,10 +37,13 @@ export function Field({
   label,
   help,
   error,
+  required,
   children,
   className,
 }: {
   label: string;
+  /** Shows a visual asterisk; also set `required` on the control itself. */
+  required?: boolean;
   help?: string;
   error?: string | null;
   className?: string;
@@ -52,7 +55,10 @@ export function Field({
   const describedBy = [errorId, helpId].filter(Boolean).join(" ") || undefined;
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id}>
+        {label}
+        {required ? <span aria-hidden="true"> *</span> : null}
+      </Label>
       {children({ id, "aria-describedby": describedBy, "aria-invalid": error ? true : undefined })}
       {help ? (
         <p id={helpId} className="text-xs text-muted-foreground">

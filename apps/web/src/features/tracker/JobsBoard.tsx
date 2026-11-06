@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { muted } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import type { JobSummary, Status } from "@/lib/api/types";
 
 import { FollowUp } from "./JobsTable";
@@ -42,14 +43,13 @@ export function JobsBoard({
               const job = jobs.find((j) => j.id === event.dataTransfer.getData("text/plain"));
               if (job && job.application.status !== status) onStatus(job, status);
             }}
-            className={`w-60 shrink-0 rounded-lg border p-2 ${
-              over === status
-                ? "border-foreground"
-                : "border-border-subtle "
-            }`}
+            className={cn(
+              "w-64 shrink-0 rounded-lg border bg-surface-muted p-2 transition-colors",
+              over === status ? "border-primary bg-accent-soft" : "border-border-subtle",
+            )}
           >
-            <h2 className={`mb-2 rounded px-2 py-1 text-xs font-semibold ${statusTone(status)}`}>
-              {status} <span className="font-normal">({column.length})</span>
+            <h2 className={cn("mb-2 flex items-center justify-between rounded-md px-2 py-1 text-xs font-semibold", statusTone(status))}>
+              {status} <span className="tabular font-normal">{column.length}</span>
             </h2>
             <ul className="space-y-2">
               {column.map((job) => (
@@ -57,7 +57,7 @@ export function JobsBoard({
                   key={job.id}
                   draggable
                   onDragStart={(event) => event.dataTransfer.setData("text/plain", job.id)}
-                  className="cursor-grab space-y-1 rounded border border-border-subtle bg-background p-2 text-sm active:cursor-grabbing"
+                  className="cursor-grab space-y-1.5 rounded-md border border-border-subtle bg-surface p-2.5 text-sm shadow-sm active:cursor-grabbing"
                 >
                   <Link href={`/jobs/${job.id}`} className="font-medium hover:underline">
                     {job.company.name}

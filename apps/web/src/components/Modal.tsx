@@ -28,11 +28,11 @@ export function Modal({
       ref={ref}
       onClose={onClose}
       aria-labelledby="modal-title"
-      className="m-auto w-full max-w-lg rounded-lg border border-black/15 bg-background p-0 text-foreground backdrop:bg-black/40 dark:border-white/20"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg rounded-lg border border-border-subtle bg-popover p-0 text-foreground shadow-float backdrop:bg-overlay"
     >
       {open && (
         <div className="space-y-4 p-5">
-          <h2 id="modal-title" className="text-lg font-semibold">
+          <h2 id="modal-title" className="text-lg font-semibold tracking-tight">
             {title}
           </h2>
           {children}

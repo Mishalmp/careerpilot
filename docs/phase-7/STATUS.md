@@ -3,17 +3,20 @@
 Updated: 2026-11-06 by the session that wrote the Phase 7 plan.
 
 ## Where we are
-- Phases 0 to 6 are built and committed on branch `phase-6-hardening` (`main` is one commit behind it). 809 backend tests, 42 web tests, all gates green locally. GitHub CI has never run.
-- **Phase 7 is documentation only so far. No Phase 7 code has been written.** The complete document set is in `docs/phase-7/`: README (index), 01 requirements and decisions, 02 design system, 03 learning platform, 04 architecture explorer, 05 system review, 06 concepts primer, 07 tasks (about 250 atomic tasks), 08 AI development playbook, 09 product spec, 10 test strategy, `assets/` (logo concept SVGs).
-- Task `X01` (write the plan) is done. Everything else in `07-tasks.md` is unchecked.
-- Task ids in docs 02 to 05 were cross-checked against `07-tasks.md` on 2026-11-06. If you add or renumber tasks, grep the other docs for the old id.
-- The owner reported that the UI "sucks" and asked for: blue SaaS design (light + dark), a learning platform with agentic web research for interview topics, an interactive architecture explorer, a senior system review, micro tasks, and AI-driven development and testing done the way real teams do it.
+- Phases 0 to 6 are built and committed on branch `phase-6-hardening` (`main` is behind it). Gates were green locally; GitHub CI has never run.
+- **Phase 7 build has started (2026-11-06).** Documentation set: `docs/phase-7/` (README index, 01 to 10, tasks in 07, owner answers in `01` section 4a).
+- **Owner answers recorded** (01 section 4a): decisions D1 to D10 resolved (D2: SearXNG default + Brave optional + manual paste; D4: native dev default, full Docker Compose for portability). Owner works 2-3 h/day, more at weekends; first month alone, then 5-10 invited users.
+- **Done in code** (see `07-tasks.md`, [x] and [~] marks): design tokens (Radix blue/slate, light + dark, contrast script in vitest), theme + density (cookies, no flash), self-hosted fonts, primitives in `apps/web/src/components/ui/*`, new AppShell (grouped sidebar, drawer, theme menu), logo + favicon, PageHeader, Jobs page + Add job dialog redesigned, every existing page mapped to tokens.
+- **E2E**: `cd apps/web && npm run e2e` starts its own API (port 8011, DB `careerpilot_e2e`, recreated each run) and a production web build (port 3101) using the installed Chrome. 41 tests: theme, shell, mobile, axe on every page in both themes, jobs flows. Screenshots land in `apps/web/e2e/.shots/` (git-ignored): look at them after UI work.
+- **Not done yet**: pages other than Jobs still have their old internal layout (themed, not redesigned): Today, Job detail, Discover, Prep, Practice, Ask, Mock, Insights, Offers, Stories, Tasks (tasks P01, P02, P05, P07, P09-P17). Backend platform B-tasks, learning platform L/LU/R tasks, architecture explorer V tasks, hardening H tasks, containers K tasks: all not started.
+- **Gotchas learned**: `npm run e2e` rebuilds the web app each run (about 40 s). Dev server on port 3100 may be a stale process from earlier; Next allows one dev server per directory, so reuse it or stop it from your own terminal. Pages send no CSP yet (task H20). `tabular-nums` on Inter looked odd in table cells, so it is not used there.
+- **Security note for the owner**: an earlier commit briefly included a README line with a real-looking password; it was removed and that commit amended before any push. If that password is real, change it, and note the old commit object may still exist in `git reflog` until it expires.
 
 ## What the next session should do
 1. Read `docs/phase-7/README.md`, then `08-ai-development-playbook.md` (how to work with this owner).
 2. Ask the owner the **15 intake questions** in `08` section 4 that are still unanswered; record answers in `01-requirements.md` section 4. Ask them to approve or change decisions D1 to D10 (task Q02) and, optionally, send reference screenshots (Q03).
-3. Work `07-tasks.md` from the top: first unchecked task whose dependencies are done. Suggested order for the owner's top complaint: Q01-Q02, D01-D22 (design system, gate D21 owner review), then P-pages. In parallel when a key exists: E01, E02 (first live AI check).
-4. Do **not** start UI or feature code until Q02 is answered, because D1 (UI foundation) and D2 (search provider) change what gets built.
+3. Work `07-tasks.md` from the top: first unchecked or [~] task whose dependencies are done. Suggested order now: finish P-pages (Today P02, Job detail P05, then the rest), backend B01-B05 (status, task progress), then learning backend L02-L10. In parallel when a key exists: E01, E02 (first live AI check).
+4. After UI work run `npm run e2e` and read the screenshots; after backend work run the API tests (`cd apps/api && python -m uv run pytest`).
 5. Before ending: tick finished tasks with commit ids, update this file.
 
 ## Decisions status (details: 01-requirements.md section 4)

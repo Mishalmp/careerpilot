@@ -96,10 +96,10 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 |---|---|---|---|---|
 | [ ] | [ ] | P01 | Login and first-run checklist (create user, add first job, key set, notes indexed) | D13 |
 | [ ] | [ ] | P02 | Today: greeting, due follow-ups, reviews due, research inbox count, today's plan, digest, quick actions | D13, B01 |
-| [ ] | [ ] | P03 | Jobs list: dense table, filter bar, saved views, bulk status change, keyboard row navigation | D09 |
-| [ ] | [ ] | P04 | Jobs board: accessible drag and drop (dnd-kit) with keyboard alternative; note dialog for skipped stages | D08 |
+| [~] | [ ] | P03 | Jobs list: dense table, filter bar, saved views, bulk status change, keyboard row navigation | D09 |
+| [~] | [ ] | P04 | Jobs board: accessible drag and drop (dnd-kit) with keyboard alternative; note dialog for skipped stages | D08 |
 | [ ] | [ ] | P05 | Job detail with tabs: Overview, Description, Company check, Fit, Interview intel, Outreach, Timeline, Contacts | D08 |
-| [ ] | [ ] | P06 | Add job: dialog, quick add from pasted text or URL (parse by code, optional AI) | D08, B04 |
+| [~] | [ ] | P06 | Add job: dialog, quick add from pasted text or URL (parse by code, optional AI) | D08, B04 |
 | [ ] | [ ] | P07 | Discover: sources, inbox with bulk actions, digest card | D09 |
 | [ ] | [ ] | P09 | Practice: problem list with filters, split workspace (statement, editor, results), timer | D08 |
 | [ ] | [ ] | P10 | Ask: conversation view, citations panel, "not in notes" state | D08, E12 |
@@ -259,7 +259,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 |---|---|---|---|---|---|
 | [x] | T01 | Playwright setup: browsers, config, fixtures (seeded DB, login helper, API server on test DB, per-worker isolation) | none | L | `npm run e2e` runs one test |
 | [~] | T02 | E2E smoke: login, add job, move status, run a problem, ask (fake model), view Insights | T01 | M | Green on CI |
-| [ ] | T03 | E2E per page, added with each P task | T02 | L | Listed in `10` |
+| [~] | T03 | E2E per page, added with each P task | T02 | L | Listed in `10` |
 | [~] | T04 | axe sweep of every route in both themes | T01, D19 | M | Zero serious violations |
 | [ ] | T05 | Visual regression suite for key pages | T01 | M | Baselines |
 | [ ] | T06 | Cross-browser run (Chromium, Firefox, WebKit) | T02 | S | Matrix green |

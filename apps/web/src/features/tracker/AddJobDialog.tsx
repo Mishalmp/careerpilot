@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Modal } from "@/components/Modal";
-import { button, input, muted, primaryButton } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Field, Input, Select, Textarea } from "@/components/ui/field";
+import { Alert } from "@/components/ui/states";
 import type { JobCreate, Region, WorkMode } from "@/lib/api/types";
 
 import { useCreateJob } from "./hooks";
@@ -63,71 +65,69 @@ export function AddJobDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <Modal open={open} onClose={close} title="Add a job">
-      <form onSubmit={submit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
-          <label className="space-y-1 text-sm">
-            <span>Company *</span>
-            <input required value={form.company_name} onChange={set("company_name")} className={input} />
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>Role *</span>
-            <input required value={form.title} onChange={set("title")} className={input} />
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>Location</span>
-            <input value={form.location_text} onChange={set("location_text")} className={input} />
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>Est. CTC (LPA)</span>
-            <input type="number" min="0" step="0.1" value={form.est_ctc_lpa} onChange={set("est_ctc_lpa")} className={input} />
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>Region</span>
-            <select value={form.region} onChange={set("region")} className={input}>
-              <option value="">-</option>
-              {REGIONS.map((r) => (
-                <option key={r}>{r}</option>
-              ))}
-            </select>
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>Work mode</span>
-            <select value={form.work_mode} onChange={set("work_mode")} className={input}>
-              <option value="">-</option>
-              {MODES.map((m) => (
-                <option key={m}>{m}</option>
-              ))}
-            </select>
-          </label>
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field label="Company" required>
+            {(p) => <Input required value={form.company_name} onChange={set("company_name")} {...p} />}
+          </Field>
+          <Field label="Role" required>
+            {(p) => <Input required value={form.title} onChange={set("title")} {...p} />}
+          </Field>
+          <Field label="Location">
+            {(p) => <Input value={form.location_text} onChange={set("location_text")} {...p} />}
+          </Field>
+          <Field label="Est. CTC (LPA)">
+            {(p) => (
+              <Input type="number" min="0" step="0.1" value={form.est_ctc_lpa} onChange={set("est_ctc_lpa")} {...p} />
+            )}
+          </Field>
+          <Field label="Region">
+            {(p) => (
+              <Select value={form.region} onChange={set("region")} {...p}>
+                <option value="">-</option>
+                {REGIONS.map((r) => (
+                  <option key={r}>{r}</option>
+                ))}
+              </Select>
+            )}
+          </Field>
+          <Field label="Work mode">
+            {(p) => (
+              <Select value={form.work_mode} onChange={set("work_mode")} {...p}>
+                <option value="">-</option>
+                {MODES.map((m) => (
+                  <option key={m}>{m}</option>
+                ))}
+              </Select>
+            )}
+          </Field>
         </div>
-        <label className="block space-y-1 text-sm">
-          <span>Apply link</span>
-          <input type="url" value={form.apply_url} onChange={set("apply_url")} className={input} />
-        </label>
-        <label className="block space-y-1 text-sm">
-          <span>Job description link</span>
-          <input type="url" value={form.jd_url} onChange={set("jd_url")} className={input} />
-        </label>
-        <label className="block space-y-1 text-sm">
-          <span>Job description text</span>
-          <textarea rows={4} value={form.jd_text} onChange={set("jd_text")} className={input} />
-        </label>
+        <Field label="Apply link">
+          {(p) => <Input type="url" value={form.apply_url} onChange={set("apply_url")} {...p} />}
+        </Field>
+        <Field label="Job description link">
+          {(p) => <Input type="url" value={form.jd_url} onChange={set("jd_url")} {...p} />}
+        </Field>
+        <Field label="Job description text" help="Paste the posting. It is used to read skills and check the company.">
+          {(p) => <Textarea rows={4} value={form.jd_text} onChange={set("jd_text")} {...p} />}
+        </Field>
 
         {existing && (
-          <p role="status" className={muted}>
-            Already tracked. <Link href={`/jobs/${existing.id}`} className="underline">Open it</Link>
-          </p>
+          <Alert tone="info">
+            Already tracked.{" "}
+            <Link href={`/jobs/${existing.id}`} className="font-medium underline">
+              Open it
+            </Link>
+          </Alert>
         )}
         <p role="alert" className="min-h-5 text-sm text-danger-text">
           {create.error?.message}
         </p>
         <div className="flex justify-end gap-2">
-          <button type="button" onClick={close} className={button}>
-            Close
-          </button>
-          <button type="submit" disabled={create.isPending} className={primaryButton}>
-            {create.isPending ? "Adding..." : "Add job"}
-          </button>
+          <Button onClick={close}>Close</Button>
+          <Button type="submit" variant="primary" loading={create.isPending}>
+            Add job
+          </Button>
         </div>
       </form>
     </Modal>

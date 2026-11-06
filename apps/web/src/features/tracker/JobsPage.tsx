@@ -1,9 +1,15 @@
 "use client";
 
+import { Briefcase, Download, LayoutGrid, Plus, Rows3, Search } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 
-import { button, input, muted, primaryButton, select } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Input, Select } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 import type { Status } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 
 import { AddJobDialog } from "./AddJobDialog";
 import { useJobs } from "./hooks";
@@ -13,6 +19,11 @@ import { STATUSES } from "./status";
 import { useStatusChanger } from "./StatusChanger";
 
 type View = "table" | "board";
+
+const VIEWS = [
+  { id: "table", label: "Table", Icon: Rows3 },
+  { id: "board", label: "Board", Icon: LayoutGrid },
+] as const;
 
 export function JobsPage() {
   const [view, setView] = useState<View>("table");
@@ -31,49 +42,74 @@ export function JobsPage() {
   const changer = useStatusChanger();
   const items = jobs.data?.pages.flatMap((page) => page.items) ?? [];
   const hasMore = jobs.hasNextPage;
+  const filtered = Boolean(q || status);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="mr-auto text-2xl font-semibold">Jobs</h1>
-        <input
-          type="search"
-          aria-label="Search company or role"
-          placeholder="Search company or role"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className={`${input} max-w-60`}
-        />
-        <select
+    <div className="flex flex-col gap-5">
+      <PageHeader
+        title="Jobs"
+        description="Every application, from first look to offer."
+        actions={
+          <>
+            <Button asChild variant="secondary">
+              <a href="/api/v1/jobs/export.csv" download>
+                <Download aria-hidden="true" /> Export CSV
+              </a>
+            </Button>
+            <Button variant="primary" onClick={() => setAdding(true)}>
+              <Plus aria-hidden="true" /> Add job
+            </Button>
+          </>
+        }
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative w-full sm:w-72">
+          <Search
+            className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            type="search"
+            aria-label="Search company or role"
+            placeholder="Search company or role"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="pl-8"
+          />
+        </div>
+        <Select
           aria-label="Filter by status"
           value={status}
           onChange={(event) => setStatus(event.target.value as Status | "")}
-          className={select}
+          className="w-auto"
         >
           <option value="">All statuses</option>
           {STATUSES.map((s) => (
             <option key={s}>{s}</option>
           ))}
-        </select>
-        <div role="group" aria-label="View" className="flex">
-          {(["table", "board"] as const).map((v) => (
+        </Select>
+        <div
+          role="group"
+          aria-label="View"
+          className="ml-auto inline-flex rounded-md border border-input bg-surface p-0.5"
+        >
+          {VIEWS.map(({ id, label, Icon }) => (
             <button
-              key={v}
+              key={id}
               type="button"
-              aria-pressed={view === v}
-              onClick={() => setView(v)}
-              className={`${button} capitalize ${view === v ? "bg-surface-hover " : ""}`}
+              aria-pressed={view === id}
+              onClick={() => setView(id)}
+              className={cn(
+                "inline-flex h-[calc(var(--control-h)-0.5rem)] items-center gap-1.5 rounded px-2.5 text-[0.8125rem] font-medium",
+                "transition-colors duration-[var(--dur-fast)]",
+                view === id ? "bg-accent-soft text-accent-text" : "text-muted-foreground hover:text-foreground",
+              )}
             >
-              {v}
+              <Icon className="size-3.5" aria-hidden="true" /> {label}
             </button>
           ))}
         </div>
-        <a href="/api/v1/jobs/export.csv" download className={button}>
-          Export CSV
-        </a>
-        <button type="button" onClick={() => setAdding(true)} className={primaryButton}>
-          Add job
-        </button>
       </div>
 
       {changer.error && (
@@ -82,18 +118,46 @@ export function JobsPage() {
         </p>
       )}
 
-      {jobs.isPending && <p className={muted}>Loading...</p>}
+      {jobs.isPending && (
+        <div className="flex flex-col gap-2" aria-busy="true" aria-label="Loading jobs">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-14 w-full" />
+          ))}
+        </div>
+      )}
       {jobs.isError && (
-        <p role="alert" className="text-danger-text">
-          Could not load jobs: {jobs.error.message}
-        </p>
+        <ErrorState
+          title="Could not load jobs"
+          description={jobs.error.message}
+          onRetry={() => void jobs.refetch()}
+        />
       )}
       {jobs.isSuccess && items.length === 0 && (
-        <p className={muted}>
-          {q || status
-            ? "No jobs match these filters."
-            : "No jobs yet. Add one, or import your workbook with `careerpilot import-tracker`."}
-        </p>
+        <EmptyState
+          icon={<Briefcase aria-hidden="true" />}
+          title={filtered ? "No jobs match these filters" : "No jobs yet"}
+          description={
+            filtered
+              ? "Try a different search or clear the status filter."
+              : "Add your first job, or import your workbook with `careerpilot import-tracker`."
+          }
+          action={
+            filtered ? (
+              <Button
+                onClick={() => {
+                  setSearch("");
+                  setStatus("");
+                }}
+              >
+                Clear filters
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={() => setAdding(true)}>
+                <Plus aria-hidden="true" /> Add job
+              </Button>
+            )
+          }
+        />
       )}
 
       {items.length > 0 &&
@@ -104,17 +168,16 @@ export function JobsPage() {
         ))}
 
       {hasMore && view === "table" && (
-        <button
-          type="button"
-          onClick={() => jobs.fetchNextPage()}
-          disabled={jobs.isFetchingNextPage}
-          className={button}
-        >
-          {jobs.isFetchingNextPage ? "Loading..." : "Load more"}
-        </button>
+        <div>
+          <Button onClick={() => jobs.fetchNextPage()} loading={jobs.isFetchingNextPage}>
+            Load more
+          </Button>
+        </div>
       )}
       {hasMore && view === "board" && (
-        <p className={muted}>Showing the 200 most recently active jobs. Use search to narrow down.</p>
+        <p className="text-sm text-muted-foreground">
+          Showing the 200 most recently active jobs. Use search to narrow down.
+        </p>
       )}
 
       <AddJobDialog open={adding} onClose={() => setAdding(false)} />

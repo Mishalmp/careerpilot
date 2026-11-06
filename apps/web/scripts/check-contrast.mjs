@@ -63,6 +63,7 @@ const PAIRS = [
   ["--success-text", "--success-soft", 4.5, "success badge"],
   ["--warning-text", "--warning-soft", 4.5, "warning badge"],
   ["--danger-text", "--danger-soft", 4.5, "danger badge"],
+  ["--violet-text", "--violet-soft", 4.5, "interview badge"],
   ["--danger-text", "--surface", 4.5, "error text on card"],
   ["--primary-foreground", "--danger-solid", 4.5, "destructive button text"],
   ["--foreground", "--sidebar", 4.5, "sidebar text"],
