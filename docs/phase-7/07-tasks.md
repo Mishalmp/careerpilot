@@ -95,10 +95,10 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | 1 | 2 | ID | Page and what is specific | Deps |
 |---|---|---|---|---|
 | [ ] | [ ] | P01 | Login and first-run checklist (create user, add first job, key set, notes indexed) | D13 |
-| [ ] | [ ] | P02 | Today: greeting, due follow-ups, reviews due, research inbox count, today's plan, digest, quick actions | D13, B01 |
+| [~] | [ ] | P02 | Today: greeting, due follow-ups, reviews due, research inbox count, today's plan, digest, quick actions | D13, B01 |
 | [~] | [ ] | P03 | Jobs list: dense table, filter bar, saved views, bulk status change, keyboard row navigation | D09 |
 | [~] | [ ] | P04 | Jobs board: accessible drag and drop (dnd-kit) with keyboard alternative; note dialog for skipped stages | D08 |
-| [ ] | [ ] | P05 | Job detail with tabs: Overview, Description, Company check, Fit, Interview intel, Outreach, Timeline, Contacts | D08 |
+| [~] | [ ] | P05 | Job detail with tabs: Overview, Description, Company check, Fit, Interview intel, Outreach, Timeline, Contacts | D08 |
 | [~] | [ ] | P06 | Add job: dialog, quick add from pasted text or URL (parse by code, optional AI) | D08, B04 |
 | [ ] | [ ] | P07 | Discover: sources, inbox with bulk actions, digest card | D09 |
 | [ ] | [ ] | P09 | Practice: problem list with filters, split workspace (statement, editor, results), timer | D08 |

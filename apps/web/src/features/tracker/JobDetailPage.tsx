@@ -4,7 +4,14 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { ChevronLeft, Trash2 } from "lucide-react";
+
 import { button, card, input, muted, primaryButton } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState, ErrorState } from "@/components/ui/states";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   ContactKind,
   EmailMode,
@@ -24,7 +31,6 @@ import {
 } from "./hooks";
 import { ResearchSection } from "../research/ResearchSection";
 import { StatusSelect, useStatusChanger } from "./StatusChanger";
-import { StatusBadge } from "./StatusBadge";
 import { STATUSES } from "./status";
 
 const PORTAL_MODES: PortalMode[] = ["Not yet", "Done", "Not available"];
@@ -48,36 +54,50 @@ export function JobDetailPage() {
   const job = useJob(id);
   const changer = useStatusChanger();
   const remove = useDeleteJob();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
-  if (job.isPending) return <p className={muted}>Loading...</p>;
+  if (job.isPending) {
+    return (
+      <div className="flex flex-col gap-4" aria-busy="true" aria-label="Loading job">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-10 w-2/3" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
   if (job.isError) {
     return (
-      <p role="alert" className="text-danger-text">
-        Could not load this job: {job.error.message}. <Link href="/jobs" className="underline">Back to jobs</Link>
-      </p>
+      <div className="flex flex-col gap-3">
+        <ErrorState title="Could not load this job" description={job.error.message} onRetry={() => void job.refetch()} />
+        <Link href="/jobs" className="text-sm text-accent-text underline">
+          Back to jobs
+        </Link>
+      </div>
     );
   }
   const data = job.data;
 
   return (
-    <div className="space-y-6">
-      <Link href="/jobs" className={`${muted} hover:underline`}>
-        &larr; All jobs
+    <div className="flex flex-col gap-5">
+      <Link
+        href="/jobs"
+        className="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ChevronLeft className="size-4" aria-hidden="true" /> All jobs
       </Link>
 
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold">
+      <header className="flex flex-col gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">
           {data.company.name} <span className="font-normal text-muted-foreground">· {data.title}</span>
         </h1>
-        <div className="flex flex-wrap items-center gap-3">
-          <StatusBadge status={data.application.status} />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <StatusSelect
             job={data}
             statuses={STATUSES}
             label="Change status"
             onChange={(status) => changer.request(data, status)}
           />
-          <nav aria-label="Links" className="flex gap-3 text-sm">
+          <nav aria-label="Links" className="flex gap-4 text-sm">
             {data.apply_url && <ExternalLink href={data.apply_url}>Apply</ExternalLink>}
             {data.jd_url && <ExternalLink href={data.jd_url}>Job description</ExternalLink>}
             {data.careers_url && <ExternalLink href={data.careers_url}>Careers page</ExternalLink>}
@@ -90,41 +110,76 @@ export function JobDetailPage() {
         )}
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ApplicationPanel key={data.application.updated_at} job={data} />
-        <Timeline job={data} />
-      </div>
+      <Tabs defaultValue="overview">
+        <TabsList className="max-w-full overflow-x-auto">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="research">Research</TabsTrigger>
+          <TabsTrigger value="description">Description</TabsTrigger>
+          <TabsTrigger value="edit">Edit</TabsTrigger>
+        </TabsList>
 
-      <Facts job={data} />
-      <ContactsPanel job={data} />
-      <ResearchSection job={data} />
+        <TabsContent value="overview" className="flex flex-col gap-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ApplicationPanel key={data.application.updated_at} job={data} />
+            <Timeline job={data} />
+          </div>
+          <Facts job={data} />
+          <ContactsPanel job={data} />
+        </TabsContent>
 
-      {data.jd_text && (
-        <section className={card}>
-          <h2 className="mb-2 font-semibold">Job description</h2>
-          <pre className="whitespace-pre-wrap font-sans text-sm">{data.jd_text}</pre>
-        </section>
-      )}
+        <TabsContent value="research">
+          <ResearchSection job={data} />
+        </TabsContent>
 
-      <details className={card}>
-        <summary className="cursor-pointer font-semibold">Edit job details</summary>
-        <EditJobForm key={data.updated_at} job={data} />
-      </details>
+        <TabsContent value="description">
+          {data.jd_text ? (
+            <section className={card}>
+              <pre className="whitespace-pre-wrap font-sans text-sm">{data.jd_text}</pre>
+            </section>
+          ) : (
+            <EmptyState
+              title="No description saved"
+              description="Paste the job posting under Edit to read its skills and check the company."
+            />
+          )}
+        </TabsContent>
 
-      <section className="flex justify-end">
-        <button
-          type="button"
-          disabled={remove.isPending}
-          onClick={() => {
-            if (window.confirm(`Delete ${data.title} at ${data.company.name}? This cannot be undone.`)) {
-              remove.mutate(data.id, { onSuccess: () => router.replace("/jobs") });
-            }
-          }}
-          className={`${button} text-danger-text `}
-        >
-          Delete job
-        </button>
-      </section>
+        <TabsContent value="edit" className="flex flex-col gap-6">
+          <section className={card}>
+            <EditJobForm key={data.updated_at} job={data} />
+          </section>
+          <section className="flex items-center justify-between gap-4 rounded-lg border border-danger/40 p-4">
+            <div>
+              <h2 className="font-medium">Delete this job</h2>
+              <p className="text-sm text-muted-foreground">Removes the job, its history and contacts. This cannot be undone.</p>
+            </div>
+            <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
+              <Trash2 aria-hidden="true" /> Delete job
+            </Button>
+          </section>
+        </TabsContent>
+      </Tabs>
+
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this job?</DialogTitle>
+            <DialogDescription>
+              {data.title} at {data.company.name} and its history will be removed. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setConfirmDelete(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              loading={remove.isPending}
+              onClick={() => remove.mutate(data.id, { onSuccess: () => router.replace("/jobs") })}
+            >
+              Delete job
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {changer.dialog}
     </div>
   );
