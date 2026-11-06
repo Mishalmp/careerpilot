@@ -14,13 +14,13 @@ Updated: 2026-11-06 by the session that wrote the Phase 7 plan.
 
 ## What the next session should do
 1. Read `docs/phase-7/README.md`, then `08-ai-development-playbook.md` (how to work with this owner).
-2. Ask the owner the **15 intake questions** in `08` section 4 that are still unanswered; record answers in `01-requirements.md` section 4. Ask them to approve or change decisions D1 to D10 (task Q02) and, optionally, send reference screenshots (Q03).
+2. The 15 intake questions are answered (`01` section 4a). Still open for the owner: an Anthropic Console API key with a small prepaid top-up (Q04), optional reference screenshots (Q03), a private GitHub repository (X09).
 3. Work `07-tasks.md` from the top: first unchecked or [~] task whose dependencies are done. Suggested order now: finish P-pages (Today P02, Job detail P05, then the rest), backend B01-B05 (status, task progress), then learning backend L02-L10. In parallel when a key exists: E01, E02 (first live AI check).
 4. After UI work run `npm run e2e` and read the screenshots; after backend work run the API tests (`cd apps/api && python -m uv run pytest`).
 5. Before ending: tick finished tasks with commit ids, update this file.
 
-## Decisions status (details: 01-requirements.md section 4)
-All proposed, **none approved yet**: D1 shadcn/ui + Radix + Tailwind, D2 Brave Search behind `SearchProvider`, D3 long operations as background tasks, D4 full Docker, D5 keep the name and a paper-plane logo, D6 sending study content to Claude, D7 question-bank content rules, D8 FSRS, D9 React Flow, D10 profile in the database.
+## Decisions status (details: 01-requirements.md section 4a)
+All resolved 2026-11-06 (owner said "your choice" or accepted defaults); any can be reopened. D2 = SearXNG default (spike R17 to prove it), Brave optional, manual paste always; D4 = native dev default plus full Docker Compose for other machines.
 
 ## Known blockers and open items
 - No Anthropic API key has ever been used: every model feature is tested only with fakes. Task E01 runs the first live check (`llm-check`); it needs the owner to put a key in `.env` (Q04).
