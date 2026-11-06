@@ -52,7 +52,7 @@ export function JobDetailPage() {
   if (job.isPending) return <p className={muted}>Loading...</p>;
   if (job.isError) {
     return (
-      <p role="alert" className="text-red-600 dark:text-red-400">
+      <p role="alert" className="text-danger-text">
         Could not load this job: {job.error.message}. <Link href="/jobs" className="underline">Back to jobs</Link>
       </p>
     );
@@ -67,7 +67,7 @@ export function JobDetailPage() {
 
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">
-          {data.company.name} <span className="font-normal text-zinc-500">· {data.title}</span>
+          {data.company.name} <span className="font-normal text-muted-foreground">· {data.title}</span>
         </h1>
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge status={data.application.status} />
@@ -84,7 +84,7 @@ export function JobDetailPage() {
           </nav>
         </div>
         {changer.error && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-danger-text">
             {changer.error}
           </p>
         )}
@@ -120,7 +120,7 @@ export function JobDetailPage() {
               remove.mutate(data.id, { onSuccess: () => router.replace("/jobs") });
             }
           }}
-          className={`${button} text-red-700 dark:text-red-300`}
+          className={`${button} text-danger-text `}
         >
           Delete job
         </button>
@@ -246,7 +246,7 @@ function ApplicationPanel({ job }: { job: JobDetail }) {
       <Field label="Notes">
         <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={input} />
       </Field>
-      <p role="alert" className="min-h-5 text-sm text-red-600 dark:text-red-400">
+      <p role="alert" className="min-h-5 text-sm text-danger-text">
         {update.error?.message}
       </p>
       <button type="submit" disabled={update.isPending} className={primaryButton}>
@@ -317,7 +317,7 @@ function EditJobForm({ job }: { job: JobDetail }) {
       <Field label="Job description text">
         <textarea rows={6} value={form.jd_text} onChange={set("jd_text")} className={input} />
       </Field>
-      <p role="alert" className="min-h-5 text-sm text-red-600 dark:text-red-400">{update.error?.message}</p>
+      <p role="alert" className="min-h-5 text-sm text-danger-text">{update.error?.message}</p>
       <button type="submit" disabled={update.isPending} className={primaryButton}>
         {update.isPending ? "Saving..." : "Save details"}
       </button>
@@ -344,7 +344,7 @@ function ContactsPanel({ job }: { job: JobDetail }) {
           <li key={contact.id} className="flex items-start justify-between gap-3">
             <div>
               <div className="font-medium">
-                {contact.name} {contact.role && <span className="font-normal text-zinc-500">· {contact.role}</span>}
+                {contact.name} {contact.role && <span className="font-normal text-muted-foreground">· {contact.role}</span>}
               </div>
               <div>{[contact.email, contact.phone].filter(Boolean).join(" · ")}</div>
               <div className={muted}>
@@ -369,7 +369,7 @@ function ContactsPanel({ job }: { job: JobDetail }) {
         ))}
       </ul>
       <form
-        className="grid grid-cols-2 gap-3 border-t border-black/10 pt-3 dark:border-white/15"
+        className="grid grid-cols-2 gap-3 border-t border-border-subtle pt-3"
         onSubmit={(event) => {
           event.preventDefault();
           const text = (value: string) => value.trim() || undefined;
@@ -398,7 +398,7 @@ function ContactsPanel({ job }: { job: JobDetail }) {
         <Field label="Source page (required for published)">
           <input type="url" value={form.source_url} onChange={set("source_url")} className={input} />
         </Field>
-        <p role="alert" className="col-span-2 min-h-5 text-sm text-red-600 dark:text-red-400">{add.error?.message}</p>
+        <p role="alert" className="col-span-2 min-h-5 text-sm text-danger-text">{add.error?.message}</p>
         <div className="col-span-2">
           <button type="submit" disabled={add.isPending} className={primaryButton}>Add contact</button>
         </div>

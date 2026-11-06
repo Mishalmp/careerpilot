@@ -97,7 +97,7 @@ Format per concept: **Idea** · **In this app** · **How it fails** · **Intervi
 
 ## 17. Content Security Policy (CSP)
 **Idea**: a response header that tells the browser which sources of scripts/styles/frames are allowed, limiting the damage of XSS. Inline scripts are blocked unless they carry a nonce or hash.
-**In this app**: strict CSP; learner code runs in browser workers under their own CSP (ADR 0007); the theme-initialisation script must be compatible (D05).
+**In this app**: the pages currently send no CSP (adding one is H20); learner code runs in browser workers under their own CSP (ADR 0007); the theme-initialisation script must be compatible (D05).
 **Fails**: loosening CSP for convenience (`unsafe-inline`), third-party scripts, new libraries needing `eval`.
 
 ## 18. Database migrations (expand/contract)

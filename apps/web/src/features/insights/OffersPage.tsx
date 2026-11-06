@@ -136,7 +136,7 @@ function Rates() {
         </button>
       </form>
       {(set.error ?? remove.error) && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {(set.error ?? remove.error)?.message}
         </p>
       )}
@@ -149,7 +149,7 @@ function Rates() {
             <span>
               1 {r.currency} = {Number(r.to_inr)} INR · {r.as_of}
               {r.stale && (
-                <span className="text-amber-700 dark:text-amber-400">
+                <span className="text-warning-text">
                   {" "}
                   · {r.age_days} days old
                 </span>
@@ -302,7 +302,7 @@ export function OffersPage() {
           </button>
         </div>
         {compare.error && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-danger-text">
             {compare.error.message}
           </p>
         )}
@@ -321,7 +321,7 @@ export function OffersPage() {
             <table className="w-full text-sm">
               <caption className="sr-only">Offers compared</caption>
               <thead>
-                <tr className="text-left text-zinc-500">
+                <tr className="text-left text-muted-foreground">
                   <th className="py-1">Offer</th>
                   <th>Rank</th>
                   <th>Steady cash</th>
@@ -336,7 +336,7 @@ export function OffersPage() {
                 {compare.data.offers.map((o) => (
                   <tr
                     key={o.name}
-                    className="border-t border-black/5 align-top dark:border-white/10"
+                    className="border-t border-border-subtle align-top"
                   >
                     <td className="py-1 font-medium">{o.name}</td>
                     <td>

@@ -30,7 +30,7 @@ function DraftCard({ jobId, draft }: { jobId: string; draft: OutreachDraft }) {
   const error = move.error ?? edit.error ?? remove.error;
 
   return (
-    <li className="space-y-2 rounded border border-black/10 p-3 dark:border-white/15">
+    <li className="space-y-2 rounded border border-border-subtle p-3">
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
         <span className="font-medium">
           Variant {draft.variant} · {draft.channel.replace("_", " ")}
@@ -106,7 +106,7 @@ function DraftCard({ jobId, draft }: { jobId: string; draft: OutreachDraft }) {
       )}
       {flags.length > 0 ? (
         <details>
-          <summary className="cursor-pointer text-sm text-amber-700 dark:text-amber-400">
+          <summary className="cursor-pointer text-sm text-warning-text">
             {flags.length} thing(s) to fix before you send
           </summary>
           <ul className="list-disc pl-5 text-sm">
@@ -116,12 +116,12 @@ function DraftCard({ jobId, draft }: { jobId: string; draft: OutreachDraft }) {
           </ul>
         </details>
       ) : (
-        <p className="text-sm text-green-700 dark:text-green-400">
+        <p className="text-sm text-success-text">
           No lint flags. Read it aloud before sending.
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {error.message}
         </p>
       )}
@@ -264,7 +264,7 @@ function NewDraft({
       </label>
       {aiAvailable && (
         <form
-          className="space-y-2 rounded border border-black/10 p-3 dark:border-white/15"
+          className="space-y-2 rounded border border-border-subtle p-3"
           onSubmit={(e) => {
             e.preventDefault();
             generate.mutate({
@@ -319,7 +319,7 @@ function NewDraft({
         </form>
       )}
       <form
-        className="space-y-2 rounded border border-black/10 p-3 dark:border-white/15"
+        className="space-y-2 rounded border border-border-subtle p-3"
         onSubmit={(e) => {
           e.preventDefault();
           create.mutate(
@@ -361,7 +361,7 @@ function NewDraft({
         </button>
       </form>
       {error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {error.message}
         </p>
       )}

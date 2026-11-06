@@ -56,7 +56,7 @@ export function AskPage() {
           </span>
         )}
         {ingest.error && (
-          <span role="alert" className="text-red-600 dark:text-red-400">
+          <span role="alert" className="text-danger-text">
             {ingest.error.message}
           </span>
         )}
@@ -97,7 +97,7 @@ export function AskPage() {
 
       <div aria-live="polite">
         {ask.error && (
-          <p role="alert" className="text-red-600 dark:text-red-400">
+          <p role="alert" className="text-danger-text">
             {ask.error.message}
           </p>
         )}

@@ -62,7 +62,7 @@ export function JobsPage() {
               type="button"
               aria-pressed={view === v}
               onClick={() => setView(v)}
-              className={`${button} capitalize ${view === v ? "bg-black/10 dark:bg-white/15" : ""}`}
+              className={`${button} capitalize ${view === v ? "bg-surface-hover " : ""}`}
             >
               {v}
             </button>
@@ -77,14 +77,14 @@ export function JobsPage() {
       </div>
 
       {changer.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {changer.error}
         </p>
       )}
 
       {jobs.isPending && <p className={muted}>Loading...</p>}
       {jobs.isError && (
-        <p role="alert" className="text-red-600 dark:text-red-400">
+        <p role="alert" className="text-danger-text">
           Could not load jobs: {jobs.error.message}
         </p>
       )}

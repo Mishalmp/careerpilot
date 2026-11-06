@@ -104,7 +104,7 @@ function Editor({ story, onDone }: { story?: Story; onDone: () => void }) {
         </button>
       </div>
       {save.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {save.error.message}
         </p>
       )}
@@ -124,7 +124,7 @@ function StoryCard({ story }: { story: Story }) {
           {story.tags?.map((t) => (
             <span
               key={t}
-              className="rounded bg-black/5 px-1.5 text-xs dark:bg-white/10"
+              className="rounded bg-surface-hover px-1.5 text-xs"
             >
               {t}
             </span>
@@ -141,7 +141,7 @@ function StoryCard({ story }: { story: Story }) {
       </dl>
       {story.evidence && <p className={muted}>Source: {story.evidence}</p>}
       {story.hints.length > 0 && (
-        <ul className="list-disc pl-5 text-sm text-amber-700 dark:text-amber-400">
+        <ul className="list-disc pl-5 text-sm text-warning-text">
           {story.hints.map((h) => (
             <li key={h}>{h}</li>
           ))}

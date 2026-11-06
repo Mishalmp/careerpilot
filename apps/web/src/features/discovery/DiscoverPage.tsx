@@ -81,7 +81,7 @@ function DigestCard() {
           ))}
         </li>
         {payload.failed_tasks_24h > 0 && (
-          <li className="text-red-700 dark:text-red-400">
+          <li className="text-danger-text">
             {payload.failed_tasks_24h} background task(s) failed.{" "}
             <Link href="/tasks" className="underline">
               See tasks
@@ -182,7 +182,7 @@ function AddSource() {
         </button>
       </div>
       {add.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {add.error.message}
         </p>
       )}
@@ -195,7 +195,7 @@ function SourceRow({ source }: { source: DiscoverySource }) {
   const update = useUpdateSource();
   const remove = useDeleteSource();
   return (
-    <li className="space-y-1 border-b border-black/5 py-2 last:border-0 dark:border-white/10">
+    <li className="space-y-1 border-b border-border-subtle py-2 last:border-0">
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
         <span>
           <strong>{source.company_name}</strong> · {source.kind}/{source.board}
@@ -245,7 +245,7 @@ function SourceRow({ source }: { source: DiscoverySource }) {
         {!source.enabled && " Paused."}
       </p>
       {source.last_error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           Last read failed: {source.last_error}
         </p>
       )}
@@ -256,7 +256,7 @@ function SourceRow({ source }: { source: DiscoverySource }) {
         </p>
       )}
       {(run.error ?? update.error ?? remove.error) && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {(run.error ?? update.error ?? remove.error)?.message}
         </p>
       )}
@@ -268,7 +268,7 @@ function CandidateRow({ candidate }: { candidate: Candidate }) {
   const accept = useAcceptCandidate();
   const set = useSetCandidate();
   return (
-    <li className="space-y-1 border-b border-black/5 py-2 last:border-0 dark:border-white/10">
+    <li className="space-y-1 border-b border-border-subtle py-2 last:border-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm">
           <a
@@ -284,7 +284,7 @@ function CandidateRow({ candidate }: { candidate: Candidate }) {
           {candidate.remote && " · remote"}
           {candidate.published_on && ` · posted ${candidate.published_on}`}
           {!candidate.listed && (
-            <span className="text-amber-700 dark:text-amber-400">
+            <span className="text-warning-text">
               {" "}
               · no longer on the board
             </span>
@@ -339,7 +339,7 @@ function CandidateRow({ candidate }: { candidate: Candidate }) {
         </p>
       )}
       {(accept.error ?? set.error) && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {(accept.error ?? set.error)?.message}
         </p>
       )}

@@ -19,12 +19,12 @@ function Evidence({ item }: { item: IntelItem }) {
       <p>
         {item.text}{" "}
         {item.inferred && (
-          <span className="rounded bg-amber-100 px-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
+          <span className="rounded bg-warning-soft px-1 text-xs text-warning-text">
             inferred from {item.similar_to}
           </span>
         )}
       </p>
-      <blockquote className="border-l-2 border-black/20 pl-2 text-xs dark:border-white/30">
+      <blockquote className="border-l-2 border-input pl-2 text-xs">
         “{item.quote}”
       </blockquote>
       <p className={`${muted} text-xs`}>
@@ -57,7 +57,7 @@ function AddSource({ jobId }: { jobId: string }) {
 
   return (
     <form
-      className="space-y-2 rounded border border-black/10 p-3 dark:border-white/15"
+      className="space-y-2 rounded border border-border-subtle p-3"
       onSubmit={(e) => {
         e.preventDefault();
         add.mutate(
@@ -127,7 +127,7 @@ function AddSource({ jobId }: { jobId: string }) {
         {add.isPending ? "Reading..." : "Add"}
       </button>
       {add.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {add.error.message}
         </p>
       )}
@@ -164,7 +164,7 @@ export function IntelPanel({ jobId }: { jobId: string }) {
       </h2>
       <p className={muted}>{note}</p>
       {brief.needs_more_sources && (
-        <p className="text-sm text-amber-700 dark:text-amber-400">
+        <p className="text-sm text-warning-text">
           Fewer than two recent sources about this company. Facts from similar
           companies are labelled inferred.
           {ai_available && (
@@ -195,7 +195,7 @@ export function IntelPanel({ jobId }: { jobId: string }) {
         </div>
       )}
       {peers.error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-danger-text">
           {peers.error.message}
         </p>
       )}
@@ -219,7 +219,7 @@ export function IntelPanel({ jobId }: { jobId: string }) {
             {brief.topics.map((t) => (
               <li
                 key={t.key}
-                className="rounded border border-black/10 px-2 py-0.5 dark:border-white/20"
+                className="rounded border border-border-subtle px-2 py-0.5"
               >
                 {t.key} · {t.sources} source{t.sources === 1 ? "" : "s"}
                 {t.inferred_only && " · inferred"}
@@ -278,7 +278,7 @@ export function IntelPanel({ jobId }: { jobId: string }) {
             </>
           )}
           {questions.error && (
-            <p role="alert" className="text-sm text-red-600">
+            <p role="alert" className="text-sm text-danger-text">
               {questions.error.message}
             </p>
           )}

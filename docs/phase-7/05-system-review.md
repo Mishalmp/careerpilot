@@ -113,7 +113,7 @@ Current: tools call services (never repositories), writes preview until `confirm
 | Session cookie HttpOnly, SameSite=Lax, CSRF header on unsafe methods, route audit test | exists | keep; add new routes to the audit automatically |
 | Login throttle persistence | in memory | B08 |
 | Password hashing | argon2 *(verify in code)* | confirm parameters, add rehash on login |
-| CSP and theme script | CSP strict; theme needs a pre-paint script | use a nonce or a static external script; D05, H20 |
+| Page CSP and theme script | Only the code-runner workers have a CSP; normal pages send none (checked in `next.config.ts` 2026-11-06). The theme needs a pre-paint script | Done: theme script is a same-origin file (D05). Next: add a page CSP with nonces and test it (H20) |
 | Output encoding for researched text | React escapes; markdown rendering must be sanitised | use a safe renderer, never `dangerouslySetInnerHTML` without sanitising; H20, R13 |
 | Secrets | env only; never in the browser | add secret scanning (gitleaks or detect-secrets) as pre-commit and CI, X07; key handling runbook H25 |
 | Dependency audit | pip-audit + npm audit in CI | keep |

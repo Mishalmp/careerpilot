@@ -65,7 +65,7 @@ export function GuideReaderPage() {
         &larr; All guides
       </Link>
       {guide.isPending && <p className={muted}>Loading...</p>}
-      {guide.isError && <p role="alert" className="text-red-600">Could not load this guide.</p>}
+      {guide.isError && <p role="alert" className="text-danger-text">Could not load this guide.</p>}
       {guide.data && (
         // Raw HTML in Markdown is ignored (react-markdown's default), so guide text cannot inject markup.
         <article className="guide">

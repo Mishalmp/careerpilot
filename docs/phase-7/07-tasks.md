@@ -1,6 +1,6 @@
 # 07: Task breakdown (the work list)
 
-How to use: take the first unchecked task whose **Deps** are all checked. Do exactly what it says; run its **Done when** check; tick the box and write the commit id after it. If a task is bigger than its size, split it here first. Sizes: **S** up to 1 hour, **M** up to 3 hours, **L** up to 6 hours (hours of focused work, estimates not measurements). Owner tasks are marked **(owner)**.
+Legend: [x] done, [~] partly done (details in STATUS.md), [ ] not started. How to use: take the first unchecked task whose **Deps** are all checked. Do exactly what it says; run its **Done when** check; tick the box and write the commit id after it. If a task is bigger than its size, split it here first. Sizes: **S** up to 1 hour, **M** up to 3 hours, **L** up to 6 hours (hours of focused work, estimates not measurements). Owner tasks are marked **(owner)**.
 
 ID prefixes: Q decisions, X process and tooling, E live-AI enablement and evals, D design system, P pages, B backend platform, L learning platform, R research agent, V architecture explorer, H system hardening, T testing, K containers, W writing and teaching content.
 Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `09-product-spec.md`; test cases in `10-test-strategy.md`.
@@ -27,8 +27,8 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## Q: decisions and inputs
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | Q01 | **(owner)** Answer intake questions 1-15 in `08` section 4 (or say "default") | none | S | Answers recorded in `01` section 4 |
-| [ ] | Q02 | **(owner)** Approve or change decisions D1-D7 | Q01 | S | `01` section 4 table marked approved |
+| [x] | Q01 | **(owner)** Answer intake questions 1-15 in `08` section 4 (or say "default") | none | S | Answered 2026-11-06; recorded in `01` section 4a |
+| [x] | Q02 | **(owner)** Approve or change decisions D1-D10 | Q01 | S | Resolved 2026-11-06 in `01` section 4a (owner said "your choice"/defaults) |
 | [ ] | Q03 | **(owner)** Send 2-3 screenshots of apps you like (optional) | none | S | Files in `docs/phase-7/assets/references/` |
 | [ ] | Q04 | **(owner)** Put `ANTHROPIC_API_KEY` in `.env`, state a daily budget | none | S | `llm-check` prints OK |
 | [ ] | Q05 | Write ADR 0012 design system, 0013 search provider, 0014 long operations, 0015 containers (from approved decisions) | Q02 | M | Four ADRs committed |
@@ -67,28 +67,29 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 ## D: design system (details in `02-design-system.md`)
 | Done | ID | Task | Deps | Size | Done when |
 |---|---|---|---|---|---|
-| [ ] | D01 | Verify Radix Blue and Slate step values (light/dark) from radix-ui.com/colors; fix the final token list | none | S | `tokens.css` values match source |
-| [ ] | D02 | Add dependencies (clsx, tailwind-merge, class-variance-authority, lucide-react, next-themes, sonner, cmdk, needed Radix primitives) with a reason and removal path each | Q02 | S | ADR 0012 lists them; build passes |
-| [ ] | D03 | `components.json`, `lib/utils.ts` (`cn`), folder `components/ui/` without breaking `components/ui.ts` | D02 | S | Existing pages still render |
-| [ ] | D04 | Global CSS: semantic tokens light and dark, `@theme inline` mapping, radius, shadow, spacing, motion tokens | D01 | M | `/dev/ui` shows both themes |
-| [ ] | D05 | Theme provider (class strategy, system default, no flash), `color-scheme`, `theme-color`; verify CSP allows the init script | D04 | M | No flash on reload in both themes; CSP test passes |
-| [ ] | D06 | Self-host fonts (Inter variable, JetBrains Mono) with `next/font/local` | none | S | `next build` works offline |
-| [ ] | D07 | Primitives: Button (variants, sizes, loading), IconButton, Input, Textarea, Select, Checkbox, Radio, Switch, Label, Field (help, error) | D04 | L | Each has component tests and keyboard test |
-| [ ] | D08 | Surfaces: Card, Separator, Badge, Avatar, Skeleton, Tooltip, Popover, Dialog, Sheet, DropdownMenu, Tabs | D07 | L | Focus trap and escape tested |
+| [x] | D01 | Verify Radix Blue and Slate step values (light/dark) from radix-ui.com/colors; fix the final token list | none | S | `tokens.css` values match source |
+| [x] | D02 | Add dependencies (clsx, tailwind-merge, class-variance-authority, lucide-react, next-themes, sonner, cmdk, needed Radix primitives) with a reason and removal path each | Q02 | S | ADR 0012 lists them; build passes |
+| [x] | D03 | `components.json`, `lib/utils.ts` (`cn`), folder `components/ui/` without breaking `components/ui.ts` | D02 | S | Existing pages still render |
+| [x] | D04 | Global CSS: semantic tokens light and dark, `@theme inline` mapping, radius, shadow, spacing, motion tokens | D01 | M | `/dev/ui` shows both themes |
+| [x] | D05 | Theme provider (class strategy, system default, no flash), `color-scheme`, `theme-color`; verify CSP allows the init script | D04 | M | No flash on reload in both themes; CSP test passes |
+| [x] | D06 | Self-host fonts (Inter variable, JetBrains Mono) with `next/font/local` | none | S | `next build` works offline |
+| [~] | D07 | Primitives: Button (variants, sizes, loading), IconButton, Input, Textarea, Select, Checkbox, Radio, Switch, Label, Field (help, error) | D04 | L | Each has component tests and keyboard test |
+| [~] | D08 | Surfaces: Card, Separator, Badge, Avatar, Skeleton, Tooltip, Popover, Dialog, Sheet, DropdownMenu, Tabs | D07 | L | Focus trap and escape tested |
 | [ ] | D09 | Data display: Table, DataTable helper, Pagination, EmptyState, ErrorState, Stat, Progress, Toast | D08 | L | Table sorts, filters, keyboard rows |
 | [ ] | D10 | Feedback conventions: skeletons, optimistic update with rollback toast, field errors mapped from problem+json | D09 | M | One demo form fails and recovers |
 | [ ] | D11 | Command palette (cmdk) and shortcut registry (`g j`, `g t`, `?` help) | D08 | M | Palette opens with Ctrl/Cmd+K; navigates |
-| [ ] | D12 | Logo mark and wordmark final SVGs (light, dark), favicons (svg, ico, 180 apple), social image | D01 | M | Browser tab shows the mark in both themes |
-| [ ] | D13 | App shell: collapsible sidebar with groups and counts, top bar (breadcrumbs, search, theme, user menu), mobile drawer, PageHeader | D07, D08, D12 | L | Works at 375/768/1280; keyboard complete |
-| [ ] | D14 | One icon map (`icons.ts`) from Lucide for nav, entities, statuses | D02 | S | No ad-hoc icon imports (lint rule) |
+| [~] | D12 | Logo mark and wordmark final SVGs (light, dark), favicons (svg, ico, 180 apple), social image | D01 | M | Browser tab shows the mark in both themes |
+| [~] | D13 | App shell: collapsible sidebar with groups and counts, top bar (breadcrumbs, search, theme, user menu), mobile drawer, PageHeader | D07, D08, D12 | L | Works at 375/768/1280; keyboard complete |
+| [~] | D14 | One icon map (`icons.ts`) from Lucide for nav, entities, statuses | D02 | S | No ad-hoc icon imports (lint rule) |
 | [ ] | D15 | Application status colours as semantic tokens with legend | D04 | S | Contrast table passes |
 | [ ] | D16 | Chart primitives (bar, sparkline, funnel) using chart tokens, with aria text | D04 | M | Screen-reader text describes data |
-| [ ] | D17 | Motion tokens and `prefers-reduced-motion` handling | D04 | S | Animations off when reduced |
-| [ ] | D18 | Dev-only `/dev/ui` gallery of every component and state, theme switch | D07-D10 | M | Gallery renders; excluded from production build |
-| [ ] | D19 | Contrast script (WCAG ratio and APCA) for all token pairs; axe on `/dev/ui` in both themes | D18 | M | CI fails if a pair drops below AA |
+| [x] | D17 | Motion tokens and `prefers-reduced-motion` handling | D04 | S | Animations off when reduced |
+| [~] | D18 | Dev-only `/dev/ui` gallery of every component and state, theme switch | D07-D10 | M | Gallery renders; excluded from production build |
+| [~] | D19 | Contrast script (WCAG ratio and APCA) for all token pairs; axe on `/dev/ui` in both themes | D18 | M | CI fails if a pair drops below AA |
 | [ ] | D20 | Visual regression of `/dev/ui` (light, dark) | D18, T01 | M | Baselines committed; diff fails |
 | [ ] | D21 | **(owner)** Review `/dev/ui` in both themes; list changes | D18 | S | Change list recorded |
 | [ ] | D22 | `docs/design/usage.md`: which component for what, do and do not | D21 | S | Linked from README |
+| [~] | D23 | Density setting (comfortable / compact) as tokens (row height, padding, font size) with a switch in Settings and the command palette (REQ-31) | D04 | M | Gallery shows both densities in both themes |
 
 ## P: page redesigns (each row = two tasks: 1 layout, 2 behaviour; see the standard checklist)
 | 1 | 2 | ID | Page and what is specific | Deps |
@@ -134,6 +135,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | B18 | Undo window for deletes of jobs and stories (soft delete 30 days) | none | M | Restore works; purge job removes |
 | [ ] | B19 | Full data export (JSON zip) and import into an empty account | none | L | Round trip equals original (test) |
 | [ ] | B20 | Multi-user readiness review: per-user settings and keys documented, tests for isolation of every new table | none | M | Checklist in `05` completed |
+| [ ] | B21 | Invite-only sign-up (admin creates an invite link/code), per-user USD budget on the shared server key, admin view of usage (REQ-29) | B03, E09 | L | Invited user signs up; cannot exceed own cap; cross-user tests |
 
 ## L: learning platform (spec: `03-learning-platform.md`)
 | Done | ID | Task | Deps | Size | Done when |
@@ -197,6 +199,8 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | R13 | Adversarial page corpus for prompt injection; tests that nothing leaks or acts | R05 | M | All corpus pages neutralised |
 | [ ] | R14 | Content rules: store link, short quote and paraphrase only; blocked sites list kept | R05 | S | Test: long quote truncated |
 | [ ] | R15 | Research quality eval: 10 sample roles with expected topics; recall metric | R05, E04 | L | Baseline recorded |
+| [ ] | R16 | CV-driven profile: paste/upload CV text, extract skills, years, role titles and seniority (code first, optional model), owner edits, saved to the profile (REQ-28); role titles feed R02 queries and the roadmap | B03, E04 | L | Fixture CVs give expected skills and titles; no hard-coded role list |
+| [ ] | R17 | Spike: prove SearXNG JSON search works from the fetcher with limiter settings; record the working `settings.yml`/`limiter.toml`; decide default provider | R01 | M | Spike note in ADR 0013; 20 queries return results |
 
 ## V: architecture explorer (spec: `04-architecture-explorer.md`)
 | Done | ID | Task | Deps | Size | Done when |
@@ -299,6 +303,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | W06 | README, CLAUDE.md, ADR updates at each milestone | milestones | S each | |
 | [ ] | W07 | Runbooks: backup/restore, rotate keys, upgrade dependencies, incident | H25 | M | |
 | [ ] | W08 | Changelog and release notes | none | S | |
+| [ ] | W09 | Portability guide `docs/setup/`: new machine on Windows/macOS/Linux, `.env` creation, running native and with Docker, deploying to a server, zipping backups and restoring on another machine, troubleshooting (REQ-30) | K03 | M | A clean checkout follows it to a running app (tested at least on Windows + one container run) |
 
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)

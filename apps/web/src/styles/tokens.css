@@ -1,0 +1,100 @@
+/*
+ * Design tokens: the only place colours are defined (docs/phase-7/02-design-system.md).
+ * Layer 1: Radix Colors scales (values copied from github.com/radix-ui/colors, checked 2026-11-06).
+ * Layer 2: semantic tokens that components use. Components never use layer 1 directly.
+ * Dark mode = the `.dark` class on <html>; density = data-density on <html>.
+ * scripts/check-contrast.mjs reads this file and fails if a text pair drops below WCAG AA.
+ */
+
+:root {
+  /* Blue (accent) */
+  --blue-1: #fbfdff; --blue-2: #f4faff; --blue-3: #e6f4fe; --blue-4: #d5efff;
+  --blue-5: #c2e5ff; --blue-6: #acd8fc; --blue-7: #8ec8f6; --blue-8: #5eb1ef;
+  --blue-9: #0090ff; --blue-10: #0588f0; --blue-11: #0d74ce; --blue-12: #113264;
+  /* Slate (neutral) */
+  --slate-1: #fcfcfd; --slate-2: #f9f9fb; --slate-3: #f0f0f3; --slate-4: #e8e8ec;
+  --slate-5: #e0e1e6; --slate-6: #d9d9e0; --slate-7: #cdced6; --slate-8: #b9bbc6;
+  --slate-9: #8b8d98; --slate-10: #80838d; --slate-11: #60646c; --slate-12: #1c2024;
+  /* Status */
+  --green-3: #e6f6eb; --green-6: #adddc0; --green-9: #30a46c; --green-11: #218358;
+  --amber-3: #fff7c2; --amber-6: #f3d673; --amber-9: #ffc53d; --amber-11: #ab6400;
+  --red-3: #feebec; --red-6: #fdbdbe; --red-9: #e5484d; --red-11: #ce2c31;
+  --violet-9: #6e56cf; --violet-11: #6550b9;
+
+  /* Semantic */
+  --background: var(--slate-1);
+  --surface: #ffffff;
+  --surface-muted: var(--slate-2);
+  --surface-hover: var(--slate-3);
+  --popover: #ffffff;
+  --border: var(--slate-6);
+  --border-subtle: var(--slate-4);
+  --border-strong: var(--slate-8);
+  --foreground: var(--slate-12);
+  --muted-foreground: var(--slate-11);
+  --primary: var(--blue-11);
+  --primary-hover: #0b66b8;
+  --primary-foreground: #ffffff;
+  --accent-soft: var(--blue-3);
+  --accent-soft-hover: var(--blue-4);
+  --accent-text: #0b66b8;
+  --ring: var(--blue-9);
+  --input: var(--slate-9);
+  --success: var(--green-9); --success-soft: var(--green-3); --success-text: #1a7548;
+  --warning: var(--amber-9); --warning-soft: var(--amber-3); --warning-text: #8f5300;
+  --danger: var(--red-9); --danger-soft: var(--red-3); --danger-text: var(--red-11);
+  --danger-solid: var(--red-11);
+  --sidebar: var(--slate-2);
+  --sidebar-border: var(--slate-5);
+  --overlay: rgb(17 24 39 / 0.45);
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.12), 0 0 0 1px rgb(0 0 0 / 0.04);
+  --chart-1: var(--blue-9); --chart-2: var(--slate-9); --chart-3: var(--green-9);
+  --chart-4: var(--amber-9); --chart-5: var(--violet-9);
+  color-scheme: light;
+
+  /* Shape and rhythm */
+  --control-h: 2.25rem;       /* buttons, inputs */
+  --row-h: 2.75rem;           /* table rows */
+  --pad-card: 1.25rem;
+  --text-base: 0.875rem;      /* 14px */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 120ms; --dur: 200ms;
+}
+
+.dark {
+  --blue-1: #0d1520; --blue-2: #111927; --blue-3: #0d2847; --blue-4: #003362;
+  --blue-5: #004074; --blue-6: #104d87; --blue-7: #205d9e; --blue-8: #2870bd;
+  --blue-9: #0090ff; --blue-10: #3b9eff; --blue-11: #70b8ff; --blue-12: #c2e6ff;
+  --slate-1: #111113; --slate-2: #18191b; --slate-3: #212225; --slate-4: #272a2d;
+  --slate-5: #2e3135; --slate-6: #363a3f; --slate-7: #43484e; --slate-8: #5a6169;
+  --slate-9: #696e77; --slate-10: #777b84; --slate-11: #b0b4ba; --slate-12: #edeef0;
+  --green-3: #132d21; --green-6: #20573e; --green-9: #30a46c; --green-11: #3dd68c;
+  --amber-3: #302008; --amber-6: #5c3d05; --amber-9: #ffc53d; --amber-11: #ffca16;
+  --red-3: #3b1219; --red-6: #72232d; --red-9: #e5484d; --red-11: #ff9592;
+  --violet-9: #6e56cf; --violet-11: #baa7ff;
+
+  --surface: var(--slate-2);
+  --surface-muted: var(--slate-3);
+  --surface-hover: var(--slate-4);
+  --popover: var(--slate-3);
+  --primary: #0b6fc4;
+  --primary-hover: #0a62b0;
+  --accent-text: var(--blue-11);
+  --ring: var(--blue-8);
+  --input: var(--slate-9);
+  --danger-solid: #c8353b;
+  --success-text: var(--green-11);
+  --warning-text: var(--amber-11);
+  --sidebar: var(--slate-2);
+  --overlay: rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.06);
+  color-scheme: dark;
+}
+
+/* Compact density: for dense screens such as tables and boards */
+[data-density="compact"] {
+  --control-h: 1.875rem;
+  --row-h: 2.125rem;
+  --pad-card: 0.875rem;
+  --text-base: 0.8125rem;     /* 13px */
+}

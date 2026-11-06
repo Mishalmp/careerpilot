@@ -118,7 +118,7 @@ export function AddJobDialog({ open, onClose }: { open: boolean; onClose: () => 
             Already tracked. <Link href={`/jobs/${existing.id}`} className="underline">Open it</Link>
           </p>
         )}
-        <p role="alert" className="min-h-5 text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="min-h-5 text-sm text-danger-text">
           {create.error?.message}
         </p>
         <div className="flex justify-end gap-2">

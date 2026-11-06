@@ -45,7 +45,7 @@ export function ProblemPage() {
   if (problem.isPending) return <p className={muted}>Loading...</p>;
   if (problem.isError) {
     return (
-      <p role="alert" className="text-red-600 dark:text-red-400">
+      <p role="alert" className="text-danger-text">
         Could not load this problem. <Link href="/practice" className="underline">Back to practice</Link>
       </p>
     );
@@ -103,7 +103,7 @@ function Workspace({ problem }: { problem: ProblemDetail }) {
           <h1 className="text-2xl font-semibold">{problem.title}</h1>
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <DifficultyBadge difficulty={problem.difficulty} />
-            {solved && <span className="text-emerald-700 dark:text-emerald-300">Solved</span>}
+            {solved && <span className="text-success-text">Solved</span>}
             {problem.tags.map((tag) => (
               <span key={tag} className={muted}>#{tag}</span>
             ))}
@@ -128,7 +128,7 @@ function Workspace({ problem }: { problem: ProblemDetail }) {
                     setLanguage(lang);
                     setSummary(null);
                   }}
-                  className={`${button} ${language === lang ? "bg-black/10 dark:bg-white/15" : ""}`}
+                  className={`${button} ${language === lang ? "bg-surface-hover " : ""}`}
                 >
                   {LABELS[lang]}
                 </button>
@@ -166,7 +166,7 @@ function Workspace({ problem }: { problem: ProblemDetail }) {
 
         <ResultsPanel problem={problem} summary={summary} running={running} phase={phase} />
         {submit.isError && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-danger-text">
             Your result could not be saved: {submit.error.message}
           </p>
         )}

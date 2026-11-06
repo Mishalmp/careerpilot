@@ -9,9 +9,9 @@ import { button, input, muted, select } from "@/components/ui";
 import { type ProblemFilters, useProblems } from "./hooks";
 
 const TONE = {
-  Easy: "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-200",
-  Medium: "bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200",
-  Hard: "bg-red-100 text-red-900 dark:bg-red-900/40 dark:text-red-200",
+  Easy: "bg-success-soft text-success-text  ",
+  Medium: "bg-warning-soft text-warning-text  ",
+  Hard: "bg-danger-soft text-danger-text  ",
 } as const;
 
 export function DifficultyBadge({ difficulty }: { difficulty: keyof typeof TONE }) {
@@ -89,14 +89,14 @@ export function ProblemsPage() {
       </div>
 
       {problems.isPending && <p className={muted}>Loading...</p>}
-      {problems.isError && <p role="alert" className="text-red-600">Could not load problems.</p>}
+      {problems.isError && <p role="alert" className="text-danger-text">Could not load problems.</p>}
       {problems.data?.length === 0 && <p className={muted}>No problems match these filters.</p>}
 
       {problems.data && problems.data.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[40rem] text-left text-sm">
             <caption className="sr-only">Practice problems</caption>
-            <thead className="border-b border-black/10 text-xs uppercase text-zinc-500 dark:border-white/15">
+            <thead className="border-b border-border-subtle text-xs uppercase text-muted-foreground">
               <tr>
                 <th scope="col" className="py-2 pr-3">Problem</th>
                 <th scope="col" className="py-2 pr-3">Level</th>
@@ -107,7 +107,7 @@ export function ProblemsPage() {
             </thead>
             <tbody>
               {problems.data.map((problem) => (
-                <tr key={problem.slug} className="border-b border-black/5 dark:border-white/10">
+                <tr key={problem.slug} className="border-b border-border-subtle">
                   <td className="py-2 pr-3">
                     <Link href={`/practice/${problem.slug}`} className="font-medium hover:underline">
                       {problem.title}
@@ -122,7 +122,7 @@ export function ProblemsPage() {
                     <span
                       className={
                         problem.status === "solved"
-                          ? "font-medium text-emerald-700 dark:text-emerald-300"
+                          ? "font-medium text-success-text "
                           : muted
                       }
                     >

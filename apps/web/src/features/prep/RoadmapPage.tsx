@@ -33,7 +33,7 @@ export function RoadmapPage() {
           <button type="button" onClick={() => seed.mutate()} disabled={seed.isPending} className={primaryButton}>
             {seed.isPending ? "Loading..." : "Load the curriculum"}
           </button>
-          {seed.error && <p role="alert" className="text-red-600">{seed.error.message}</p>}
+          {seed.error && <p role="alert" className="text-danger-text">{seed.error.message}</p>}
         </div>
       )}
 

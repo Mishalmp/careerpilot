@@ -78,6 +78,62 @@ Everything the owner asked for, restated as numbered requirements (REQ-nn) that 
 | D9 | Diagram library | **React Flow (`@xyflow/react`)** for interactive node diagrams; plain SVG/CSS for small illustrations. | Mermaid (static), tldraw (heavy), D3 (more work). Reversal: medium | |
 | D10 | Profile storage | **Move the scoring profile from a YAML file into the database** with an edit screen (needed for a Settings page); keep YAML import once. | Keep YAML (no UI edit). Reversal: low | |
 
+## 4a. Owner answers and resolved decisions (recorded 2026-11-06)
+**Intake answers (from the owner)**
+| # | Answer | Consequence |
+|---|---|---|
+| 1 | The owner alone for the first month while it is built properly; then 5 to 10 invited users, then scale after their feedback | Stage 3 of the scalability path (`09` section 7) moves from "later" to "next after Release A+B": invite-only sign-up, per-user settings and keys/budgets, isolation tests (tasks B03, B20, B21) |
+| 2 | Roles come from the CV: full stack, Python full stack, software developer/engineer, SDE and similar names. Everything must be dynamic from CV content, including interview roadmaps | New requirement REQ-28; tasks B03 (profile in DB), R16 (derive skills, role titles and research seeds from CV text) |
+| 3 | 2 to 3 hours a day, 5 to 12 hours on weekends | Plan sizing in `07`; roadmap defaults in `03` |
+| 4 | Ready = 80% on a checkpoint across high-priority topics, twice, a week apart | Default pass mark and "ready" rule in `03` section 8 |
+| 5 | Linear, Vercel, Huntr are fine; use the best modern UI/UX; responsive almost everywhere | `02` unchanged; responsiveness is in every page checklist |
+| 6 | Keep the name and logo; provide light and dark versions and different sizes (compact and full) for different places | Logo set in D12: mark, wordmark (light/dark), compact; UI density setting (comfortable/compact), task D23 |
+| 7 | English only | |
+| 8 | Prefers a small amount; asked what is possible with the current account | See "AI cost and access" below |
+| 9 | Study content may be sent to Claude | D6 approved (profile file, contact emails, backups, keys still never sent) |
+| 10 | Use whichever is free/open-source/cheap and best; must work perfectly | See "Search source" below |
+| 11 | My call; avoid struggles when deploying or pulling on another OS; environment independent | See D4 |
+| 12 | Laptop now; private GitHub repo; cloud later | X09 stays an owner task; stage 3 hosting is a later epic |
+| 13 | Backups stay on the laptop; the owner zips and copies them to cloud storage; wants step-by-step notes for deploying and using on another OS or laptop | New task W09 (portability guide) |
+| 14 | Chrome first; Edge/Firefox default | Playwright runs Chromium first |
+| 15 | WCAG 2.2 AA | |
+**Owner instruction on process**: if a skill or knowledge is missing, find it on the internet, cross-validate, test end to end; work automatically step by step without stopping.
+
+**AI cost and access (verified 2026-11-06)**
+- A Claude Pro subscription does not include an API key. API use is a separate Console account billed by prepaid credits; third-party guides say the minimum top-up is 5 USD (not confirmed by Anthropic's own page). Credits expire after one year and are non-refundable (Anthropic help article as summarised in a search result).
+- Prices from Anthropic's pricing page (fetched 2026-11-06), per million tokens, input / output: Haiku 5.5 0.10 / 0.50 USD (prompts up to 100k tokens), Sonnet 5.5 2 / 10, Opus 5.5 4 / 20.
+- Plan: use **Haiku 5.5** for extraction, MCQ generation and evaluation; **Sonnet 5.5** only for graders that need judgement and for the hardest steps, chosen by the eval scores (E10). A research run of 80k tokens costs roughly 0.01 to 0.05 USD on Haiku (arithmetic from the prices above; to be measured).
+- Default caps for the owner: 1 USD/day and 10 USD/month, hard stop (settings; shown in the UI). Raise later.
+- No free hosted API exists for this; a free local open-source model through a provider interface (for example Ollama) is possible later but quality for grading is unproven, so it is not part of the first build.
+- The optional `claude -p` provider (plan section 15) stays off by default.
+
+**Search source (verified 2026-11-06 from search results; confirm on the vendors' own pages before paying)**
+- Brave Search API: reports say the old free tier was replaced in early 2026 by about 5 USD of monthly credit (roughly 1,000 queries), a card is required, and overage is billed.
+- SearXNG (open source, self-hosted metasearch): free; JSON output must be enabled in `settings.yml`; its bot limiter can return 429 to API clients unless configured; reliability depends on upstream engines. Not yet tested here.
+- Anthropic web search tool: 10 USD per 1,000 searches plus tokens.
+- Decision D2 (resolved): the `SearchProvider` interface ships with a Fake, a **SearXNG** adapter (default, free, runs in the compose `tools` profile) and a **Brave** adapter (optional, when the owner adds a key). Manual paste always works. Task R01 starts with a spike that proves SearXNG JSON works with the limiter configured; if it is unreliable, Brave's monthly credit becomes the default.
+
+**Decisions resolved (owner said "your choice" or accepted defaults)**
+| ID | Result |
+|---|---|
+| D1 | Approved: shadcn/ui + Radix + Tailwind v4 |
+| D2 | Resolved as above (SearXNG default, Brave optional, manual paste) |
+| D3 | Approved: long operations as tasks |
+| D4 | Resolved: **native development stays the default** (fast, agents are quicker); a complete Docker Compose stack (db, api, worker, web, optional searxng) is the portable path for other machines and deployment; both use the same `.env` and one `scripts/dev.py`; no machine-specific paths in the repo |
+| D5 | Approved: keep CareerPilot; logo set with light/dark and compact/full variants |
+| D6 | Approved |
+| D7 | Approved |
+| D8 | Approved: FSRS (Python `fsrs`, pinned; confirm API at L08) |
+| D9 | Approved: React Flow |
+| D10 | Approved: profile in the database, derived from the CV (REQ-28) |
+Any of these can be reopened; reversal costs are in the table above.
+
+## 4b. Added requirements
+- REQ-28 Dynamic from the CV: the profile (skills, years, role titles, seniority) is derived from the owner's CV text, editable, and drives scoring, research seeds, roadmap and gap analysis; no role list is hard-coded.
+- REQ-29 Invite-only multi-user for 5 to 10 people after the first month: separate data, separate budgets, a shared server-side API key with per-user caps, admin-created invites.
+- REQ-30 Portable setup: the same steps work on Windows, macOS and Linux; a written step-by-step guide covers new machine setup, deployment, backup zip and restore.
+- REQ-31 Visual variants: light and dark themes, and comfortable and compact density; logo mark, wordmark and compact forms.
+
 ## 5. Non-goals (for now)
 Native mobile apps. Real-time collaboration. Paying customers and billing. Email sending of any kind (the no-send rule stays). Bulk scraping of job sites that forbid it. A server-side code runner. Voice interviews.
 

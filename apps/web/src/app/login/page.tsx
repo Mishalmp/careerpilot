@@ -3,6 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Logo } from "@/components/Logo";
+import { ThemeMenu } from "@/components/ThemeMenu";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Field, Input } from "@/components/ui/field";
 import { useLogin, useSession } from "@/lib/session";
 
 export default function LoginPage() {
@@ -17,52 +22,65 @@ export default function LoginPage() {
   }, [session.data, router]);
 
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          login.mutate({ email, password });
-        }}
-        className="w-full max-w-sm space-y-4 rounded-lg border border-black/10 p-6 dark:border-white/15"
-      >
-        <h1 className="text-xl font-semibold">Sign in to CareerPilot</h1>
+    <main className="relative flex flex-1 items-center justify-center p-6">
+      <div className="absolute right-4 top-4">
+        <ThemeMenu />
+      </div>
+      <div className="flex w-full max-w-sm flex-col items-center gap-6">
+        <Logo className="scale-110" />
+        <Card className="w-full">
+          <CardContent>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                login.mutate({ email, password });
+              }}
+              className="flex flex-col gap-4"
+            >
+              <div>
+                <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
+                <p className="mt-1 text-[0.8125rem] text-muted-foreground">
+                  Your applications, preparation and practice in one place.
+                </p>
+              </div>
 
-        <label className="block space-y-1 text-sm">
-          <span>Email</span>
-          <input
-            type="email"
-            autoComplete="username"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded border border-black/20 bg-transparent px-3 py-2 dark:border-white/25"
-          />
-        </label>
+              <Field label="Email">
+                {(p) => (
+                  <Input
+                    type="email"
+                    autoComplete="username"
+                    required
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    {...p}
+                  />
+                )}
+              </Field>
 
-        <label className="block space-y-1 text-sm">
-          <span>Password</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded border border-black/20 bg-transparent px-3 py-2 dark:border-white/25"
-          />
-        </label>
+              <Field label="Password">
+                {(p) => (
+                  <Input
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    {...p}
+                  />
+                )}
+              </Field>
 
-        <p role="alert" className="min-h-5 text-sm text-red-600 dark:text-red-400">
-          {login.error?.message}
-        </p>
+              <p role="alert" className="min-h-5 text-sm text-danger-text">
+                {login.error?.message}
+              </p>
 
-        <button
-          type="submit"
-          disabled={login.isPending}
-          className="w-full rounded bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-60"
-        >
-          {login.isPending ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
+              <Button type="submit" variant="primary" loading={login.isPending} className="w-full">
+                {login.isPending ? "Signing in" : "Sign in"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

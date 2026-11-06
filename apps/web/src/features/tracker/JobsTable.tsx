@@ -16,7 +16,7 @@ export function FollowUp({ job }: { job: JobSummary }) {
   if (!date) return <span className={muted}>-</span>;
   const overdue = date < todayLocal();
   return (
-    <span className={overdue ? "font-medium text-red-600 dark:text-red-400" : ""}>
+    <span className={overdue ? "font-medium text-danger-text " : ""}>
       {date}
       {overdue && " (overdue)"}
     </span>
@@ -34,7 +34,7 @@ export function JobsTable({
     <div className="overflow-x-auto">
       <table className="w-full min-w-[56rem] text-left text-sm">
         <caption className="sr-only">Tracked jobs, newest activity first</caption>
-        <thead className="border-b border-black/10 text-xs uppercase text-zinc-500 dark:border-white/15">
+        <thead className="border-b border-border-subtle text-xs uppercase text-muted-foreground">
           <tr>
             <th scope="col" className="py-2 pr-3">Company and role</th>
             <th scope="col" className="py-2 pr-3">Status</th>
@@ -46,7 +46,7 @@ export function JobsTable({
         </thead>
         <tbody>
           {jobs.map((job) => (
-            <tr key={job.id} className="border-b border-black/5 align-top dark:border-white/10">
+            <tr key={job.id} className="border-b border-border-subtle align-top">
               <td className="py-2 pr-3">
                 <Link href={`/jobs/${job.id}`} className="font-medium underline-offset-2 hover:underline">
                   {job.company.name}

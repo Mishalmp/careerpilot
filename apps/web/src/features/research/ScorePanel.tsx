@@ -54,7 +54,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
         </button>
       </div>
       {compute.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {compute.error.message}
         </p>
       )}
@@ -66,7 +66,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
       {score && (
         <>
           {score.stale && (
-            <p className="text-sm text-amber-700 dark:text-amber-400">
+            <p className="text-sm text-warning-text">
               Your profile or the scoring rules changed since this was computed.
               Recompute.
             </p>
@@ -75,7 +75,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
             {score.chance_note} Measured {score.coverage}% of the weight.
           </p>
           {score.blockers.length > 0 && (
-            <ul className="list-disc pl-5 text-sm text-red-700 dark:text-red-400">
+            <ul className="list-disc pl-5 text-sm text-danger-text">
               {score.blockers.map((b) => (
                 <li key={b}>{b}</li>
               ))}
@@ -84,7 +84,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
           <table className="w-full text-sm">
             <caption className="sr-only">Score breakdown</caption>
             <thead>
-              <tr className="text-left text-zinc-500">
+              <tr className="text-left text-muted-foreground">
                 <th className="py-1">Part</th>
                 <th>Weight</th>
                 <th>Score</th>
@@ -95,7 +95,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
               {score.components.map((c) => (
                 <tr
                   key={c.key}
-                  className="border-t border-black/5 align-top dark:border-white/10"
+                  className="border-t border-border-subtle align-top"
                 >
                   <td className="py-1 capitalize">{c.key}</td>
                   <td>{c.weight}</td>
@@ -109,7 +109,7 @@ export function ScorePanel({ jobId }: { jobId: string }) {
             <div className="space-y-1 text-sm">
               <p>{score.reading.summary}</p>
               {score.reading.red_flags.map((f) => (
-                <p key={f.quote} className="text-red-700 dark:text-red-400">
+                <p key={f.quote} className="text-danger-text">
                   {f.text} <span className="italic">“{f.quote}”</span>
                 </p>
               ))}

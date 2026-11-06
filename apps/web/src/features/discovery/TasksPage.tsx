@@ -38,7 +38,7 @@ export function TasksPage() {
           <span
             className={
               counts.failed > 0
-                ? "font-medium text-red-700 dark:text-red-400"
+                ? "font-medium text-danger-text "
                 : ""
             }
           >
@@ -83,7 +83,7 @@ export function TasksPage() {
               <span
                 className={
                   task.status === "failed"
-                    ? "text-red-700 dark:text-red-400"
+                    ? "text-danger-text "
                     : muted
                 }
               >
@@ -92,7 +92,7 @@ export function TasksPage() {
               </span>
             </div>
             {task.error && (
-              <p className="text-sm text-red-700 dark:text-red-400">
+              <p className="text-sm text-danger-text">
                 {task.error}
               </p>
             )}
@@ -115,7 +115,7 @@ export function TasksPage() {
         ))}
       </ul>
       {(retry.error ?? retryAll.error) && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {(retry.error ?? retryAll.error)?.message}
         </p>
       )}

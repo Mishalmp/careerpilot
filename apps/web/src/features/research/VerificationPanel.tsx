@@ -44,7 +44,7 @@ function WebsiteField({
       {save.error && (
         <p
           role="alert"
-          className="w-full text-sm text-red-600 dark:text-red-400"
+          className="w-full text-sm text-danger-text"
         >
           {save.error.message}
         </p>
@@ -69,10 +69,10 @@ const LABELS: Record<CheckOut["key"], string> = {
 };
 
 const VERDICTS = {
-  verified: ["Verified", "text-green-700 dark:text-green-400"],
-  likely_genuine: ["Likely genuine", "text-green-700 dark:text-green-400"],
-  needs_check: ["Needs your check", "text-amber-700 dark:text-amber-400"],
-  suspicious: ["Suspicious", "text-red-700 dark:text-red-400"],
+  verified: ["Verified", "text-success-text "],
+  likely_genuine: ["Likely genuine", "text-success-text "],
+  needs_check: ["Needs your check", "text-warning-text "],
+  suspicious: ["Suspicious", "text-danger-text "],
 } as const;
 
 function Symbol({ check }: { check: CheckOut }) {
@@ -82,7 +82,7 @@ function Symbol({ check }: { check: CheckOut }) {
   return (
     <span
       aria-label={check.status}
-      className={good ? "text-green-700" : "text-red-700"}
+      className={good ? "text-success-text" : "text-danger-text"}
     >
       {good ? "✓" : "✗"}
     </span>
@@ -102,14 +102,14 @@ function CheckRow({ jobId, check }: { jobId: string; check: CheckOut }) {
     );
 
   return (
-    <li className="space-y-1 border-b border-black/5 py-2 last:border-0 dark:border-white/10">
+    <li className="space-y-1 border-b border-border-subtle py-2 last:border-0">
       <div className="flex items-start gap-2 text-sm">
         <Symbol check={check} />
         <div className="flex-1">
           <p>{LABELS[check.key]}</p>
           {check.note && <p className={muted}>{check.note}</p>}
           {check.evidence_quote && (
-            <blockquote className="mt-1 border-l-2 border-black/20 pl-2 text-xs dark:border-white/30">
+            <blockquote className="mt-1 border-l-2 border-input pl-2 text-xs">
               “{check.evidence_quote}”
             </blockquote>
           )}
@@ -173,7 +173,7 @@ function CheckRow({ jobId, check }: { jobId: string; check: CheckOut }) {
             )}
           </div>
           {set.error && (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            <p role="alert" className="text-sm text-danger-text">
               {set.error.message}
             </p>
           )}
@@ -213,7 +213,7 @@ export function VerificationPanel({ jobId }: { jobId: string }) {
       {data.raised_flags.length > 0 && (
         <p
           role="alert"
-          className="text-sm font-medium text-red-700 dark:text-red-400"
+          className="text-sm font-medium text-danger-text"
         >
           Red flag raised. Do not share documents or pay anything until you have
           checked it.
@@ -245,7 +245,7 @@ export function VerificationPanel({ jobId }: { jobId: string }) {
         website={data.website}
       />
       {run.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {run.error.message}
         </p>
       )}

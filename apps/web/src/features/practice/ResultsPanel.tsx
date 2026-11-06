@@ -6,11 +6,11 @@ import type { ProblemDetail } from "./hooks";
 import type { Outcome, OutcomeStatus, Phase, RunSummary } from "./runner/runner";
 
 const MARK: Record<OutcomeStatus, { symbol: string; label: string; tone: string }> = {
-  pass: { symbol: "✓", label: "passed", tone: "text-emerald-700 dark:text-emerald-300" },
-  fail: { symbol: "✗", label: "wrong answer", tone: "text-red-700 dark:text-red-300" },
-  error: { symbol: "!", label: "error", tone: "text-red-700 dark:text-red-300" },
-  timeout: { symbol: "⏱", label: "timed out", tone: "text-amber-700 dark:text-amber-300" },
-  skipped: { symbol: "-", label: "not run", tone: "text-zinc-500" },
+  pass: { symbol: "✓", label: "passed", tone: "text-success-text " },
+  fail: { symbol: "✗", label: "wrong answer", tone: "text-danger-text " },
+  error: { symbol: "!", label: "error", tone: "text-danger-text " },
+  timeout: { symbol: "⏱", label: "timed out", tone: "text-warning-text " },
+  skipped: { symbol: "-", label: "not run", tone: "text-muted-foreground" },
 };
 
 const show = (value: unknown) => JSON.stringify(value);
@@ -53,7 +53,7 @@ export function ResultsPanel({
       {!running && !summary && <p className={muted}>Run your code to see the results. Ctrl+Enter also runs.</p>}
 
       {summary?.fatal && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-300">
+        <p role="alert" className="text-sm text-danger-text">
           {summary.fatal}
         </p>
       )}
@@ -102,7 +102,7 @@ function OutcomeRow({ problem, outcome }: { problem: ProblemDetail; outcome: Out
         </dl>
       )}
       {outcome.stdout && !outcome.hidden && (
-        <pre className="ml-6 mt-1 whitespace-pre-wrap rounded bg-black/5 p-2 text-xs dark:bg-white/10">
+        <pre className="ml-6 mt-1 whitespace-pre-wrap rounded bg-surface-hover p-2 text-xs">
           {outcome.stdout}
         </pre>
       )}
@@ -113,7 +113,7 @@ function OutcomeRow({ problem, outcome }: { problem: ProblemDetail; outcome: Out
 function Line({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-2">
-      <dt className="w-16 shrink-0 text-zinc-500">{label}</dt>
+      <dt className="w-16 shrink-0 text-muted-foreground">{label}</dt>
       <dd className="break-all">{value}</dd>
     </div>
   );

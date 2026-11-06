@@ -111,7 +111,7 @@ export function CodeEditor({
   return (
     <div
       ref={host}
-      className="h-96 overflow-hidden rounded border border-black/20 dark:border-white/25"
+      className="h-96 overflow-hidden rounded border border-input"
       data-testid="code-editor"
     />
   );

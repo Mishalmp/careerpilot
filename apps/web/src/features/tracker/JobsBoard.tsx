@@ -45,7 +45,7 @@ export function JobsBoard({
             className={`w-60 shrink-0 rounded-lg border p-2 ${
               over === status
                 ? "border-foreground"
-                : "border-black/10 dark:border-white/15"
+                : "border-border-subtle "
             }`}
           >
             <h2 className={`mb-2 rounded px-2 py-1 text-xs font-semibold ${statusTone(status)}`}>
@@ -57,7 +57,7 @@ export function JobsBoard({
                   key={job.id}
                   draggable
                   onDragStart={(event) => event.dataTransfer.setData("text/plain", job.id)}
-                  className="cursor-grab space-y-1 rounded border border-black/10 bg-background p-2 text-sm active:cursor-grabbing dark:border-white/15"
+                  className="cursor-grab space-y-1 rounded border border-border-subtle bg-background p-2 text-sm active:cursor-grabbing"
                 >
                   <Link href={`/jobs/${job.id}`} className="font-medium hover:underline">
                     {job.company.name}

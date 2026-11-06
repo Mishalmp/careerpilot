@@ -41,7 +41,7 @@ function Bars({
             style={{ height: `${Math.max(2, (v / max) * 64)}px` }}
             title={`${labels[i]}: ${v} ${unit}`}
           />
-          <span className="text-[10px] text-zinc-500">{labels[i]}</span>
+          <span className="text-[10px] text-muted-foreground">{labels[i]}</span>
         </div>
       ))}
     </div>
@@ -66,7 +66,7 @@ function Funnel({ data }: { data: Analytics["funnel"] }) {
         {steps.map(([label, count]) => (
           <li key={label} className="flex items-center gap-2 text-sm">
             <span className="w-24">{label}</span>
-            <div className="h-3 flex-1 rounded-sm bg-black/5 dark:bg-white/10">
+            <div className="h-3 flex-1 rounded-sm bg-surface-hover">
               <div
                 className="h-3 rounded-sm bg-foreground/70"
                 style={{ width: `${(count / top) * 100}%` }}
@@ -173,7 +173,7 @@ export function InsightsPage() {
           <table className="w-full text-sm">
             <caption className="sr-only">Interviews by fit label</caption>
             <thead>
-              <tr className="text-left text-zinc-500">
+              <tr className="text-left text-muted-foreground">
                 <th>Label</th>
                 <th>Scored</th>
                 <th>Outcome known</th>
@@ -185,7 +185,7 @@ export function InsightsPage() {
               {calibration.groups.map((g) => (
                 <tr
                   key={g.chance}
-                  className="border-t border-black/5 dark:border-white/10"
+                  className="border-t border-border-subtle"
                 >
                   <td className="capitalize">{g.chance}</td>
                   <td>{g.scored}</td>

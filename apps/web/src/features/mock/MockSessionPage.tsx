@@ -46,13 +46,13 @@ export function MockSessionPage() {
       <ol className="space-y-4">
         {session.turns.map((turn, index) => (
           <li key={index} className={`${card} space-y-2`}>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
               {index + 1}. {turn.topic}
             </p>
             <p className="font-medium">{turn.question}</p>
             {turn.answer !== null && (
               <>
-                <p className="whitespace-pre-wrap rounded bg-black/5 p-2 text-sm dark:bg-white/10">
+                <p className="whitespace-pre-wrap rounded bg-surface-hover p-2 text-sm">
                   {turn.answer}
                 </p>
                 <p className="text-sm">
@@ -90,7 +90,7 @@ export function MockSessionPage() {
                 {answer.error && (
                   <p
                     role="alert"
-                    className="text-sm text-red-600 dark:text-red-400"
+                    className="text-sm text-danger-text"
                   >
                     {answer.error.message}
                   </p>
@@ -114,7 +114,7 @@ export function MockSessionPage() {
             answers.
           </p>
           {summary.weak.length > 0 ? (
-            <p className="text-sm text-amber-700 dark:text-amber-400">
+            <p className="text-sm text-warning-text">
               Revisit:{" "}
               {summary.weak.map((t) => `${t.topic} (${t.average})`).join(", ")}.{" "}
               <Link href="/prep" className="underline">

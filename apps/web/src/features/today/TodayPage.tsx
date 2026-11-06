@@ -16,7 +16,7 @@ export function TodayPage() {
   if (today.isPending) return <p className={muted}>Loading...</p>;
   if (today.isError) {
     return (
-      <p role="alert" className="text-red-600 dark:text-red-400">
+      <p role="alert" className="text-danger-text">
         Could not load Today: {today.error.message}
       </p>
     );

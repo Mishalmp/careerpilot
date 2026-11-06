@@ -136,7 +136,7 @@ export function StatusSelect({
       aria-label={label}
       value={job.application.status}
       onChange={(event) => onChange(event.target.value as Status)}
-      className="rounded border border-black/20 bg-background px-2 py-1 text-xs dark:border-white/25"
+      className="rounded border border-input bg-background px-2 py-1 text-xs"
     >
       {statuses.map((status) => (
         <option key={status} value={status}>

@@ -16,9 +16,9 @@ import { todayLocal } from "@/lib/dates";
 const STATUSES: TopicStatus[] = ["Not started", "Learning", "Revised", "Mock-tested"];
 const KINDS: StudyKind[] = ["learn", "practice", "review", "mock"];
 const PRIORITY_TONE = {
-  High: "text-red-700 dark:text-red-300",
-  Medium: "text-amber-700 dark:text-amber-300",
-  Low: "text-zinc-500",
+  High: "text-danger-text ",
+  Medium: "text-warning-text ",
+  Low: "text-muted-foreground",
 } as const;
 
 export function TopicsPage() {
@@ -74,14 +74,14 @@ export function TopicsPage() {
       {[...grouped.entries()].map(([areaName, items]) => (
         <section key={areaName} className={card}>
           <h2 className="mb-2 font-semibold">{areaName}</h2>
-          <ul className="divide-y divide-black/5 dark:divide-white/10">
+          <ul className="divide-y divide-border-subtle">
             {items.map((topic) => (
               <li key={topic.id} className="flex flex-wrap items-center gap-3 py-2 text-sm">
                 <span className="min-w-60 flex-1">
                   {topic.title}
                   <span className={`ml-2 text-xs ${PRIORITY_TONE[topic.priority]}`}>{topic.priority}</span>
                   {topic.next_review_on && (
-                    <span className={`ml-2 text-xs ${topic.next_review_on <= today ? "font-medium text-red-600 dark:text-red-400" : "text-zinc-500"}`}>
+                    <span className={`ml-2 text-xs ${topic.next_review_on <= today ? "font-medium text-danger-text " : "text-muted-foreground"}`}>
                       review {topic.next_review_on <= today ? "due" : topic.next_review_on}
                     </span>
                   )}
@@ -159,7 +159,7 @@ function LogSessionDialog({ topic, onClose }: { topic: Topic | null; onClose: ()
           <span>Notes</span>
           <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={input} />
         </label>
-        <p role="alert" className="min-h-5 text-sm text-red-600 dark:text-red-400">{log.error?.message}</p>
+        <p role="alert" className="min-h-5 text-sm text-danger-text">{log.error?.message}</p>
         <div className="flex justify-end gap-2">
           <button type="button" onClick={onClose} className={button}>Cancel</button>
           <button type="submit" disabled={log.isPending} className={primaryButton}>Save session</button>

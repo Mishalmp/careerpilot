@@ -37,7 +37,7 @@ function StartForm() {
       }}
     >
       <h2 className="font-semibold">Start a mock interview</h2>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-muted-foreground">
         The model plays the interviewer: one question at a time, a score and
         feedback on each answer, and a summary of weak topics at the end. Pick a
         job to follow its description and any interview intel you collected, or
@@ -90,7 +90,7 @@ function StartForm() {
         {start.isPending ? "Preparing the first question..." : "Start"}
       </button>
       {start.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger-text">
           {start.error.message}
         </p>
       )}
