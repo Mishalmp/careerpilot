@@ -4011,6 +4011,11 @@ export interface components {
              */
             enrich_with_web: boolean;
             /**
+             * Max Age Days
+             * @default 120
+             */
+            max_age_days: number;
+            /**
              * Max Web Pages Per Job
              * @default 3
              */
@@ -4126,6 +4131,8 @@ export interface components {
         };
         /** ProfileOut */
         ProfileOut: {
+            /** Contact Email */
+            contact_email: string | null;
             /** Current Role */
             current_role: string | null;
             cv: components["schemas"]["CvInfo"];
@@ -4141,6 +4148,8 @@ export interface components {
             location: string | null;
             /** Needs Visa */
             needs_visa: boolean;
+            /** Phone */
+            phone: string | null;
             /** Regions */
             regions: string[];
             /** Role Titles */
@@ -4168,6 +4177,8 @@ export interface components {
          * @description Only the fields you send change. Use this to fix what the CV reading got wrong.
          */
         ProfileUpdate: {
+            /** Contact Email */
+            contact_email?: string | null;
             /** Current Role */
             current_role?: string | null;
             /** Full Name */
@@ -4180,6 +4191,8 @@ export interface components {
             location?: string | null;
             /** Needs Visa */
             needs_visa?: boolean | null;
+            /** Phone */
+            phone?: string | null;
             /** Regions */
             regions?: ("India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)")[] | null;
             /** Role Titles */

@@ -43,6 +43,8 @@ test.describe("account setup wizard", () => {
     // 1. About you
     await page.getByLabel("Full name").fill("Priya Sharma");
     await page.getByLabel("Current role").fill("Backend Developer");
+    await page.getByLabel("Contact email").fill("priya@example.com");
+    await page.getByLabel("Phone number").fill("+91 98765 43210");
     await page.getByRole("button", { name: "Save and continue" }).click();
 
     // 2. What you want
@@ -73,6 +75,7 @@ test.describe("account setup wizard", () => {
     // 5. Review and finish
     await expect(page.getByRole("heading", { name: "Review" })).toBeVisible();
     await expect(page.getByText("Priya Sharma").first()).toBeVisible();
+    await expect(page.getByText("priya@example.com · +91 98765 43210")).toBeVisible();
     await page.getByRole("button", { name: "Finish setup" }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole("heading", { level: 1, name: /Priya/ })).toBeVisible();

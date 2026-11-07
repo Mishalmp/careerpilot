@@ -70,6 +70,12 @@ export function AboutSection({ draft, edit }: { draft: Draft; edit: Edit }) {
         <Field label="Years of experience">
           {(p) => <Input type="number" min={0} max={60} value={draft.years} onChange={(e) => edit({ years: e.target.value })} {...p} />}
         </Field>
+        <Field label="Contact email" help="The address employers should write to. Kept here for you; nothing is sent from it.">
+          {(p) => <Input type="email" autoComplete="email" placeholder="you@example.com" value={draft.contact_email} onChange={(e) => edit({ contact_email: e.target.value })} {...p} />}
+        </Field>
+        <Field label="Phone number" help="With the country code, for example +91 98765 43210.">
+          {(p) => <Input type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={draft.phone} onChange={(e) => edit({ phone: e.target.value })} {...p} />}
+        </Field>
         <Field label="One line about you" help="Optional, for example “Backend engineer who likes data pipelines”." className="sm:col-span-2">
           {(p) => <Input value={draft.headline} onChange={(e) => edit({ headline: e.target.value })} {...p} />}
         </Field>
@@ -293,6 +299,7 @@ export function ReviewSection({ profile }: { profile: Profile }) {
     ["Name", profile.full_name ?? "-"],
     ["Current role", profile.current_role ?? "-"],
     ["Looking for", profile.target_roles.join(", ") || "-"],
+    ["Contact", [profile.contact_email, profile.phone].filter(Boolean).join(" · ") || "-"],
     ["Where and how", [...profile.regions, ...profile.work_modes].join(", ") || "-"],
     ["CV", profile.cv.has_cv ? `${profile.cv.source}${profile.cv.filename ? `: ${profile.cv.filename}` : ""}` : "not added"],
     ["Skills", profile.skills.length ? `${profile.skills.length} found` : "none yet"],

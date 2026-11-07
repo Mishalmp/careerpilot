@@ -19,6 +19,8 @@ export type Draft = {
   full_name: string;
   current_role: string;
   location: string;
+  contact_email: string;
+  phone: string;
   headline: string;
   years: string;
   target_roles: string[];
@@ -40,6 +42,8 @@ export function toDraft(p: Profile): Draft {
     full_name: p.full_name ?? "",
     current_role: p.current_role ?? "",
     location: p.location ?? "",
+    contact_email: p.contact_email ?? "",
+    phone: p.phone ?? "",
     headline: p.headline ?? "",
     years: num(p.years_experience),
     target_roles: p.target_roles,
@@ -63,7 +67,7 @@ const same = (a: string[], b: string[]) => a.length === b.length && a.every((v, 
 export function changes(p: Profile, d: Draft, touched: ReadonlySet<string>): ProfileUpdate {
   const saved = toDraft(p);
   const out: ProfileUpdate = {};
-  for (const key of ["full_name", "current_role", "location", "headline"] as const) {
+  for (const key of ["full_name", "current_role", "location", "contact_email", "phone", "headline"] as const) {
     if (touched.has(key) && d[key].trim() !== saved[key]) out[key] = d[key].trim() || null;
   }
   if (touched.has("years") && d.years.trim() !== saved.years) out.years_experience = d.years.trim() === "" ? null : Number(d.years);

@@ -13,6 +13,8 @@ const base: Profile = {
   headline: null,
   current_role: null,
   location: null,
+  contact_email: null,
+  phone: null,
   target_roles: ["Python Developer"],
   target_levels: [],
   regions: ["India"],

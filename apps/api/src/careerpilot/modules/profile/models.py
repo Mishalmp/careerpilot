@@ -29,6 +29,9 @@ class UserProfile(Base):
     headline: Mapped[str | None] = mapped_column(Text)
     current_role: Mapped[str | None] = mapped_column(Text)
     location: Mapped[str | None] = mapped_column(Text)
+    # How an employer reaches you. Kept for your own use and drafts; nothing is ever sent from here.
+    contact_email: Mapped[str | None] = mapped_column(Text)
+    phone: Mapped[str | None] = mapped_column(Text)
     target_roles: Mapped[list[str]] = mapped_column(JSONB, default=list)
     target_levels: Mapped[list[str]] = mapped_column(JSONB, default=list)
     regions: Mapped[list[str]] = mapped_column(JSONB, default=list)

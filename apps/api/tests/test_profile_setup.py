@@ -424,3 +424,19 @@ def test_the_real_ocr_engine_reads_a_scanned_cv_when_the_extra_is_installed() ->
     assert {"python", "fastapi", "postgresql", "aws", "docker", "terraform"} <= found
     assert rules.role_titles(read.text) == ["Python Backend Developer"]
     assert rules.years_experience(read.text) == 6
+
+
+# --- contact details -----------------------------------------------------------------------------
+
+
+async def test_contact_email_and_phone_are_saved_validated_and_clearable(api: AsyncClient) -> None:
+    body = (
+        await api.patch(
+            BASE, json={"contact_email": "priya@example.com", "phone": "+91 98765 43210"}
+        )
+    ).json()
+    assert body["contact_email"] == "priya@example.com" and body["phone"] == "+91 98765 43210"
+    for bad in ({"contact_email": "not-an-email"}, {"phone": "call me"}, {"phone": "12"}):
+        assert (await api.patch(BASE, json=bad)).status_code == 422, bad
+    cleared = (await api.patch(BASE, json={"contact_email": None, "phone": None})).json()
+    assert cleared["contact_email"] is None and cleared["phone"] is None

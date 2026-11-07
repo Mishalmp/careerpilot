@@ -3,13 +3,16 @@ from decimal import Decimal
 from typing import Annotated, Literal, Self
 from urllib.parse import urlsplit
 
-from pydantic import BaseModel, Field, StringConstraints, model_validator
+from pydantic import BaseModel, EmailStr, Field, StringConstraints, model_validator
 
 from careerpilot.modules.tracker.schemas import Url
 
 Item = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=60)]
 Text = Annotated[str, StringConstraints(strip_whitespace=True, max_length=120)]
 Level = Literal["junior", "mid", "senior", "lead"]
+Phone = Annotated[
+    str, StringConstraints(strip_whitespace=True, pattern=r"^\+?[0-9][0-9 ()\-]{5,19}$")
+]
 Lpa = Annotated[Decimal, Field(ge=0, le=1000, max_digits=8, decimal_places=2)]
 LinkKind = Literal["linkedin", "github", "leetcode", "naukri", "portfolio", "other"]
 # Spelled out for the type checker; a test proves they equal the tracker enums.
@@ -62,6 +65,8 @@ class ProfileOut(BaseModel):
     headline: str | None
     current_role: str | None
     location: str | None
+    contact_email: str | None
+    phone: str | None
     target_roles: list[str]
     target_levels: list[str]
     regions: list[str]
@@ -93,6 +98,8 @@ class ProfileUpdate(BaseModel):
     headline: Text | None = None
     current_role: Text | None = None
     location: Text | None = None
+    contact_email: EmailStr | None = None  # an empty value clears it
+    phone: Phone | None = None
     target_roles: Annotated[list[Item], Field(max_length=8)] | None = None
     target_levels: Annotated[list[Level], Field(max_length=4)] | None = None
     regions: Annotated[list[RegionName], Field(max_length=5)] | None = None

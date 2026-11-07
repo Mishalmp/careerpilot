@@ -6888,6 +6888,13 @@
             "title": "Enrich With Web",
             "type": "boolean"
           },
+          "max_age_days": {
+            "default": 120,
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Max Age Days",
+            "type": "integer"
+          },
           "max_web_pages_per_job": {
             "default": 3,
             "maximum": 6.0,
@@ -7206,6 +7213,17 @@
       },
       "ProfileOut": {
         "properties": {
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
           "current_role": {
             "anyOf": [
               {
@@ -7267,6 +7285,17 @@
           "needs_visa": {
             "title": "Needs Visa",
             "type": "boolean"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
           },
           "regions": {
             "items": {
@@ -7369,6 +7398,8 @@
           "headline",
           "current_role",
           "location",
+          "contact_email",
+          "phone",
           "target_roles",
           "target_levels",
           "regions",
@@ -7386,6 +7417,18 @@
       "ProfileUpdate": {
         "description": "Only the fields you send change. Use this to fix what the CV reading got wrong.",
         "properties": {
+          "contact_email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
           "current_role": {
             "anyOf": [
               {
@@ -7459,6 +7502,18 @@
               }
             ],
             "title": "Needs Visa"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9][0-9 ()\\-]{5,19}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
           },
           "regions": {
             "anyOf": [

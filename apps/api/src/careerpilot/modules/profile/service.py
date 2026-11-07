@@ -65,6 +65,8 @@ def _out(profile: UserProfile | None) -> ProfileOut:
             headline=None,
             current_role=None,
             location=None,
+            contact_email=None,
+            phone=None,
             target_roles=[],
             target_levels=[],
             regions=[],
@@ -87,6 +89,8 @@ def _out(profile: UserProfile | None) -> ProfileOut:
         headline=profile.headline,
         current_role=profile.current_role,
         location=profile.location,
+        contact_email=profile.contact_email,
+        phone=profile.phone,
         target_roles=list(profile.target_roles or []),
         target_levels=list(profile.target_levels or []),
         regions=list(profile.regions or []),
@@ -197,7 +201,15 @@ async def upload_cv(
     return CvUploadOut(profile=_out(profile), notes=[*read.notes, *notes])
 
 
-_PLAIN = ("full_name", "headline", "current_role", "location", "needs_visa")
+_PLAIN = (
+    "full_name",
+    "headline",
+    "current_role",
+    "location",
+    "contact_email",
+    "phone",
+    "needs_visa",
+)
 _LISTS = ("target_roles", "target_levels", "regions", "work_modes")
 
 

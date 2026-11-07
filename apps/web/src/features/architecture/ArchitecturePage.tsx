@@ -41,7 +41,7 @@ export function ArchitecturePage() {
           setSelected(null);
         }}
       >
-        <TabsList className="max-w-full overflow-x-auto">
+        <TabsList className="max-w-full overflow-x-auto overflow-y-hidden">
           <TabsTrigger value="overview">
             <Network className="mr-1.5 inline size-4" aria-hidden="true" />
             System
