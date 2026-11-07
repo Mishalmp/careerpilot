@@ -28,6 +28,9 @@ import {
 } from "./hooks";
 import { PageHeader } from "@/components/ui/page-header";
 
+import { Feeds } from "./Feeds";
+import { SearchProfiles } from "./SearchProfiles";
+
 const KINDS = ["greenhouse", "lever", "ashby"] as const;
 
 function words(value: string): string[] {
@@ -126,7 +129,7 @@ function AddSource() {
         );
       }}
     >
-      <h2 className="font-semibold">Follow a company&apos;s job board</h2>
+      <h2 className="font-semibold">Follow one company&apos;s job board</h2>
       <p className={muted}>
         Public boards only (Greenhouse, Lever, Ashby), read once a day. The
         board name is the last part of the address, for example{" "}
@@ -254,6 +257,8 @@ function SourceRow({ source }: { source: DiscoverySource }) {
         <p className={muted}>
           Found {run.data.listed} on the board, {run.data.kept} after your
           filters, {run.data.new} new.
+          {run.data.outside_search > 0 &&
+            ` ${run.data.outside_search} more matched your words but are outside the places or ways you search.`}
         </p>
       )}
       {(run.error ?? update.error ?? remove.error) && (
@@ -282,7 +287,8 @@ function CandidateRow({ candidate }: { candidate: Candidate }) {
           </a>{" "}
           · {candidate.company_name}
           {candidate.location && ` · ${candidate.location}`}
-          {candidate.remote && " · remote"}
+          {candidate.remote && (candidate.location ? " · remote" : " · remote (where from: not stated)")}
+          {candidate.via && ` · via ${candidate.via}`}
           {candidate.published_on && ` · posted ${candidate.published_on}`}
           {!candidate.listed && (
             <span className="text-warning-text">
@@ -355,8 +361,13 @@ export function DiscoverPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Discover" />
+      <PageHeader
+        title="Discover"
+        description="Find jobs without searching each site: say where and how you want to work, follow free feeds and company boards, and decide on what arrives."
+      />
       <DigestCard />
+      <SearchProfiles />
+      <Feeds followed={sources.data ?? []} />
       <AddSource />
 
       <section

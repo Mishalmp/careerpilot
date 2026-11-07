@@ -42,13 +42,15 @@ from careerpilot.modules.apply.schemas import (
     PayEstimate,
 )
 from careerpilot.modules.apply.web import JobWeb
+from careerpilot.modules.discovery import service as discovery_service
+from careerpilot.modules.discovery.locations import SearchSpec
 from careerpilot.modules.profile import service as profile_service
 from careerpilot.modules.profile.schemas import ProfileOut
 from careerpilot.modules.scoring import service as scoring_service
 from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
 from careerpilot.modules.tracker import service as tracker_service
-from careerpilot.modules.tracker.enums import Status
+from careerpilot.modules.tracker.enums import Status, WorkMode
 from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.schemas import CompanyUpdate, StatusChange
 from careerpilot.modules.tracker.service import JobRecord
@@ -115,7 +117,7 @@ async def request_build(
 # --- choosing -------------------------------------------------------------------------------
 
 
-def _allowed(job: JobRecord, policy: Policy, today: date) -> bool:
+def _allowed(job: JobRecord, policy: Policy, today: date, specs: list[SearchSpec]) -> bool:
     """The policy's hard rules. A field the post does not state never excludes a job."""
     if policy.regions and job.region is not None and job.region.value not in policy.regions:
         return False
@@ -127,6 +129,16 @@ def _allowed(job: JobRecord, policy: Policy, today: date) -> bool:
         return False
     if policy.max_age_days and job.posted_on and (today - job.posted_on).days > policy.max_age_days:
         return False  # an old post is probably filled or closed
+    judged = bool(
+        specs and (job.location_text or job.work_mode)
+    )  # nothing stated: nothing to judge
+    if judged and not discovery_service.fits_searches(
+        specs,
+        title=job.title,
+        location=job.location_text,
+        remote=job.work_mode is WorkMode.REMOTE,
+    ):
+        return False
     skipped = {name.casefold() for name in policy.skip_companies}
     if job.company.name.casefold() in skipped:
         return False
@@ -156,10 +168,11 @@ def _rank(
     profile: ProfileOut,
     content_dir: Path,
     today: date,
+    specs: list[SearchSpec],
 ) -> list[tuple[JobRecord, matching.Match]]:
     ranked: list[tuple[JobRecord, matching.Match]] = []
     for job in jobs:
-        if not _allowed(job, policy, today):
+        if not _allowed(job, policy, today, specs):
             continue
         found = matching.match(
             job_title=job.title,
@@ -190,6 +203,21 @@ def _facts(job: JobRecord, skills: list[str]) -> JobFacts:
     )
 
 
+async def _pool(db: AsyncSession, owner_id: uuid.UUID) -> list[PoolEntry]:
+    """Jobs in your tracker with an estimated pay: the source of earlier-post and market ranges."""
+    return [
+        PoolEntry(
+            company=job.company.name,
+            title=job.title,
+            lpa=float(job.est_ctc_lpa),
+            url=job.jd_url,
+            job_id=job.id,
+        )
+        for job in await _open_jobs(db, owner_id, JobFilters(min_ctc=1.0))
+        if job.est_ctc_lpa is not None
+    ]
+
+
 # --- building -------------------------------------------------------------------------------
 
 
@@ -210,6 +238,7 @@ async def build_queue(
     profile = await profile_service.get_profile(db, owner_id)
     _need_profile(profile)
 
+    specs = await discovery_service.search_specs(db, owner_id) if policy.use_search_profiles else []
     already = await repository.listed_job_ids(db, owner_id)
     candidates = [
         pair
@@ -219,20 +248,11 @@ async def build_queue(
             profile,
             settings.content_dir,
             today,
+            specs,
         )
         if pair[0].id not in already
     ]
-    pool = [
-        PoolEntry(
-            company=job.company.name,
-            title=job.title,
-            lpa=float(job.est_ctc_lpa),
-            url=job.jd_url,
-            job_id=job.id,
-        )
-        for job in await _open_jobs(db, owner_id, JobFilters(min_ctc=1.0))
-        if job.est_ctc_lpa is not None
-    ]
+    pool = await _pool(db, owner_id)
 
     # An earlier build that stopped part-way (a crash, a restart) leaves items that were listed but
     # never looked up. Finish those first: this is what "retry continues from where it stopped"
@@ -250,12 +270,25 @@ async def build_queue(
             today=today,
         )
         if await _fill(
-            db, owner_id, stale, job, found, pool, policy, settings, search, fetcher, today, now
+            db,
+            owner_id,
+            stale,
+            job,
+            found,
+            pool,
+            policy,
+            settings,
+            search,
+            fetcher,
+            today,
+            now,
+            deep=stale.deep,
         ):
             held += 1
         await db.commit()
 
-    remaining = policy.daily_limit - await repository.count_counted_on(db, owner_id, today)
+    counted = await repository.count_counted_on(db, owner_id, today)
+    remaining = policy.daily_limit - counted
     if remaining <= 0:
         return BuildResult(0, held, 0)
 
@@ -280,8 +313,22 @@ async def build_queue(
         )
         if item is None:  # another build listed it first
             continue
+        deep = counted + listed < policy.deep_limit
+        item.deep = deep
         if await _fill(
-            db, owner_id, item, job, found, pool, policy, settings, search, fetcher, today, now
+            db,
+            owner_id,
+            item,
+            job,
+            found,
+            pool,
+            policy,
+            settings,
+            search,
+            fetcher,
+            today,
+            now,
+            deep=deep,
         ):
             held += 1
         else:
@@ -346,12 +393,15 @@ async def _fill(
     fetcher: Fetcher | None,
     today: date,
     now: datetime,
+    *,
+    deep: bool = True,
 ) -> bool:
     """Look everything up for one item. Returns True when the item was held back."""
     notes: list[str] = []
     held_reason: str | None = None
 
-    await _remember_website(db, owner_id, job, policy)
+    if deep:
+        await _remember_website(db, owner_id, job, policy)
     # The company check first: a company that fails it should not take up web searches.
     try:
         verification = (
@@ -365,7 +415,7 @@ async def _fill(
                 today=today,
                 use_ai=False,
             )
-            if policy.enrich_with_web and fetcher is not None
+            if deep and policy.enrich_with_web and fetcher is not None
             else await verification_service.get_verification(
                 db, owner_id, job.id, ai_available=False
             )
@@ -382,7 +432,7 @@ async def _fill(
         item.notes = notes
         return True
 
-    if policy.enrich_with_web:
+    if deep and policy.enrich_with_web:
         web = JobWeb(search, fetcher, max_pages=policy.max_web_pages_per_job)
     else:
         web = JobWeb(None, None, max_pages=0)
@@ -400,7 +450,12 @@ async def _fill(
     except Exception:
         log.exception("apply_enrich_failed", job_id=str(job.id))
         notes.append("Looking up pay and interview information failed; check them yourself.")
-    if search is None and policy.enrich_with_web:
+    if not deep:
+        notes.append(
+            "Not researched on the web yet: the day's deep-research limit was reached. "
+            "Press Research this job to do it now."
+        )
+    elif search is None and policy.enrich_with_web:
         notes.append("No search service is set up, so the web was not searched.")
     item.notes = [*notes, *web.notes]
     item.enriched_at = now
@@ -433,6 +488,7 @@ def _out(item: ApplyItem, job: JobRecord) -> ApplyItemOut:
         if item.company_check
         else None,
         notes=list(item.notes),
+        deep=item.deep,
         enriched_at=item.enriched_at,
         decided_at=item.decided_at,
         decision_note=item.decision_note,
@@ -456,6 +512,55 @@ async def get_queue(
         policy_source=source,
         policy_problems=problems,
     )
+
+
+async def deepen(
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    item_id: uuid.UUID,
+    *,
+    today: date,
+    settings: Settings,
+    search: SearchProvider | None,
+    fetcher: Fetcher | None,
+    now: datetime | None = None,
+) -> ApplyItemOut:
+    """Research one listed job on the web now (pay, interview, same job elsewhere, company check),
+    for an item that was listed without it because the day's deep-research limit was reached."""
+    now = now or datetime.now(UTC)
+    item = await _item(db, owner_id, item_id)
+    if item.status not in (ApplyStatus.READY, ApplyStatus.APPROVED, ApplyStatus.BLOCKED):
+        raise _wrong_state(item, "researched")
+    policy, _ = policy_for(settings.content_dir)
+    profile = await profile_service.get_profile(db, owner_id)
+    job = await tracker_service.get_job(db, owner_id, item.job_id)
+    found = matching.match(
+        job_title=job.title,
+        job_skills=scoring_service.detect_skills(settings.content_dir, _job_text(job)),
+        profile_skills=profile.skills,
+        profile_titles=profile.role_titles,
+        posted_on=job.posted_on or job.found_on,
+        today=today,
+    )
+    pool = await _pool(db, owner_id)
+    item.deep = True
+    await _fill(
+        db,
+        owner_id,
+        item,
+        job,
+        found,
+        pool,
+        policy,
+        settings,
+        search,
+        fetcher,
+        today,
+        now,
+        deep=True,
+    )
+    await db.commit()
+    return _out(item, await tracker_service.get_job(db, owner_id, item.job_id))
 
 
 async def ready_count(db: AsyncSession, owner_id: uuid.UUID) -> int:

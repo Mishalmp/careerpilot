@@ -28,6 +28,16 @@ export function useBuildQueue() {
   });
 }
 
+/** Research one listed job on the web now (pay, interview, same job elsewhere, company check). */
+export function useResearchItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) =>
+      unwrap(await api.POST("/api/v1/apply/items/{item_id}/research", { params: { path: { item_id: id } } })),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ROOT }),
+  });
+}
+
 type Action = "approve" | "applied" | "skip";
 
 export function useDecideItem() {

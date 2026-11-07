@@ -41,7 +41,21 @@ from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
 from careerpilot.modules.tasks.service import TaskFailure
 from careerpilot.modules.tracker import service as tracker_service
+from careerpilot.modules.tracker.enums import Status
+from careerpilot.modules.tracker.filters import JobFilters
 
+REFRESH_AFTER = timedelta(days=7)  # research a live application again after this long
+REFRESH_BATCH = 3  # new runs per day at most: each one costs searches and model calls
+LIVE_STATUSES = (
+    Status.SHORTLISTED,
+    Status.APPLIED_PENDING,
+    Status.FOLLOW_UP_SENT,
+    Status.INTERVIEW_CONFIRMED,
+    Status.TECHNICAL_ROUND,
+    Status.NEXT_ROUND,
+    Status.HR_ROUND,
+    Status.MANAGER_ROUND,
+)
 STALE_RUN = timedelta(hours=1)  # a run still "running" after this is considered dead
 
 
@@ -285,6 +299,9 @@ async def execute(
                 continue
             key = rules.dedupe_key(kind.value, body)
             if key in known:
+                await repository.add_mention(
+                    db, owner_id, key, url=page.url, title=page.title or None
+                )
                 continue  # already found before, in this run or an earlier one
             known.add(key)
             repository.add_finding(
@@ -389,3 +406,27 @@ async def reject(
     finding.status = FindingStatus.REJECTED
     finding.decided_at = now or datetime.now(UTC)
     await db.commit()
+
+
+async def refresh_due(
+    db: AsyncSession, owner_id: uuid.UUID, settings: Settings, *, now: datetime | None = None
+) -> int:
+    """Keep interview preparation current: research again, every week, the jobs you are actually
+    pursuing (shortlisted, applied, interviewing), a few a day. Does nothing without a model key and
+    a search service. Returns how many runs were queued. Safe to repeat the same day."""
+    now = now or datetime.now(UTC)
+    if settings.anthropic_api_key is None or settings.search_provider == "none":
+        return 0
+    jobs, _ = await tracker_service.list_jobs(
+        db, owner_id, JobFilters(statuses=LIVE_STATUSES), cursor=None, limit=200
+    )
+    started = 0
+    for job in jobs:
+        if started >= REFRESH_BATCH:
+            break
+        latest = await repository.list_runs(db, owner_id, job.id, 1)
+        if latest and latest[0].created_at > now - REFRESH_AFTER:
+            continue  # looked at recently (or a run is already waiting)
+        await start_run(db, owner_id, job.id, settings, search_configured=True, now=now)
+        started += 1
+    return started

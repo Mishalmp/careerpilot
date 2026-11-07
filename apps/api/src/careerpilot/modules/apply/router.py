@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, status
 
 from careerpilot.core.clock import today_in
-from careerpilot.core.deps import AppSettings, DbSession
+from careerpilot.core.deps import AppFetcher, AppSearch, AppSettings, DbSession
 from careerpilot.modules.apply import service
 from careerpilot.modules.apply.schemas import ApplyItemOut, ApplyQueueOut, BuildOut, DecisionIn
 from careerpilot.modules.auth.dependencies import Authenticated
@@ -61,4 +61,25 @@ async def skip(
 ) -> ApplyItemOut:
     return await service.skip(
         db, session.user_id, item_id, body.note, today=today_in(settings.timezone)
+    )
+
+
+@router.post("/items/{item_id}/research", operation_id="research_apply_item")
+async def research(
+    item_id: uuid.UUID,
+    session: Authenticated,
+    db: DbSession,
+    settings: AppSettings,
+    search: AppSearch,
+    fetcher: AppFetcher,
+) -> ApplyItemOut:
+    """Look up pay, interview information and the company for one listed job, now."""
+    return await service.deepen(
+        db,
+        session.user_id,
+        item_id,
+        today=today_in(settings.timezone),
+        settings=settings,
+        search=search,
+        fetcher=fetcher,
     )

@@ -159,3 +159,53 @@ Honest limits:
 
 ## 9. Still unverified (each has a task)
 No live Claude call (E01). Tavily and Brave not called with real keys. The `effort` parameter on Haiku 5.5 is documented but not tried. All price figures can change.
+
+## 10. Finding jobs, applying at volume, and what it costs (2026-11-08)
+
+### 10.1 Where jobs come from, and what is missing
+| Source | Status | Notes |
+|---|---|---|
+| Company boards (Greenhouse, Lever, Ashby) | built, live-tested | one request per board per day; you must know the company's board name |
+| Free feeds: Remote OK, Remotive, We Work Remotely, Himalayas, Arbeitnow | built (checked live for shape on 2026-11-08) | no key. Terms: link back and name the source (shown on each job); Remotive delays jobs 24 h and asks for at most 4 reads a day (we read once) |
+| LinkedIn, Indeed, Glassdoor, Naukri | **not read, by design** | their terms forbid automation; scraping gets accounts banned. Add such a job yourself from the Jobs page with its link and the app researches it |
+| Adzuna API (free key; India among its countries) | not built, needs your key | a search API: keywords and cities from your searches. Official limits not verified (sources disagree: 250 a day or about 1,000 a month) |
+| Jooble API (free key) | not built, needs your key | POST search; India and UAE coverage not confirmed |
+| JSearch (Google for Jobs data, includes big boards) | not built | small free plan, paid beyond; a licensed way to see listings that also appear on LinkedIn or Indeed |
+| Job-alert emails forwarded to the app | not built | would cover Naukri and LinkedIn alerts without reading their sites |
+
+Live check on 2026-11-08 (all five feeds read through the app's own readers): Remote OK 99 jobs, Remotive 12, Arbeitnow 300, Himalayas 20 (the first page only), We Work Remotely 25 (its RSS needed the fetcher to accept `application/rss+xml`, which it refused until this check). Against the four example searches, **India on-site or hybrid matched 0 of 456** (as expected: the feeds have no Indian on-site jobs), India remote about 100, Dubai (remote) about 100, Europe or USA remote about 140. Many remote jobs do not say where they can be done from; those are kept and shown as "remote (where from: not stated)", so an India search can still show a job that is really for another country.
+
+Honest coverage today: followed company boards plus five feeds. Feeds are mostly remote, so **India on-site and hybrid coverage is thin until Adzuna or Jooble is added**. Most Indian mid-size employers post on Naukri, which cannot be read.
+
+### 10.2 Searches (where and how you want to work)
+Discover has "Where and how I search": each search is regions, cities (any spelling: Bangalore finds Bengaluru; "Delhi NCR" is five cities) and remote, hybrid or on site, with optional title words. A job is kept when it fits **any** enabled search. Examples built in as one-click presets: India on site or hybrid in big cities; India remote; Dubai on site or remote; Europe and USA remote. A remote job is kept for India only when it says India, APAC or worldwide, or says nothing about where from; "Remote - US" is rejected. A location the app cannot read is not matched (a missed job is better than a wrong city) and the run says how many were left out. The same searches filter the daily apply list.
+
+### 10.3 Applying to 50 to 100 jobs a day: what is possible
+- The app **cannot submit applications** (site terms, CAPTCHAs, every form differs, and the project rule: no submit action). It makes the list, the research and the order; **you** press apply. Time per application on a real site is 3 to 10 minutes (forms, uploads, questions), so 50 a day is about 4 hours and 100 about 8 hours. That is a hard limit of the approach, not of the app.
+- Setting `daily_limit: 100` in the apply policy is allowed. Only the first `deep_limit` (default 10) are researched on the web (about 5 searches each); the rest are listed from what the post and your tracker say, and any can be researched with one click. This keeps 100 items to roughly 50 searches a day instead of 500.
+- Honest advice: mass applying has a low reply rate; 20 to 30 targeted applications plus referrals usually beats 100 cold ones. The list ranks by match, so working from the top is the efficient order.
+
+### 10.4 Keeping interview preparation current and ranked
+- Research findings are merged across pages: the same question found on another page is not duplicated, it gains a mention and the extra source ("Asked on 3 pages"). The inbox is ordered by mentions, then closeness to the role.
+- Every day, up to 3 jobs you are actually pursuing (shortlisted, applied, interviewing) that were not researched in the last 7 days get a new research run. This needs a model key and a search service; without them nothing runs and nothing is charged.
+- Not built: ranking by how often *this company* asks it (needs interview-experience pages per company), and feeding your own mock-interview misses back into the order.
+
+### 10.5 Cost for your usage (estimates, not measurements: no model key has ever been used here)
+Assumptions: 100 jobs listed a day, 10 researched on the web, 100 job descriptions read, 10 jobs researched for interviews a week-day, 1 mock interview a day, 10 notes questions a day, 20 drafts a day. Token sizes are my estimates (a job description about 3,000 tokens in and 300 out; a researched page about 5,000 in and 1,000 out). Prices per million tokens, input / output: Haiku 5.5 $0.10 / $0.50, Sonnet 5.5 $2 / $10 (checked on Anthropic's page 2026-11-06).
+
+| Task | Model | Per unit | Per day | Per month |
+|---|---|---|---|---|
+| Choosing and ranking the 100 daily jobs, pay and interview search | none (rules) | $0 | $0 | $0 |
+| Web searches for 10 deep items (about 50) | SearXNG (free) | $0 | $0 | $0 (Tavily's free 1,000 a month covers about 6 deep items a day) |
+| Reading 100 job descriptions | Haiku | $0.0005 | $0.05 | about $1.5 |
+| Same on Sonnet | Sonnet | $0.01 | $1 | about $30 |
+| Interview research for 10 jobs (12 pages each) | Haiku | $0.012 per job | $0.12 | about $4 |
+| Weekly refresh of live applications (3 a day) | Haiku | $0.012 | $0.04 | about $1 |
+| One mock interview (10 questions, graded) | Sonnet | about $0.09 | $0.09 | about $3 |
+| 10 notes questions a day | Sonnet | $0.011 | $0.11 | about $3 |
+| 20 outreach drafts a day | Haiku / Sonnet | $0.0005 / $0.008 | $0.01 / $0.16 | $0.3 / $5 |
+| **Total, bulk on Haiku and judgement on Sonnet** |  |  | **about $0.4** | **about $12 to 15** |
+| Total, everything on Sonnet |  |  | about $2 | about $60 to 80 |
+| Total with DeepSeek V4 Flash for bulk (about $0.14 / $0.28) and Claude for judgement |  |  | about $0.3 | about $9 to 12 |
+
+The daily token cap (`CAREERPILOT_LLM_DAILY_TOKEN_CAP`, default 200,000) stops a bad day: at Haiku prices that is at most about $0.10 a day, at Sonnet prices about $0.60 to $1. Add a prepaid top-up of $10 to $20 and a month is covered at this usage.

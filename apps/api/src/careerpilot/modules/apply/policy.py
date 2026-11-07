@@ -18,7 +18,12 @@ Name = Annotated[str, Field(min_length=1, max_length=80)]
 class Policy(BaseModel):
     model_config = ConfigDict(extra="forbid")  # an unknown key is a typo, not an option
 
-    daily_limit: Annotated[int, Field(ge=1, le=10)] = 3
+    daily_limit: Annotated[int, Field(ge=1, le=100)] = 3
+    # The first this many items of a day are researched on the web (pay, interview, same job
+    # elsewhere). The rest are listed from what the post and your tracker already say, so a list
+    # of 100 does not mean 500 searches; any of them can be researched later with one click.
+    deep_limit: Annotated[int, Field(ge=0, le=100)] = 10
+    use_search_profiles: bool = True  # only jobs that fit the searches you described
     min_match_score: Annotated[int, Field(ge=0, le=100)] = 40
     regions: list[Name] = []  # empty = any region
     work_modes: list[Literal["Remote", "Hybrid", "Onsite"]] = []  # empty = any

@@ -60,6 +60,8 @@ class DiscoveredJob(Base):
         ForeignKey("discovery_sources.id", ondelete="CASCADE")
     )
     external_id: Mapped[str] = mapped_column(Text)
+    # Set by feeds that list many companies; a company's own board uses the source's name.
+    company_name: Mapped[str | None] = mapped_column(Text)
     title: Mapped[str] = mapped_column(Text)
     location: Mapped[str | None] = mapped_column(Text)
     url: Mapped[str] = mapped_column(Text)
@@ -77,3 +79,23 @@ class DiscoveredJob(Base):
     last_seen_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class SearchProfile(Base):
+    """One way of searching, for example "India, Bengaluru or Hyderabad, hybrid or onsite". All of
+    it must hold for a listing to fit; several profiles are alternatives."""
+
+    __tablename__ = "search_profiles"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    name: Mapped[str] = mapped_column(Text)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    regions: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    cities: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    work_modes: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    keywords: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    exclude: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

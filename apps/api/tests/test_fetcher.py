@@ -392,3 +392,19 @@ async def test_nul_characters_are_removed_from_fetched_text() -> None:
         "https://x.example/"
     )
     assert page.text == "ab"
+
+
+async def test_an_rss_feed_is_read_as_text() -> None:
+    """Found reading We Work Remotely live: its feed is application/rss+xml."""
+    from tests.fakes import FakeWeb
+
+    web = FakeWeb(
+        {
+            "feeds.example/jobs.rss": (
+                "<rss><channel><item>hello</item></channel></rss>",
+                "application/rss+xml",
+            )
+        }
+    )
+    page = await web.fetcher().fetch("https://feeds.example/jobs.rss")
+    assert "<item>hello</item>" in page.text

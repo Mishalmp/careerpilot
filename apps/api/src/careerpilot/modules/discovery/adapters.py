@@ -16,6 +16,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
+from email.utils import parsedate_to_datetime
 from typing import Any, cast
 from urllib.parse import quote
 
@@ -24,6 +25,7 @@ from careerpilot.modules.discovery.enums import BoardKind
 
 BOARD_MAX_BYTES = 8_000_000  # a large Ashby board is about 2 MB
 MAX_DESCRIPTION = 20_000
+ALL = "all"  # a feed with no sections to choose from
 TOKEN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
 
 
@@ -41,6 +43,7 @@ class RawJob:
     description: str | None = None  # None: not in the list, fetched when you accept the job
     published_on: date | None = None
     remote: bool = False
+    company: str | None = None  # feeds that list many companies name the employer per job
 
 
 def board_url(kind: BoardKind, token: str) -> str:
@@ -57,6 +60,19 @@ def board_url(kind: BoardKind, token: str) -> str:
             return f"https://api.lever.co/v0/postings/{name}?mode=json"
         case BoardKind.ASHBY:
             return f"https://api.ashbyhq.com/posting-api/job-board/{name}"
+        case BoardKind.REMOTEOK:
+            return "https://remoteok.com/api"
+        case BoardKind.REMOTIVE:
+            return "https://remotive.com/api/remote-jobs" + (
+                "" if token == ALL else f"?category={name}"
+            )
+        case BoardKind.ARBEITNOW:
+            return "https://www.arbeitnow.com/api/job-board-api"
+        case BoardKind.HIMALAYAS:
+            return "https://himalayas.app/jobs/api?limit=100"
+        case BoardKind.WEWORKREMOTELY:
+            category = "remote-programming-jobs" if token == ALL else name
+            return f"https://weworkremotely.com/categories/{category}.rss"
 
 
 def _get(value: Any, key: str) -> Any:
@@ -75,10 +91,11 @@ def _http(value: Any) -> str | None:
 
 
 def _day(value: Any) -> date | None:
-    """Accepts ISO text or epoch milliseconds."""
+    """Accepts ISO text, or an epoch in milliseconds or seconds (feeds differ)."""
     try:
         if isinstance(value, int | float):
-            return datetime.fromtimestamp(value / 1000, UTC).date()
+            seconds = value / 1000 if value > 100_000_000_000 else value
+            return datetime.fromtimestamp(seconds, UTC).date()
         if isinstance(value, str) and value:
             return datetime.fromisoformat(value.replace("Z", "+00:00")).date()
     except (ValueError, OverflowError, OSError):
@@ -164,7 +181,155 @@ def parse_ashby(raw: str) -> list[RawJob]:
     return jobs
 
 
+def _description(raw: Any) -> str | None:
+    """Plain text from a description that is HTML, or HTML written as escaped text."""
+    text = _text(raw)
+    if not text:
+        return None
+    if "<" not in text and "&lt;" in text:
+        text = html.unescape(text)
+    return html_to_text(text)[:MAX_DESCRIPTION] or None
+
+
+def parse_remoteok(raw: str) -> list[RawJob]:
+    jobs: list[RawJob] = []
+    for item in _entries(raw, None):
+        title, url = _text(item.get("position")), _http(item.get("url"))
+        if item.get("id") is None or not title or not url:  # the first element is a legal notice
+            continue
+        jobs.append(
+            RawJob(
+                external_id=str(item["id"]),
+                title=title,
+                url=url,
+                apply_url=_http(item.get("apply_url")),
+                location=_text(item.get("location")),
+                description=_description(item.get("description")),
+                published_on=_day(item.get("date")),
+                remote=True,
+                company=_text(item.get("company")),
+            )
+        )
+    return jobs
+
+
+def parse_remotive(raw: str) -> list[RawJob]:
+    jobs: list[RawJob] = []
+    for item in _entries(raw, "jobs"):
+        title, url = _text(item.get("title")), _http(item.get("url"))
+        if item.get("id") is None or not title or not url:
+            continue
+        jobs.append(
+            RawJob(
+                external_id=str(item["id"]),
+                title=title,
+                url=url,
+                location=_text(item.get("candidate_required_location")),
+                description=_description(item.get("description")),
+                published_on=_day(item.get("publication_date")),
+                remote=True,
+                company=_text(item.get("company_name")),
+            )
+        )
+    return jobs
+
+
+def parse_arbeitnow(raw: str) -> list[RawJob]:
+    jobs: list[RawJob] = []
+    for item in _entries(raw, "data"):
+        title, url, slug = _text(item.get("title")), _http(item.get("url")), _text(item.get("slug"))
+        if not slug or not title or not url:
+            continue
+        jobs.append(
+            RawJob(
+                external_id=slug,
+                title=title,
+                url=url,
+                location=_text(item.get("location")),
+                description=_description(item.get("description")),
+                published_on=_day(item.get("created_at")),
+                remote=bool(item.get("remote")),
+                company=_text(item.get("company_name")),
+            )
+        )
+    return jobs
+
+
+def parse_himalayas(raw: str) -> list[RawJob]:
+    jobs: list[RawJob] = []
+    for item in _entries(raw, "jobs"):
+        title = _text(item.get("title"))
+        url = _http(item.get("applicationLink")) or _http(item.get("guid"))
+        guid = _text(item.get("guid")) or url
+        if not guid or not title or not url:
+            continue
+        restrictions = item.get("locationRestrictions")
+        places = (
+            [str(p) for p in cast("list[Any]", restrictions)]
+            if isinstance(restrictions, list)
+            else []
+        )
+        jobs.append(
+            RawJob(
+                external_id=guid,
+                title=title,
+                url=url,
+                location=", ".join(places) if places else "Worldwide",
+                description=_description(item.get("description") or item.get("excerpt")),
+                published_on=_day(item.get("pubDate")),
+                remote=True,
+                company=_text(item.get("companyName")),
+            )
+        )
+    return jobs
+
+
+_ITEM = re.compile(r"<item>(.*?)</item>", re.DOTALL)
+
+
+def _tag(block: str, name: str) -> str | None:
+    found = re.search(rf"<{name}>(.*?)</{name}>", block, re.DOTALL)
+    return _text(html.unescape(found.group(1))) if found else None
+
+
+def parse_weworkremotely(raw: str) -> list[RawJob]:
+    """An RSS feed. A title is "Company: Job title"; <region> says where it can be done."""
+    jobs: list[RawJob] = []
+    for block in _ITEM.findall(raw):
+        title, url, guid = _tag(block, "title"), _http(_tag(block, "link")), _tag(block, "guid")
+        if not title or not url:
+            continue
+        company, _, job_title = title.partition(": ")
+        jobs.append(
+            RawJob(
+                external_id=guid or url,
+                title=job_title or title,
+                url=url,
+                location=_tag(block, "region"),
+                description=_description(_tag(block, "description")),
+                published_on=_rss_day(_tag(block, "pubDate")),
+                remote=True,
+                company=company if job_title else None,
+            )
+        )
+    return jobs
+
+
+def _rss_day(value: str | None) -> date | None:
+    if not value:
+        return None
+    try:
+        return parsedate_to_datetime(value).date()
+    except (TypeError, ValueError):
+        return None
+
+
 _PARSERS = {
+    BoardKind.REMOTEOK: parse_remoteok,
+    BoardKind.REMOTIVE: parse_remotive,
+    BoardKind.ARBEITNOW: parse_arbeitnow,
+    BoardKind.HIMALAYAS: parse_himalayas,
+    BoardKind.WEWORKREMOTELY: parse_weworkremotely,
     BoardKind.GREENHOUSE: parse_greenhouse,
     BoardKind.LEVER: parse_lever,
     BoardKind.ASHBY: parse_ashby,

@@ -74,6 +74,7 @@ function FindingCard({
         <Badge tone="accent">{finding.topic}</Badge>
         <Badge tone="outline">{finding.kind === "question" ? "Question" : "Topic"}</Badge>
         <Badge tone="neutral">Relevance {finding.relevance}</Badge>
+        {finding.mentions > 1 && <Badge tone="success">Asked on {finding.mentions} pages</Badge>}
       </div>
       <p className="mt-2 font-medium">{finding.text}</p>
       <blockquote className="mt-2 border-l-2 border-border-strong pl-3 text-sm text-muted-foreground">
@@ -87,6 +88,19 @@ function FindingCard({
       >
         {finding.source_title ?? finding.source_url} <ExternalLink className="size-3" aria-hidden="true" />
       </a>
+      {finding.more_sources.length > 0 && (
+        <p className="mt-1 text-sm text-muted-foreground">
+          Also on:{" "}
+          {finding.more_sources.map((s, i) => (
+            <span key={s.url}>
+              {i > 0 && ", "}
+              <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-accent-text underline underline-offset-2">
+                {s.title ?? s.url}
+              </a>
+            </span>
+          ))}
+        </p>
+      )}
       <div className="mt-3 flex gap-2">
         <Button size="sm" variant="primary" disabled={busy} onClick={onApprove} aria-label={`Approve: ${finding.text}`}>
           <Check aria-hidden="true" /> Approve

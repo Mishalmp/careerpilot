@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     SmallInteger,
     Text,
     UniqueConstraint,
@@ -67,6 +68,10 @@ class ResearchFinding(Base):
         SmallInteger
     )  # rough 0-100 from word overlap, not a model
     dedupe_key: Mapped[str] = mapped_column(Text)
+    # How many separate pages asked this (or covered this topic). Found again elsewhere, a finding
+    # is not duplicated: it gains a mention and the extra source. More mentions rank it higher.
+    mentions: Mapped[int] = mapped_column(Integer, default=1)
+    more_sources: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list)
     status: Mapped[FindingStatus] = mapped_column(
         str_enum(FindingStatus, "research_finding_status"), default=FindingStatus.PENDING
     )

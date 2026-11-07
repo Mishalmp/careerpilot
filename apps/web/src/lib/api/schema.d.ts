@@ -118,6 +118,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/apply/items/{item_id}/research": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Research
+         * @description Look up pay, interview information and the company for one listed job, now.
+         */
+        post: operations["research_apply_item"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/apply/items/{item_id}/skip": {
         parameters: {
             query?: never;
@@ -380,6 +400,45 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/searches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Searches
+         * @description The ways you search: regions, cities and ways of working. Several are alternatives.
+         */
+        get: operations["list_search_profiles"];
+        put?: never;
+        /** Create Search */
+        post: operations["create_search_profile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/searches/{profile_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Search */
+        delete: operations["delete_search_profile"];
+        options?: never;
+        head?: never;
+        /** Update Search */
+        patch: operations["update_search_profile"];
         trace?: never;
     };
     "/api/v1/discovery/sources": {
@@ -1970,6 +2029,8 @@ export interface components {
             decided_at: string | null;
             /** Decision Note */
             decision_note: string | null;
+            /** Deep */
+            deep: boolean;
             /** Enriched At */
             enriched_at: string | null;
             /**
@@ -2069,7 +2130,7 @@ export interface components {
          * BoardKind
          * @enum {string}
          */
-        BoardKind: "greenhouse" | "lever" | "ashby";
+        BoardKind: "greenhouse" | "lever" | "ashby" | "remoteok" | "remotive" | "arbeitnow" | "himalayas" | "weworkremotely";
         /** Body_upload_cv */
         Body_upload_cv: {
             /**
@@ -2165,6 +2226,8 @@ export interface components {
             title: string;
             /** Url */
             url: string;
+            /** Via */
+            via: string | null;
         };
         /**
          * CandidateStatus
@@ -3833,6 +3896,13 @@ export interface components {
             /** Topic */
             topic: string;
         };
+        /** MoreSource */
+        MoreSource: {
+            /** Title */
+            title?: string | null;
+            /** Url */
+            url: string;
+        };
         /** Move */
         Move: {
             /**
@@ -4006,6 +4076,11 @@ export interface components {
              */
             daily_limit: number;
             /**
+             * Deep Limit
+             * @default 10
+             */
+            deep_limit: number;
+            /**
              * Enrich With Web
              * @default true
              */
@@ -4040,6 +4115,11 @@ export interface components {
              * @default []
              */
             skip_companies: string[];
+            /**
+             * Use Search Profiles
+             * @default true
+             */
+            use_search_profiles: boolean;
             /**
              * Work Modes
              * @default []
@@ -4326,6 +4406,10 @@ export interface components {
              */
             id: string;
             kind: components["schemas"]["FindingKind"];
+            /** Mentions */
+            mentions: number;
+            /** More Sources */
+            more_sources: components["schemas"]["MoreSource"][];
             /** Quote */
             quote: string;
             /** Relevance */
@@ -4411,6 +4495,11 @@ export interface components {
             listed: number;
             /** New */
             new: number;
+            /**
+             * Outside Search
+             * @default 0
+             */
+            outside_search: number;
         };
         /**
          * RunStatus
@@ -4460,6 +4549,92 @@ export interface components {
             confident: boolean;
             /** Hits */
             hits: components["schemas"]["HitOut"][];
+        };
+        /**
+         * SearchProfileIn
+         * @description One way of searching. Everything in it must hold; several profiles are alternatives.
+         */
+        SearchProfileIn: {
+            /**
+             * Cities
+             * @default []
+             */
+            cities: string[];
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /**
+             * Exclude
+             * @default []
+             */
+            exclude: string[];
+            /**
+             * Keywords
+             * @default []
+             */
+            keywords: string[];
+            /** Name */
+            name: string;
+            /** Regions */
+            regions: ("India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)")[];
+            /** Work Modes */
+            work_modes: ("Remote" | "Hybrid" | "Onsite")[];
+        };
+        /** SearchProfileOut */
+        SearchProfileOut: {
+            /**
+             * Cities
+             * @default []
+             */
+            cities: string[];
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /**
+             * Exclude
+             * @default []
+             */
+            exclude: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Keywords
+             * @default []
+             */
+            keywords: string[];
+            /** Name */
+            name: string;
+            /** Regions */
+            regions: ("India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)")[];
+            /** Work Modes */
+            work_modes: ("Remote" | "Hybrid" | "Onsite")[];
+        };
+        /**
+         * SearchProfileUpdate
+         * @description Only the fields you send change.
+         */
+        SearchProfileUpdate: {
+            /** Cities */
+            cities?: string[] | null;
+            /** Enabled */
+            enabled?: boolean | null;
+            /** Exclude */
+            exclude?: string[] | null;
+            /** Keywords */
+            keywords?: string[] | null;
+            /** Name */
+            name?: string | null;
+            /** Regions */
+            regions?: ("India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)")[] | null;
+            /** Work Modes */
+            work_modes?: ("Remote" | "Hybrid" | "Onsite")[] | null;
         };
         /** SearchStatus */
         SearchStatus: {
@@ -5254,6 +5429,39 @@ export interface operations {
             };
         };
     };
+    research_apply_item: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     skip_apply_item: {
         parameters: {
             query?: never;
@@ -5720,6 +5928,140 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_search_profiles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchProfileOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_search_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchProfileIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_search_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_search_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchProfileOut"];
+                };
             };
             /** @description Validation Error */
             422: {

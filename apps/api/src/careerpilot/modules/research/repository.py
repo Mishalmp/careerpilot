@@ -105,10 +105,38 @@ async def list_findings(
         base = base.where(ResearchFinding.run_id == run_id)
     total = await db.scalar(select(func.count()).select_from(base.subquery()))
     rows = await db.scalars(
-        base.order_by(
-            ResearchFinding.relevance.desc(), ResearchFinding.created_at, ResearchFinding.id
+        base.order_by(  # asked on more pages first, then closer to the role
+            ResearchFinding.mentions.desc(),
+            ResearchFinding.relevance.desc(),
+            ResearchFinding.created_at,
+            ResearchFinding.id,
         )
         .limit(min(limit, MAX_LIMIT))
         .offset(offset)
     )
     return rows.all(), total or 0
+
+
+async def add_mention(
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    dedupe_key: str,
+    *,
+    url: str,
+    title: str | None,
+) -> bool:
+    """The same question or topic was found on another page: count it, and keep that page as a
+    source. A page that is already a source of it is not counted twice. True when it counted."""
+    finding = await db.scalar(
+        select(ResearchFinding)
+        .where(ResearchFinding.owner_id == owner_id, ResearchFinding.dedupe_key == dedupe_key)
+        .order_by(ResearchFinding.created_at)
+        .limit(1)
+    )
+    if finding is None or finding.source_url == url:
+        return False
+    if any(source.get("url") == url for source in finding.more_sources):
+        return False
+    finding.mentions += 1
+    finding.more_sources = [*finding.more_sources, {"url": url, "title": title}]
+    return True

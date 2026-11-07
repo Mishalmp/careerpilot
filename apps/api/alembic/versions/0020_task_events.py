@@ -26,7 +26,9 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("task_id", sa.Uuid(), nullable=False),
         sa.Column("owner_id", sa.Uuid(), nullable=False),
-        sa.Column("at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False
+        ),
         sa.Column("attempt", sa.Integer(), nullable=False),
         sa.Column("level", sa.Text(), nullable=False),
         sa.Column("step", sa.Text(), nullable=True),

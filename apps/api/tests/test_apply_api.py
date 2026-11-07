@@ -115,7 +115,7 @@ async def test_a_wrong_policy_file_is_reported_not_ignored(
     app: FastAPI, api: AsyncClient, content: Path
 ) -> None:
     await profile(api)
-    policy(content, "daily_limit: 99\nauto_submit: true\n")
+    policy(content, "daily_limit: 999\nauto_submit: true\n")
     response = await api.post(f"{BASE}/build")
     assert response.status_code == 422
     assert "daily_limit" in response.json()["detail"] and "auto_submit" in response.json()["detail"]
@@ -323,6 +323,7 @@ async def test_there_is_no_way_to_submit_or_send_an_application(app: FastAPI) ->
         (f"{BASE}/items/{{item_id}}/approve", "POST"),
         (f"{BASE}/items/{{item_id}}/applied", "POST"),
         (f"{BASE}/items/{{item_id}}/skip", "POST"),
+        (f"{BASE}/items/{{item_id}}/research", "POST"),  # looks things up; sends nothing
     }
     assert not any(word in path for path, _ in paths for word in ("submit", "send", "auto"))
 

@@ -334,6 +334,20 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | DY1-DY7 | Role-agnostic domain packs (see `12` Part A) | S01 | XL | A non-software pack passes its own eval set |
 | [ ] | S12 | First live run of search, research, apply list, GitHub and OCR on real data; record accuracy in `13` | owner | M | Numbers in `13` |
 
+## C: coverage, searches, scale and ranked interview questions (2026-11-08)
+| Done | ID | Task | Deps | Size | Done when |
+|---|---|---|---|---|---|
+| [x] | C01 | Location reader: cities with spellings, regions, ways of working, where remote may be worked from (`discovery/locations.py`) | none | M | 29 table tests |
+| [x] | C02 | Search profiles (CRUD, Discover UI with presets) applied to discovery runs and the apply list; migration 0022 | C01 | L | API and browser tests |
+| [x] | C03 | Free feeds: Remote OK, Remotive, We Work Remotely, Himalayas, Arbeitnow (per-job company, "via" shown) | none | M | Parser tests; read live through the app's readers on 2026-11-08 (456 jobs) |
+| [x] | C04 | Daily list up to 100: `deep_limit`, quick items, "Research this job" | C02 | M | API and browser tests |
+| [x] | C05 | Interview questions merged across pages, counted and ranked ("Asked on N pages") | R-group | M | Tests |
+| [x] | C06 | Weekly research refresh of live applications, 3 a day, only with a key and search | C05 | S | Test |
+| [ ] | C07 | Adzuna adapter (needs the owner's free key) and Jooble adapter | C02 | M | Fake tests, then a live check with a key |
+| [ ] | C08 | JSearch or job-alert-email intake for Naukri and LinkedIn listings | C02 | L | Decision first: cost and terms |
+| [ ] | C09 | Company-level question frequency and feeding mock-interview misses into the ranking | C05 | M | Measured on real research runs |
+| [ ] | C10 | Batch review screen for 50 to 100 items (compact rows, keyboard approve, open next 5 links) | C04 | M | Browser test |
+
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)
 - 2026-11-06: plan created.

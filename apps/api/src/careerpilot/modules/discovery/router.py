@@ -16,6 +16,9 @@ from careerpilot.modules.discovery.schemas import (
     DiscoverySourceOut,
     DiscoverySourceUpdate,
     RunOut,
+    SearchProfileIn,
+    SearchProfileOut,
+    SearchProfileUpdate,
 )
 
 router = APIRouter(prefix="/discovery", tags=["discovery"])
@@ -101,3 +104,32 @@ async def dismiss(candidate_id: uuid.UUID, session: Authenticated, db: DbSession
 )
 async def restore(candidate_id: uuid.UUID, session: Authenticated, db: DbSession) -> None:
     await service.set_status(db, session.user_id, candidate_id, CandidateStatus.NEW)
+
+
+@router.get("/searches", operation_id="list_search_profiles")
+async def list_searches(session: Authenticated, db: DbSession) -> list[SearchProfileOut]:
+    """The ways you search: regions, cities and ways of working. Several are alternatives."""
+    return await service.list_profiles(db, session.user_id)
+
+
+@router.post("/searches", operation_id="create_search_profile", status_code=status.HTTP_201_CREATED)
+async def create_search(
+    body: SearchProfileIn, session: Authenticated, db: DbSession
+) -> SearchProfileOut:
+    return await service.create_profile(db, session.user_id, body)
+
+
+@router.patch("/searches/{profile_id}", operation_id="update_search_profile")
+async def update_search(
+    profile_id: uuid.UUID, body: SearchProfileUpdate, session: Authenticated, db: DbSession
+) -> SearchProfileOut:
+    return await service.update_profile(db, session.user_id, profile_id, body)
+
+
+@router.delete(
+    "/searches/{profile_id}",
+    operation_id="delete_search_profile",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_search(profile_id: uuid.UUID, session: Authenticated, db: DbSession) -> None:
+    await service.delete_profile(db, session.user_id, profile_id)

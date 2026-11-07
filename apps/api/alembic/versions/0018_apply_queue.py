@@ -54,7 +54,10 @@ def upgrade() -> None:
         sa.Column("decided_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("decision_note", sa.Text(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.CheckConstraint(
             "match_score BETWEEN 0 AND 100", name=op.f("ck_apply_items_match_score_range")

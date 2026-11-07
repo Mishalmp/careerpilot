@@ -87,6 +87,7 @@ class ApplyItemOut(BaseModel):
     also_listed: list[AlsoListed]
     company_check: CompanyCheckSummary | None
     notes: list[str]
+    deep: bool  # False: not researched on the web yet
     enriched_at: datetime | None
     decided_at: datetime | None
     decision_note: str | None

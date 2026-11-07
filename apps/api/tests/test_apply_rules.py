@@ -166,7 +166,7 @@ def test_the_private_file_wins_over_the_example(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     ("content", "fragment"),
     [
-        ("daily_limit: 99\n", "daily_limit"),
+        ("daily_limit: 999\n", "daily_limit"),
         ("daily_limit: three\n", "daily_limit"),
         ("auto_submit: true\n", "auto_submit"),  # a setting that must not exist
         ("work_modes: [Underwater]\n", "work_modes"),

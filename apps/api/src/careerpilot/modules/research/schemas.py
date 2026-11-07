@@ -26,6 +26,11 @@ class ResearchRunOut(BaseModel):
     pending_findings: int = 0
 
 
+class MoreSource(BaseModel):
+    url: str
+    title: str | None = None
+
+
 class ResearchFindingOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -38,6 +43,8 @@ class ResearchFindingOut(BaseModel):
     source_url: str
     source_title: str | None
     relevance: int
+    mentions: int  # how many separate pages had it: more is a stronger sign it gets asked
+    more_sources: list[MoreSource]
     status: FindingStatus
     created_at: datetime
 

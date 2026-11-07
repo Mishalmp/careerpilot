@@ -16,7 +16,8 @@ from careerpilot.modules.discovery.adapters import (
     fetch_greenhouse_description,
 )
 from careerpilot.modules.discovery.enums import BoardKind, CandidateStatus
-from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
+from careerpilot.modules.discovery.locations import SearchSpec, matches_any
+from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource, SearchProfile
 from careerpilot.modules.discovery.schemas import (
     AcceptOut,
     CandidateList,
@@ -25,6 +26,9 @@ from careerpilot.modules.discovery.schemas import (
     DiscoverySourceOut,
     DiscoverySourceUpdate,
     RunOut,
+    SearchProfileIn,
+    SearchProfileOut,
+    SearchProfileUpdate,
 )
 from careerpilot.modules.tracker import service as tracker_service
 from careerpilot.modules.tracker.enums import Portal, WorkMode
@@ -125,6 +129,7 @@ def _row(job: RawJob) -> dict[str, Any]:
         "description": job.description,
         "published_on": job.published_on,
         "remote": job.remote,
+        "company_name": job.company,
     }
 
 
@@ -150,7 +155,11 @@ async def run_source(
         await db.commit()
         raise
 
-    kept = [j for j in jobs if matches(j.title, source.include, source.exclude)]
+    named = [j for j in jobs if matches(j.title, source.include, source.exclude)]
+    specs = await search_specs(db, owner_id)
+    kept = [
+        j for j in named if matches_any(specs, title=j.title, location=j.location, remote=j.remote)
+    ]
     known = await repository.known_ids(db, source.id)
     fresh = [j for j in kept if j.external_id not in known]
     inserted = await repository.insert_new(db, owner_id, source.id, [_row(j) for j in fresh])
@@ -159,7 +168,9 @@ async def run_source(
     )
     source.last_run_at, source.last_error, source.last_listed = now, None, len(jobs)
     await db.commit()
-    return RunOut(listed=len(jobs), kept=len(kept), new=inserted)
+    return RunOut(
+        listed=len(jobs), kept=len(kept), new=inserted, outside_search=len(named) - len(kept)
+    )
 
 
 # --- the inbox -----------------------------------------------------------------------------
@@ -169,7 +180,8 @@ def _candidate_out(job: DiscoveredJob, source: DiscoverySource) -> CandidateOut:
     return CandidateOut(
         id=job.id,
         source_id=job.source_id,
-        company_name=source.company_name,
+        company_name=job.company_name or source.company_name,
+        via=source.company_name if job.company_name else None,
         title=job.title,
         location=job.location,
         url=job.url,
@@ -221,7 +233,7 @@ async def accept(
 
     try:
         data = JobCreate(
-            company_name=source.company_name,
+            company_name=candidate.company_name or source.company_name,
             title=candidate.title,
             location_text=(candidate.location or "")[:200] or None,
             jd_url=candidate.url,
@@ -272,3 +284,64 @@ async def total_new(db: AsyncSession, owner_id: uuid.UUID) -> int:
 
 async def enabled_sources(db: AsyncSession) -> list[tuple[uuid.UUID, uuid.UUID]]:
     return await repository.enabled_sources(db)
+
+
+# --- search profiles: where and how you want to work ---------------------------------------------
+
+
+def _profile_out(profile: SearchProfile) -> SearchProfileOut:
+    return SearchProfileOut.model_validate(profile, from_attributes=True)
+
+
+async def list_profiles(db: AsyncSession, owner_id: uuid.UUID) -> list[SearchProfileOut]:
+    return [_profile_out(p) for p in await repository.list_profiles(db, owner_id)]
+
+
+async def create_profile(
+    db: AsyncSession, owner_id: uuid.UUID, data: SearchProfileIn
+) -> SearchProfileOut:
+    profile = repository.add_profile(db, owner_id, **data.model_dump())
+    await db.commit()
+    await db.refresh(profile)
+    return _profile_out(profile)
+
+
+async def update_profile(
+    db: AsyncSession, owner_id: uuid.UUID, profile_id: uuid.UUID, data: SearchProfileUpdate
+) -> SearchProfileOut:
+    profile = await repository.get_profile(db, owner_id, profile_id)
+    if profile is None:
+        raise _not_found("Search")
+    for field, value in data.model_dump(exclude_unset=True).items():
+        if value is not None:
+            setattr(profile, field, value)
+    await db.commit()
+    await db.refresh(profile)
+    return _profile_out(profile)
+
+
+async def delete_profile(db: AsyncSession, owner_id: uuid.UUID, profile_id: uuid.UUID) -> None:
+    if not await repository.delete_profile(db, owner_id, profile_id):
+        raise _not_found("Search")
+    await db.commit()
+
+
+async def search_specs(db: AsyncSession, owner_id: uuid.UUID) -> list[SearchSpec]:
+    """The enabled searches, ready to match listings. No searches means nothing is filtered."""
+    return [
+        SearchSpec(
+            regions=tuple(p.regions),
+            cities=tuple(p.cities),
+            work_modes=tuple(p.work_modes),
+            keywords=tuple(p.keywords),
+            exclude=tuple(p.exclude),
+        )
+        for p in await repository.list_profiles(db, owner_id)
+        if p.enabled
+    ]
+
+
+def fits_searches(
+    specs: list[SearchSpec], *, title: str, location: str | None, remote: bool
+) -> bool:
+    return matches_any(specs, title=title, location=location, remote=remote)

@@ -136,6 +136,9 @@ async def schedule_due(
                     {},
                     max_attempts=settings.task_max_attempts,
                 )
+        if local.hour >= settings.digest_hour:
+            for owner_id in await auth_service.user_ids(db):
+                queued += await research_service.refresh_due(db, owner_id, settings, now=now)
         if settings.apply_enabled and local.hour >= settings.apply_hour:
             for owner_id in await profile_service.owners_with_profile(db):
                 queued += await tasks_service.enqueue(

@@ -473,6 +473,10 @@
             ],
             "title": "Decision Note"
           },
+          "deep": {
+            "title": "Deep",
+            "type": "boolean"
+          },
           "enriched_at": {
             "anyOf": [
               {
@@ -615,6 +619,7 @@
           "also_listed",
           "company_check",
           "notes",
+          "deep",
           "enriched_at",
           "decided_at",
           "decision_note"
@@ -782,7 +787,12 @@
         "enum": [
           "greenhouse",
           "lever",
-          "ashby"
+          "ashby",
+          "remoteok",
+          "remotive",
+          "arbeitnow",
+          "himalayas",
+          "weworkremotely"
         ],
         "title": "BoardKind",
         "type": "string"
@@ -1036,12 +1046,24 @@
           "url": {
             "title": "Url",
             "type": "string"
+          },
+          "via": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Via"
           }
         },
         "required": [
           "id",
           "source_id",
           "company_name",
+          "via",
           "title",
           "location",
           "url",
@@ -6378,6 +6400,30 @@
         "title": "MockTurnOut",
         "type": "object"
       },
+      "MoreSource": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "MoreSource",
+        "type": "object"
+      },
       "Move": {
         "properties": {
           "acknowledge_flags": {
@@ -6878,9 +6924,16 @@
           },
           "daily_limit": {
             "default": 3,
-            "maximum": 10.0,
+            "maximum": 100.0,
             "minimum": 1.0,
             "title": "Daily Limit",
+            "type": "integer"
+          },
+          "deep_limit": {
+            "default": 10,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Deep Limit",
             "type": "integer"
           },
           "enrich_with_web": {
@@ -6933,6 +6986,11 @@
             },
             "title": "Skip Companies",
             "type": "array"
+          },
+          "use_search_profiles": {
+            "default": true,
+            "title": "Use Search Profiles",
+            "type": "boolean"
           },
           "work_modes": {
             "default": [],
@@ -7925,6 +7983,17 @@
           "kind": {
             "$ref": "#/components/schemas/FindingKind"
           },
+          "mentions": {
+            "title": "Mentions",
+            "type": "integer"
+          },
+          "more_sources": {
+            "items": {
+              "$ref": "#/components/schemas/MoreSource"
+            },
+            "title": "More Sources",
+            "type": "array"
+          },
           "quote": {
             "title": "Quote",
             "type": "string"
@@ -7975,6 +8044,8 @@
           "source_url",
           "source_title",
           "relevance",
+          "mentions",
+          "more_sources",
           "status",
           "created_at"
         ],
@@ -8121,6 +8192,11 @@
           },
           "new": {
             "title": "New",
+            "type": "integer"
+          },
+          "outside_search": {
+            "default": 0,
+            "title": "Outside Search",
             "type": "integer"
           }
         },
@@ -8281,6 +8357,309 @@
           "best_similarity"
         ],
         "title": "SearchOut",
+        "type": "object"
+      },
+      "SearchProfileIn": {
+        "description": "One way of searching. Everything in it must hold; several profiles are alternatives.",
+        "properties": {
+          "cities": {
+            "default": [],
+            "items": {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 15,
+            "title": "Cities",
+            "type": "array"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "exclude": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Exclude",
+            "type": "array"
+          },
+          "keywords": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Keywords",
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "regions": {
+            "items": {
+              "enum": [
+                "India",
+                "Europe",
+                "USA",
+                "UAE / Middle East",
+                "Remote (Global)"
+              ],
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Regions",
+            "type": "array"
+          },
+          "work_modes": {
+            "items": {
+              "enum": [
+                "Remote",
+                "Hybrid",
+                "Onsite"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Work Modes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "regions",
+          "work_modes"
+        ],
+        "title": "SearchProfileIn",
+        "type": "object"
+      },
+      "SearchProfileOut": {
+        "properties": {
+          "cities": {
+            "default": [],
+            "items": {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 15,
+            "title": "Cities",
+            "type": "array"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "exclude": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Exclude",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keywords": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Keywords",
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "regions": {
+            "items": {
+              "enum": [
+                "India",
+                "Europe",
+                "USA",
+                "UAE / Middle East",
+                "Remote (Global)"
+              ],
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Regions",
+            "type": "array"
+          },
+          "work_modes": {
+            "items": {
+              "enum": [
+                "Remote",
+                "Hybrid",
+                "Onsite"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Work Modes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "regions",
+          "work_modes",
+          "id"
+        ],
+        "title": "SearchProfileOut",
+        "type": "object"
+      },
+      "SearchProfileUpdate": {
+        "description": "Only the fields you send change.",
+        "properties": {
+          "cities": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 60,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 15,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cities"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "exclude": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 40,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclude"
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 40,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keywords"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "India",
+                    "Europe",
+                    "USA",
+                    "UAE / Middle East",
+                    "Remote (Global)"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regions"
+          },
+          "work_modes": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "Remote",
+                    "Hybrid",
+                    "Onsite"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 3,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Modes"
+          }
+        },
+        "title": "SearchProfileUpdate",
         "type": "object"
       },
       "SearchStatus": {
@@ -10382,6 +10761,66 @@
         ]
       }
     },
+    "/api/v1/apply/items/{item_id}/research": {
+      "post": {
+        "description": "Look up pay, interview information and the company for one listed job, now.",
+        "operationId": "research_apply_item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Research",
+        "tags": [
+          "apply"
+        ]
+      }
+    },
     "/api/v1/apply/items/{item_id}/skip": {
       "post": {
         "operationId": "skip_apply_item",
@@ -11194,6 +11633,236 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/discovery/searches": {
+      "get": {
+        "description": "The ways you search: regions, cities and ways of working. Several are alternatives.",
+        "operationId": "list_search_profiles",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SearchProfileOut"
+                  },
+                  "title": "Response List Search Profiles",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Searches",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "post": {
+        "operationId": "create_search_profile",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Search",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/discovery/searches/{profile_id}": {
+      "delete": {
+        "operationId": "delete_search_profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Search",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "patch": {
+        "operationId": "update_search_profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Search",
         "tags": [
           "discovery"
         ]

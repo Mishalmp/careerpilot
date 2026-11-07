@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.modules.discovery.enums import CandidateStatus
-from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource
+from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource, SearchProfile
 
 CANDIDATE_LIMIT = 200
 CHUNK = 500
@@ -155,3 +155,37 @@ async def enabled_sources(db: AsyncSession) -> list[tuple[uuid.UUID, uuid.UUID]]
         select(DiscoverySource.owner_id, DiscoverySource.id).where(DiscoverySource.enabled)
     )
     return [(owner, source) for owner, source in rows]
+
+
+async def list_profiles(db: AsyncSession, owner_id: uuid.UUID) -> Sequence[SearchProfile]:
+    rows = await db.scalars(
+        select(SearchProfile)
+        .where(SearchProfile.owner_id == owner_id)
+        .order_by(SearchProfile.created_at, SearchProfile.id)
+    )
+    return rows.all()
+
+
+async def get_profile(
+    db: AsyncSession, owner_id: uuid.UUID, profile_id: uuid.UUID
+) -> SearchProfile | None:
+    return await db.scalar(
+        select(SearchProfile).where(
+            SearchProfile.owner_id == owner_id, SearchProfile.id == profile_id
+        )
+    )
+
+
+def add_profile(db: AsyncSession, owner_id: uuid.UUID, **fields: Any) -> SearchProfile:
+    profile = SearchProfile(owner_id=owner_id, **fields)
+    db.add(profile)
+    return profile
+
+
+async def delete_profile(db: AsyncSession, owner_id: uuid.UUID, profile_id: uuid.UUID) -> bool:
+    result = await db.execute(
+        delete(SearchProfile)
+        .where(SearchProfile.owner_id == owner_id, SearchProfile.id == profile_id)
+        .returning(SearchProfile.id)
+    )
+    return result.first() is not None

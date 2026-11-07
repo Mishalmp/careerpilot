@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import Any
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     Date,
     DateTime,
@@ -46,6 +47,8 @@ class ApplyItem(Base):
     also_listed: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list)
     company_check: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     notes: Mapped[list[str]] = mapped_column(JSONB, default=list)  # what could not be looked up
+    # False: listed with what the post says and what is already known, without new searches.
+    deep: Mapped[bool] = mapped_column(Boolean, default=True)
     enriched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     decision_note: Mapped[str | None] = mapped_column(Text)

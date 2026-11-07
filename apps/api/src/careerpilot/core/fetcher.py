@@ -51,6 +51,9 @@ TEXT_TYPES: Final = (
     "text/plain",
     "application/json",
     "application/rdap+json",  # domain registration lookups
+    "application/rss+xml",  # job feeds
+    "application/xml",
+    "text/xml",
 )
 _REDIRECT_STATUSES: Final = frozenset({301, 302, 303, 307, 308})
 

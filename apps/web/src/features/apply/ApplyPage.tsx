@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 
-import { type ApplyItem, useApplyQueue, useBuildQueue, useDecideItem } from "./hooks";
+import { type ApplyItem, useApplyQueue, useBuildQueue, useDecideItem, useResearchItem } from "./hooks";
 
 type Pay = NonNullable<ApplyItem["pay"]>;
 type Interview = NonNullable<ApplyItem["interview"]>;
@@ -227,6 +227,7 @@ function InterviewBlock({ interview }: { interview: Interview }) {
 }
 
 function ItemCard({ item, busy, onAct }: { item: ApplyItem; busy: boolean; onAct: (a: "approve" | "applied" | "skip") => void }) {
+  const research = useResearchItem();
   const link = item.apply_url ?? item.jd_url;
   const check = item.company_check;
   const decided = item.status === "applied" || item.status === "skipped";
@@ -303,6 +304,11 @@ function ItemCard({ item, busy, onAct }: { item: ApplyItem; busy: boolean; onAct
         </div>
       </div>
 
+      {research.error && (
+        <p role="alert" className="mt-2 text-sm text-danger-text">
+          {research.error.message}
+        </p>
+      )}
       {item.notes.length > 0 && (
         <ul className="mt-3 list-disc pl-5 text-sm text-muted-foreground">
           {item.notes.map((n) => (
@@ -327,6 +333,11 @@ function ItemCard({ item, busy, onAct }: { item: ApplyItem; busy: boolean; onAct
               <a href={link} target="_blank" rel="noopener noreferrer" aria-label={`Open the apply page for ${item.title} at ${item.company}`}>
                 Open the apply page <ExternalLink aria-hidden="true" />
               </a>
+            </Button>
+          )}
+          {!item.deep && (
+            <Button size="sm" variant="soft" loading={research.isPending} onClick={() => research.mutate(item.id)} aria-label={`Research ${item.title} at ${item.company}`}>
+              Research this job
             </Button>
           )}
           {!link && <span className="text-sm text-muted-foreground">No apply link on file. Add one on the job page.</span>}
