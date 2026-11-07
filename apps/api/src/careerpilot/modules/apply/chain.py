@@ -198,10 +198,18 @@ _ANCHORS = re.compile(
 _DETAILS = re.compile(
     r"\b(system design|data structures|dsa|algorithms?|live coding|pair programming|whiteboard"
     r"|technical|hr|managerial|manager|panel|behavioural|behavioral|onsite|virtual|stages?"
-    r"|low[- ]level design|lld|hld|leetcode|sql|project discussion)\b",
+    r"|low[- ]level design|lld|hld|leetcode|sql|project discussion|coding|design|recruiter"
+    r"|phone screen|screening call|assignment|concurrency)\b",
     re.IGNORECASE,
 )
 _MIN_SENTENCE, _MAX_SENTENCE = 40, 300
+MIN_WORDS = 7
+# A page title or a marketing line also says "interview" ("Databricks Interview Questions | X").
+_NOT_A_DESCRIPTION = re.compile(
+    r"\||questions (?:and|&) answers|take a mock interview|friendly reminder|\bfor freshers\b"
+    r"|insider insights|read more|sign up|subscribe",
+    re.IGNORECASE,
+)
 
 
 def interview_sentences(text: str, limit: int = MAX_POINTS) -> list[str]:
@@ -214,9 +222,11 @@ def interview_sentences(text: str, limit: int = MAX_POINTS) -> list[str]:
         if not _MIN_SENTENCE <= len(sentence) <= _MAX_SENTENCE or sentence.casefold() in seen:
             continue
         anchors = len({m.group(0).casefold() for m in _ANCHORS.finditer(sentence)})
-        if anchors == 0:
+        if anchors == 0 or len(sentence.split()) < MIN_WORDS or _NOT_A_DESCRIPTION.search(sentence):
             continue
         details = len({m.group(0).casefold() for m in _DETAILS.finditer(sentence)})
+        if details == 0:
+            continue  # it names the process but says nothing about it
         seen.add(sentence.casefold())
         scored.append((-(2 * anchors + details), position, sentence))
     return [sentence for _, _, sentence in sorted(scored)[:limit]]

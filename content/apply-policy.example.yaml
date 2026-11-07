@@ -11,3 +11,4 @@ require_apply_link: true        # jobs without an apply link cannot be one click
 block_if_company_suspicious: true   # hold a job back (shown with the reason) on a red flag or two failed checks
 enrich_with_web: true           # look for the same post elsewhere, pay and interview information
 max_web_pages_per_job: 3        # how many other pages to read per job (0 to 6)
+max_age_days: 120               # skip posts older than this many days (they are probably filled); 0 = any age

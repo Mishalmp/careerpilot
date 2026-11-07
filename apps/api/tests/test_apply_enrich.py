@@ -313,3 +313,35 @@ async def test_interview_level_3_typical_for_the_role_is_labelled_as_not_this_co
     got = await enrich(facts(), [], web_for(search, web), skills_of)
     assert got.interview.level is InterviewLevel.SIMILAR_ROLES
     assert "not this company" in got.interview.label
+
+
+def test_titles_and_marketing_lines_are_not_interview_descriptions() -> None:
+    """Found in the first real run: search results gave page titles as "interview information"."""
+    for line in (
+        "Databricks Interview Questions and Answers: 2026 Edition | DataCamp.",
+        "Clear Interview Process and Insider Insights - Databricks.",
+        "Take a mock interview with a real engineer from our team today.",
+        "The interview process is something that every candidate wonders about a lot.",  # no detail
+    ):
+        assert chain.interview_sentences(line) == [], line
+    good = (
+        "The stages: a recruiter screen, one or two technical coding screens, then a virtual "
+        "onsite with four interviews covering algorithms and system design."
+    )
+    assert chain.interview_sentences(good) == [good]
+
+
+async def test_the_search_result_title_is_never_used_as_interview_evidence() -> None:
+    search = FakeSearch(
+        answers={
+            "interview process Python": [
+                SearchHit(
+                    "Acme interview process: three rounds, coding and system design",
+                    "https://guide.example.org/acme",
+                    "Great place.",
+                )
+            ]
+        }
+    )
+    got = await enrich(facts(), [], web_for(search), skills_of)
+    assert got.interview.level is None  # the title mentions rounds, but only the snippet counts

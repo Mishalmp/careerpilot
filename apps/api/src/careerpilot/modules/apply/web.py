@@ -37,6 +37,7 @@ class JobWeb:
         self.searches_used = 0
         self.pages_used = 0
         self._search_broken = False
+        self._said_empty = False
         self._pages: dict[str, str | None] = {}
 
     @property
@@ -52,7 +53,14 @@ class JobWeb:
         self.searches_left -= 1
         self.searches_used += 1
         try:
-            return await self._provider.search(query, HITS_PER_SEARCH)
+            hits = await self._provider.search(query, HITS_PER_SEARCH)
+            if not hits and not self._said_empty:
+                self._said_empty = True
+                self.notes.append(
+                    "A search returned nothing. The engines behind a free search service are "
+                    "sometimes rate-limited; try again in a few minutes."
+                )
+            return hits
         except SearchError as error:
             self._search_broken = True  # one failure ends searching for this job
             self.notes.append(f"Web search stopped: {error}")

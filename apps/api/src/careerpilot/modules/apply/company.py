@@ -36,13 +36,22 @@ def summarise(check: VerificationOut) -> tuple[CompanyCheckSummary, str | None]:
     elif len(failed) >= FAILED_CHECKS_TO_HOLD:
         names = ", ".join(c.key.value.replace("_", " ") for c in failed)
         reason = f"{len(failed)} company checks failed: {names}."
+    # "suspicious" is the verification module's word for "fewer than three checks passed". Here it
+    # is only said when something was actually found against the company.
+    found_against = bool(flags) or len(failed) >= FAILED_CHECKS_TO_HOLD
+    shown = (
+        "unverified"
+        if check.verdict.value == "suspicious" and not found_against
+        else check.verdict.value
+    )
     return (
         CompanyCheckSummary(
-            verdict=check.verdict.value,
+            verdict=shown,
             passed=check.passed,
             total=check.total,
             flags=flags,
-            note=reason or f"{check.passed} of {check.total} checks passed; no red flags.",
+            note=reason
+            or f"{check.passed} of {check.total} checks passed; nothing was found against it.",
         ),
         reason,
     )

@@ -25,6 +25,7 @@ class Policy(BaseModel):
     skip_companies: list[Name] = []
     require_apply_link: bool = True
     block_if_company_suspicious: bool = True  # a red flag or two failed checks; see company.py
+    max_age_days: Annotated[int, Field(ge=0, le=1000)] = 120  # skip older posts; 0 = any age
     enrich_with_web: bool = True
     max_web_pages_per_job: Annotated[int, Field(ge=0, le=6)] = 3
 

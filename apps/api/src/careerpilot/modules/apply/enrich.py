@@ -279,7 +279,9 @@ async def _interview_from_hits(hits: list[SearchHit], web: JobWeb) -> list[Evide
     usable = [h for h in hits if web.readable(h.url)]
     points: list[EvidenceLink] = []
     for hit in usable:
-        points.extend(_points(f"{hit.title}. {hit.snippet}", hit.url, hit.title))
+        points.extend(
+            _points(hit.snippet, hit.url, hit.title)
+        )  # never the title: it is not a description
     if points:
         return points[: chain.MAX_POINTS * 2]
     for hit in usable:

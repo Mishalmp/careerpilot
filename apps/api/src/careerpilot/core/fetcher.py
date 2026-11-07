@@ -40,7 +40,9 @@ BLOCKED_DOMAINS: Final = frozenset(
 )
 
 ALLOWED_PORTS: Final = frozenset({80, 443})
+CONTROL_HOSTS: Final = ("example.com", "www.google.com", "www.cloudflare.com")
 MAX_REDIRECTS: Final = 4
+RESOLVE_RETRY_SECONDS: Final = 1.0
 MAX_BYTES: Final = 1_000_000
 TOTAL_TIMEOUT_SECONDS: Final = 20.0
 TEXT_TYPES: Final = (
@@ -136,11 +138,31 @@ class Fetcher:
         self._max_bytes = max_bytes
         self._timeout = timeout_seconds
 
+    async def network_is_up(self) -> bool:
+        """Can this machine look up any address at all? Used to tell "that site does not exist" from
+        "my own network is down" (found in the first real run: a DNS outage made a real company's
+        website look fake)."""
+        for host in CONTROL_HOSTS:
+            try:
+                await self._resolver(host, 443)
+            except FetchError:
+                continue
+            return True
+        return False
+
     async def fetch(self, url: str, *, max_bytes: int | None = None) -> FetchedPage:
         """Fetch a page. `max_bytes` raises the size cap for one call (job boards are large)."""
         try:
             async with asyncio.timeout(self._timeout):
-                return await self._fetch(url, max_bytes or self._max_bytes)
+                try:
+                    return await self._fetch(url, max_bytes or self._max_bytes)
+                except FetchError as exc:
+                    if exc.code != "unresolvable":
+                        raise
+                    # Found in the real run: a name that resolves a moment later failed once. A real
+                    # "no such site" fails twice, at the cost of a second.
+                    await asyncio.sleep(RESOLVE_RETRY_SECONDS)
+                    return await self._fetch(url, max_bytes or self._max_bytes)
         except TimeoutError as exc:
             raise FetchError("timeout", "The page took too long to load.") from exc
 

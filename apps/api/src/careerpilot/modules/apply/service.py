@@ -18,6 +18,7 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
 import structlog
@@ -49,7 +50,7 @@ from careerpilot.modules.tasks.enums import TaskKind
 from careerpilot.modules.tracker import service as tracker_service
 from careerpilot.modules.tracker.enums import Status
 from careerpilot.modules.tracker.filters import JobFilters
-from careerpilot.modules.tracker.schemas import StatusChange
+from careerpilot.modules.tracker.schemas import CompanyUpdate, StatusChange
 from careerpilot.modules.tracker.service import JobRecord
 from careerpilot.modules.verification import service as verification_service
 
@@ -114,7 +115,7 @@ async def request_build(
 # --- choosing -------------------------------------------------------------------------------
 
 
-def _allowed(job: JobRecord, policy: Policy) -> bool:
+def _allowed(job: JobRecord, policy: Policy, today: date) -> bool:
     """The policy's hard rules. A field the post does not state never excludes a job."""
     if policy.regions and job.region is not None and job.region.value not in policy.regions:
         return False
@@ -124,6 +125,8 @@ def _allowed(job: JobRecord, policy: Policy) -> bool:
         and job.work_mode.value not in policy.work_modes
     ):
         return False
+    if policy.max_age_days and job.posted_on and (today - job.posted_on).days > policy.max_age_days:
+        return False  # an old post is probably filled or closed
     skipped = {name.casefold() for name in policy.skip_companies}
     if job.company.name.casefold() in skipped:
         return False
@@ -156,7 +159,7 @@ def _rank(
 ) -> list[tuple[JobRecord, matching.Match]]:
     ranked: list[tuple[JobRecord, matching.Match]] = []
     for job in jobs:
-        if not _allowed(job, policy):
+        if not _allowed(job, policy, today):
             continue
         found = matching.match(
             job_title=job.title,
@@ -287,6 +290,49 @@ async def build_queue(
     return BuildResult(listed, held, examined)
 
 
+# Pages where a job is hosted for many companies: their address says nothing about the employer.
+_JOB_BOARD_HOSTS = (
+    "greenhouse.io",
+    "lever.co",
+    "ashbyhq.com",
+    "workable.com",
+    "smartrecruiters.com",
+    "myworkdayjobs.com",
+    "linkedin.com",
+    "indeed.com",
+    "naukri.com",
+    "glassdoor.com",
+    "wellfound.com",
+    "instahyre.com",
+    "bamboohr.com",
+    "jobvite.com",
+    "icims.com",
+    "recruitee.com",
+    "breezy.hr",
+)
+
+
+async def _remember_website(
+    db: AsyncSession, owner_id: uuid.UUID, job: JobRecord, policy: Policy
+) -> None:
+    """A company found through a job board has no website on file, so its checks could never run.
+    When the post itself sits on the employer's own site, use that address (only if none is set)."""
+    if not policy.enrich_with_web or job.company.website:
+        return
+    link = job.apply_url or job.jd_url
+    parts = urlsplit(link) if link else None
+    host = (parts.hostname or "").lower() if parts else ""
+    if not host or any(host == h or host.endswith("." + h) for h in _JOB_BOARD_HOSTS):
+        return
+    await tracker_service.update_company(
+        db,
+        owner_id,
+        job.id,
+        CompanyUpdate(website=f"{parts.scheme}://{host}"),  # pyright: ignore[reportOptionalMemberAccess]
+    )
+    await db.refresh(job.company)
+
+
 async def _fill(
     db: AsyncSession,
     owner_id: uuid.UUID,
@@ -305,6 +351,7 @@ async def _fill(
     notes: list[str] = []
     held_reason: str | None = None
 
+    await _remember_website(db, owner_id, job, policy)
     # The company check first: a company that fails it should not take up web searches.
     try:
         verification = (

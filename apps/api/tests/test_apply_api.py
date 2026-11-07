@@ -344,3 +344,52 @@ async def test_the_daily_build_is_queued_once_a_day_and_only_for_users_with_a_pr
     assert await schedule_due(sm, settings, now) == 0  # once per day
     disabled = settings.model_copy(update={"apply_enabled": False})
     assert await schedule_due(sm, disabled, now + timedelta(days=1)) == 0
+
+
+async def test_an_old_post_is_not_listed_but_a_post_with_no_date_still_can_be(
+    app: FastAPI, api: AsyncClient, content: Path
+) -> None:
+    """Found in the first real run: a two-year-old post topped the list."""
+    policy(content, "daily_limit: 3\nmin_match_score: 50\nmax_age_days: 90\n")
+    wire(app, FakeSearch([]))
+    await profile(api)
+    old = await job(
+        api, "Python Backend Developer", "Oldco", jd_text=GOOD_JD, posted_on="2026-01-01"
+    )
+    fresh = await job(
+        api, "Python Backend Developer", "Freshco", jd_text=GOOD_JD, posted_on="2026-11-01"
+    )
+    undated = await job(api, "Python Backend Developer", "Nodate", jd_text=GOOD_JD)
+    await build(app, api)
+    listed = {i["job_id"] for i in (await queue(api))["items"]}
+    assert old not in listed and {fresh, undated} <= listed
+
+
+async def test_a_company_found_on_a_job_board_gets_its_website_from_the_post(
+    app: FastAPI, api: AsyncClient, content: Path
+) -> None:
+    """Found in the first real run: such companies had no website, so no check could ever run."""
+    policy(content, "daily_limit: 3\nmin_match_score: 50\n")
+    wire(app, FakeSearch([]))
+    await profile(api)
+    own = await job(
+        api,
+        "Python Backend Developer",
+        "Ownsite",
+        jd_text=GOOD_JD,
+        apply_url="https://careers.ownsite.example/jobs/1",
+    )
+    hosted = await job(
+        api,
+        "Python Backend Developer",
+        "Hosted",
+        jd_text=GOOD_JD,
+        apply_url="https://boards.greenhouse.io/hosted/jobs/1",
+    )
+    await build(app, api)
+    assert (await api.get(f"{JOBS}/{own}")).json()["company"][
+        "website"
+    ] == "https://careers.ownsite.example"
+    assert (await api.get(f"{JOBS}/{hosted}")).json()["company"][
+        "website"
+    ] is None  # a board's address is not theirs

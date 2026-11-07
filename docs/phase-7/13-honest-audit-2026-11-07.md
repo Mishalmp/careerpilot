@@ -4,7 +4,7 @@ Written because the owner asked for "requirement expectation versus what has bee
 
 ## 1. The short version
 - The **core product works and is well tested in isolation**: tracker, company checks, scoring, outreach drafts (no send), notes search, practice runner, learning with spaced repetition and exams, the daily apply list, account setup, background tasks with history and retry, backups. On 2026-11-07 the full suites passed: 1,141 API tests (1 skipped: the optional model-quality test), 50 web unit tests, 117 browser tests (Chrome), plus lint, strict type checks and 24 import rules.
-- Almost everything that talks to the **outside world has never been run for real**: web search, the research agent, Claude calls, GitHub reading, OCR on real scanned CVs, job-page parsing for pay and interviews. They are tested with fakes and generated samples. That is the biggest gap between "tests pass" and "works".
+- Part of what talks to the **outside world has now run for real** (section 6: live search, live job boards, page fetching, pay and interview reading, company checks) and found six real bugs, all fixed. Still never run for real: the research agent, Claude calls, GitHub reading, OCR on a real scan. They are tested with fakes and generated samples.
 - The **UI is consistent but not yet "styled and interactive" everywhere**: the pages built this phase (Today, Learn, Jobs, Apply, Profile and setup, Activity, Architecture) use one design system and have hover, motion and empty states; about nine older pages only share the controls and headers, not a redesigned layout.
 - It is **not production grade yet** for strangers: no password reset by email, no per-user rate limits, no CSP on pages, CV text stored unencrypted, CI never run, no alerts, no multi-user. It is fine for the owner on one machine.
 
@@ -71,8 +71,35 @@ Task list totals (`07-tasks.md`): 45 done, 39 partly, 132 not started of 216. Gr
 | Backups | Encrypted dump made and restored into a new database in a container | Good; copy off the machine is manual |
 | Security | Throttle, CSRF, cookie flags, SSRF guard, upload limits, owner scoping tests | Good for one user; not reviewed by anyone else; not for strangers yet |
 
+## 6. The first real run (2026-11-07, same day)
+What ran for real: a free SearXNG container (live web results), live Greenhouse job boards (Cloudflare 464 listings, Databricks 924), the owner's real CV uploaded as a file, account setup, the daily apply list with real searches and real page fetches, and the company checks against live DNS and websites. A scratch database and a test account were used; the owner's database was not touched, and the scratch data was deleted afterwards.
+
+What worked, measured:
+- Discovery read both boards live: 1,388 listings, 521 kept by the title filter. The CV reader found 40 skills, the right two titles and 6 years from the real CV.
+- Building a list took about 15 to 30 seconds for 2 jobs, with 5 searches and up to 3 pages per job.
+- **Pay**: both jobs had the pay range in the post itself (found by the regex, shown with the quote): correct on both.
+- **Interview information**: real, useful sentences ("4 steps: recruiter screen, technical phone screen, hiring manager call...") with their sources, after the fix below.
+- **Same job elsewhere**: one real match on another site (skills in common 64%), others correctly labelled "similar role" and "page not opened".
+- Sites that forbid automation (LinkedIn) appeared as links only.
+
+What the real run found wrong (all fixed, with tests):
+| Finding | Cause | Fix |
+|---|---|---|
+| "Interview information" was page titles and marketing lines ("Databricks Interview Questions and Answers: 2026 Edition") | Search result titles were mined as sentences; any sentence with "interview" counted | Only snippets and page text are used; a sentence must describe the process (rounds, coding, design, stages...); titles, pipes and sales lines are dropped |
+| A two-year-old post (746 days) was on the list | No age rule | New policy setting `max_age_days` (default 120, 0 = any) |
+| The company check never ran for discovered companies | Companies found through a job board have no website on file | The employer's own address is taken from the post when it is not a job-board address |
+| A real company (Databricks) showed "suspicious, 0 of 8" | A DNS outage on this machine made its website look fake; and the list printed "suspicious" together with "no red flags" | An unresolvable site is only a failed check when other sites do resolve; the list says "unverified" unless something was found against the company. After the fix: 4 of 8 passed |
+| A first lookup failed once and then worked ("Could not resolve boards-api.greenhouse.io") | Transient DNS failure | The safe fetcher tries a failed name once more after a second |
+| An empty search result gave no explanation | Free search engines behind SearXNG are rate-limited (it reported "too many requests" and a CAPTCHA) | The card now says "A search returned nothing... try again in a few minutes" |
+
+Still not verified after this run:
+- Only 2 jobs from one company (Databricks) reached the list; pay and interview accuracy on many companies is unmeasured. Only one job was a "same job elsewhere" match.
+- Pay for a Berlin job came from a US pay range of an earlier post: it is labelled "an earlier or similar post", but no one checks that the region matches.
+- The research agent, Claude, GitHub reading and OCR on a real scan were not part of this run.
+- The free search service is flaky by nature (two engines were rate-limited during the run): expect gaps and rerun later; a paid or keyed provider (Tavily's free tier) is steadier.
+
 ## 5. What to do next, in this order
-1. **Make the first real run** (owner, 30 minutes): start SearXNG, press "Build today's list", upload the real CV, read the cards critically, note every wrong line. This turns the biggest unknown into numbers. (If an Anthropic key is added, run `llm-check` and one research run.)
+1. **Repeat the real run on more companies** (the first one is in section 6): follow 5 to 10 boards, build several days of lists, read every card critically. For the research agent and Claude, add an Anthropic key and run `llm-check` and one research run.
 2. Create the private GitHub repository so CI runs (X09, X10).
 3. Do the "urgent" items in `12` Part B (worker heartbeat, per-user rate limits, encrypt CV text, report-only CSP).
 4. Measure the CV reader on 10 CVs and the pay parser on 50 real pages; put the numbers here.

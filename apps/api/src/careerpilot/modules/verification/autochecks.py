@@ -77,7 +77,14 @@ async def check_website(fetcher: Fetcher, host: str) -> CheckResult:
         page = await fetcher.fetch(url)
     except FetchError as exc:
         status = CheckStatus.FAIL if exc.code == "unresolvable" else CheckStatus.UNKNOWN
-        return CheckResult(CheckKey.WEBSITE, status, exc.message, url)
+        message = exc.message
+        if status is CheckStatus.FAIL and not await fetcher.network_is_up():
+            # Not evidence about the company: this computer cannot look anything up right now.
+            status, message = (
+                CheckStatus.UNKNOWN,
+                "Your network could not look anything up just now.",
+            )
+        return CheckResult(CheckKey.WEBSITE, status, message, url)
     if len(page.text) < MIN_HOME_PAGE_CHARS:
         return CheckResult(
             CheckKey.WEBSITE, CheckStatus.UNKNOWN, "The home page has almost no text.", page.url

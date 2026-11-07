@@ -28,7 +28,7 @@ function range(pay: Pay): string {
   return pay.low === pay.high ? a : `${a} to ${formatMoney(pay.high, pay.currency)}`;
 }
 
-const VERDICT_TONE = { verified: "success", likely_genuine: "success", needs_check: "warning", suspicious: "danger", not_checked: "neutral" } as const;
+const VERDICT_TONE = { verified: "success", likely_genuine: "success", needs_check: "warning", suspicious: "danger", unverified: "neutral", not_checked: "neutral" } as const;
 const STATUS_TEXT: Record<ApplyItem["status"], string> = {
   ready: "Ready to review",
   approved: "Approved: apply, then say you did",
