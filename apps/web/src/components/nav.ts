@@ -55,7 +55,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/profile", label: "Profile", icon: UserRound },
       { href: "/architecture", label: "How it works", icon: Network },
-      { href: "/tasks", label: "Tasks", icon: ListChecks },
+      { href: "/tasks", label: "Activity", icon: ListChecks },
     ],
   },
 ];

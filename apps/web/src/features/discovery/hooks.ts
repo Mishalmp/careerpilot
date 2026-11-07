@@ -9,12 +9,10 @@ type Schemas = components["schemas"];
 export type DiscoverySource = Schemas["DiscoverySourceOut"];
 export type NewSource = Schemas["DiscoverySourceCreate"];
 export type Candidate = Schemas["CandidateOut"];
-export type TaskStatus = Schemas["TaskStatus"];
 export type CandidateStatus = Schemas["CandidateStatus"];
 
 const SOURCES = ["discovery", "sources"] as const;
 const CANDIDATES = ["discovery", "candidates"] as const;
-const TASKS = ["tasks"] as const;
 
 export function useSources() {
   return useQuery({
@@ -28,7 +26,7 @@ function useRefresh() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: SOURCES });
     void queryClient.invalidateQueries({ queryKey: CANDIDATES });
-    void queryClient.invalidateQueries({ queryKey: TASKS });
+    void queryClient.invalidateQueries({ queryKey: ["tasks"] });
     void queryClient.invalidateQueries({ queryKey: ["digest"] });
   };
 }
@@ -137,36 +135,5 @@ export function useDigest() {
   return useQuery({
     queryKey: ["digest", "latest"],
     queryFn: async () => unwrap(await api.GET("/api/v1/digest/latest")),
-  });
-}
-
-export function useTasks(status?: TaskStatus) {
-  return useQuery({
-    queryKey: [...TASKS, status ?? "all"],
-    queryFn: async () =>
-      unwrap(await api.GET("/api/v1/tasks", { params: { query: { status } } })),
-    refetchInterval: 15_000,
-  });
-}
-
-export function useRetryTask() {
-  const refresh = useRefresh();
-  return useMutation({
-    mutationFn: async (id: string) =>
-      unwrap(
-        await api.POST("/api/v1/tasks/{task_id}/retry", {
-          params: { path: { task_id: id } },
-        }),
-      ),
-    onSuccess: refresh,
-  });
-}
-
-export function useRetryFailed() {
-  const refresh = useRefresh();
-  return useMutation({
-    mutationFn: async () =>
-      unwrap(await api.POST("/api/v1/tasks/retry-failed")),
-    onSuccess: refresh,
   });
 }

@@ -6,6 +6,23 @@ from pydantic import BaseModel, ConfigDict
 from careerpilot.modules.tasks.enums import TaskKind, TaskStatus
 
 
+class TaskProgress(BaseModel):
+    step: str
+    done: int | None = None
+    total: int | None = None
+
+
+class TaskEventOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    at: datetime
+    attempt: int
+    level: str  # info | warning | error
+    step: str | None
+    message: str
+
+
 class TaskOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -19,6 +36,7 @@ class TaskOut(BaseModel):
     started_at: datetime | None
     finished_at: datetime | None
     error: str | None
+    progress: TaskProgress | None
     created_at: datetime
 
 
@@ -36,3 +54,8 @@ class TaskList(BaseModel):
 
 class RetryAllOut(BaseModel):
     requeued: int
+
+
+class TaskDetail(BaseModel):
+    task: TaskOut
+    events: list[TaskEventOut]  # oldest first

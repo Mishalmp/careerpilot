@@ -30,6 +30,7 @@ from careerpilot.modules.offers.router import router as offers_router
 from careerpilot.modules.outreach.router import router as outreach_router
 from careerpilot.modules.practice.router import router as practice_router
 from careerpilot.modules.prep.router import router as prep_router
+from careerpilot.modules.profile.cvfile import default_ocr
 from careerpilot.modules.profile.router import router as profile_router
 from careerpilot.modules.research.router import router as research_router
 from careerpilot.modules.scoring.router import router as scoring_router
@@ -82,6 +83,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.llm = make_llm(settings)
     app.state.search = make_search(settings)
     app.state.fetcher = Fetcher()
+    app.state.ocr = default_ocr  # starts only when a scanned CV needs it
     app.state.login_throttle = LoginThrottle(
         settings.login_max_failures, settings.login_window_seconds
     )

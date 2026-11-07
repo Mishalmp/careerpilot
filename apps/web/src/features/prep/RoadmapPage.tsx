@@ -8,6 +8,7 @@ import type { Day, DayStatus } from "@/lib/api/types";
 import { useDays, useSeedPrep, useSetStartDate, useUpdateDay } from "./hooks";
 import { PrepNav } from "./PrepNav";
 import { todayLocal } from "@/lib/dates";
+import { PageHeader } from "@/components/ui/page-header";
 
 const DAY_STATUSES: DayStatus[] = ["Planned", "Done", "Skipped", "Moved"];
 
@@ -23,7 +24,7 @@ export function RoadmapPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Prep</h1>
+      <PageHeader title="Prep" />
       <PrepNav />
 
       {days.isPending && <p className={muted}>Loading...</p>}

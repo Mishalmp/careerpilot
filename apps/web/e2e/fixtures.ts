@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process";
+
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test as base, type Page } from "@playwright/test";
 
@@ -55,3 +57,17 @@ export async function expectNoA11yViolations(page: Page) {
 
 export const test = base;
 export { expect };
+
+/** Runs one of apps/api/scripts/seed_e2e_*.py against the throwaway E2E database. */
+export function runSeed(script: "apply" | "activity" | "profile" | "findings", ...args: string[]) {
+  execFileSync("python", ["-m", "uv", "run", "python", `scripts/seed_e2e_${script}.py`, ...args], {
+    cwd: "../api",
+    stdio: "pipe",
+  });
+}
+
+/** The CSRF token of the signed-in user, for requests made straight to the API. */
+export async function csrfToken(page: Page): Promise<string> {
+  const me = await page.request.get("/api/v1/auth/me");
+  return ((await me.json()) as { csrf_token: string }).csrf_token;
+}

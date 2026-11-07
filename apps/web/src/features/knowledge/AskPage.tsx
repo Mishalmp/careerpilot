@@ -6,6 +6,7 @@ import { Fragment, useState } from "react";
 import { button, card, input, muted, primaryButton } from "@/components/ui";
 
 import { type AskResult, type Hit, useAsk, useIngest, useKnowledgeStatus } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 const EXAMPLES = [
   "Why does a lambda in a loop capture the last value?",
@@ -23,7 +24,7 @@ export function AskPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold">Ask my notes</h1>
+        <PageHeader title="Ask my notes" />
         <p className={muted}>
           Searches your study guides and private notes by meaning and by words. Answers come only
           from your notes, with sources.

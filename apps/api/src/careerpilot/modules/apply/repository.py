@@ -83,3 +83,19 @@ async def count_ready(db: AsyncSession, owner_id: uuid.UUID) -> int:
             .where(ApplyItem.owner_id == owner_id, ApplyItem.status == ApplyStatus.READY)
         )
     ) or 0
+
+
+async def unfinished(db: AsyncSession, owner_id: uuid.UUID) -> Sequence[ApplyItem]:
+    """Items that were listed but never looked up (a build stopped before it got to them)."""
+    return (
+        await db.scalars(
+            select(ApplyItem)
+            .where(
+                ApplyItem.owner_id == owner_id,
+                ApplyItem.status == ApplyStatus.READY,
+                ApplyItem.enriched_at.is_(None),
+            )
+            .order_by(ApplyItem.created_at)
+            .with_for_update(skip_locked=True)
+        )
+    ).all()

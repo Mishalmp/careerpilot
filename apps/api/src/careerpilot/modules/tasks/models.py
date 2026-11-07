@@ -35,6 +35,29 @@ class Task(Base):
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     error: Mapped[str | None] = mapped_column(Text)
+    # What the running attempt is doing now: {"step": ..., "done": n, "total": n or null}.
+    progress: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True
     )
+
+
+class TaskEvent(Base):
+    """One line of a task's history: an attempt starting, a step, a warning, a failure, the end.
+
+    Written in their own short transactions, so a failed attempt still keeps its history.
+    """
+
+    __tablename__ = "task_events"
+    __table_args__ = (Index("ix_task_events_task_at", "task_id", "at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"))
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    attempt: Mapped[int] = mapped_column(Integer)
+    level: Mapped[str] = mapped_column(Text)  # info | warning | error
+    step: Mapped[str | None] = mapped_column(Text)
+    message: Mapped[str] = mapped_column(Text)

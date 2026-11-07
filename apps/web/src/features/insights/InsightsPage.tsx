@@ -3,6 +3,7 @@
 import { card, muted } from "@/components/ui";
 
 import { type Analytics, useAnalytics } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 function Rate({ label, value }: { label: string; value: number | null }) {
   return (
@@ -107,7 +108,7 @@ export function InsightsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Insights</h1>
+      <PageHeader title="Insights" />
       <p className={muted}>{note}</p>
       <Funnel data={funnel} />
 

@@ -44,6 +44,8 @@ cd apps/api
 python -m uv sync               # on Windows use "python -m uv" if "uv" is not found
 python -m uv run alembic upgrade head
 python -m uv run python -m careerpilot.cli create-user --email you@example.com
+# forgot the password later: python -m uv run python -m careerpilot.cli reset-password --email you@example.com
+# optional, to read scanned CVs: python -m uv sync --extra ocr
 python -m uv run uvicorn careerpilot.main:app_factory --factory --reload --port 8010
 ```
 In a second terminal:

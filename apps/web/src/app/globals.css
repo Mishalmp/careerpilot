@@ -69,6 +69,11 @@
   .tabular { font-variant-numeric: tabular-nums; }
 }
 
+/* A short rise when a page opens, so moving between pages feels connected. Position only: fading
+   the text in made it briefly low-contrast, which accessibility checks (and tired eyes) notice. */
+@keyframes page-in { from { transform: translateY(6px); } to { transform: none; } }
+.page-enter { animation: page-in var(--dur) var(--ease) both; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

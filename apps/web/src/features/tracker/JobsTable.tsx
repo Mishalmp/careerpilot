@@ -33,16 +33,16 @@ export function JobsTable({
 }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
-      <table className="w-full min-w-[52rem] text-left text-[length:var(--text-base)]">
+      <table className="w-full text-left md:min-w-[52rem] text-[length:var(--text-base)]">
         <caption className="sr-only">Tracked jobs, newest activity first</caption>
         <thead className="border-b border-border-subtle bg-surface-muted">
           <tr>
             <th scope="col" className={TH}>Company and role</th>
             <th scope="col" className={TH}>Status</th>
-            <th scope="col" className={TH}>Where</th>
-            <th scope="col" className={TH}>Est. CTC</th>
-            <th scope="col" className={TH}>Follow-up</th>
-            <th scope="col" className={TH}>Updated</th>
+            <th scope="col" className={cn(TH, "hidden md:table-cell")}>Where</th>
+            <th scope="col" className={cn(TH, "hidden md:table-cell")}>Est. CTC</th>
+            <th scope="col" className={cn(TH, "hidden sm:table-cell")}>Follow-up</th>
+            <th scope="col" className={cn(TH, "hidden md:table-cell")}>Updated</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border-subtle">
@@ -65,12 +65,12 @@ export function JobsTable({
                   onChange={(status) => onStatus(job, status)}
                 />
               </td>
-              <td className={TD}>{[job.location_text, job.work_mode].filter(Boolean).join(" · ") || "-"}</td>
-              <td className={TD}>{job.est_ctc_lpa ? `${job.est_ctc_lpa} LPA` : "-"}</td>
-              <td className={TD}>
+              <td className={cn(TD, "hidden md:table-cell")}>{[job.location_text, job.work_mode].filter(Boolean).join(" · ") || "-"}</td>
+              <td className={cn(TD, "hidden md:table-cell")}>{job.est_ctc_lpa ? `${job.est_ctc_lpa} LPA` : "-"}</td>
+              <td className={cn(TD, "hidden sm:table-cell")}>
                 <FollowUp job={job} />
               </td>
-              <td className={cn(TD, "text-muted-foreground")}>{dateOnly(job.updated_at)}</td>
+              <td className={cn(TD, "hidden text-muted-foreground md:table-cell")}>{dateOnly(job.updated_at)}</td>
             </tr>
           ))}
         </tbody>

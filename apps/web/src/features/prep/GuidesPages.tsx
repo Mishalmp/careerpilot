@@ -9,6 +9,7 @@ import { card, muted } from "@/components/ui";
 
 import { useGuide, useGuides } from "./hooks";
 import { PrepNav } from "./PrepNav";
+import { PageHeader } from "@/components/ui/page-header";
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -39,7 +40,7 @@ export function GuidesListPage() {
   const guides = useGuides();
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Prep</h1>
+      <PageHeader title="Prep" />
       <PrepNav />
       {guides.isPending && <p className={muted}>Loading...</p>}
       <ul className="grid gap-2 md:grid-cols-2">

@@ -308,3 +308,31 @@ def test_years_asked_are_read_only_near_the_word_experience(
 )
 def test_title_level(title: str, level: str | None) -> None:
     assert level_of_title(title) == level
+
+
+# --- the shared skill vocabulary (content/skills.yaml) -----------------------------------------
+
+
+def _vocabulary():
+    from careerpilot.core.config import REPO_ROOT
+    from careerpilot.modules.scoring.skills import load_vocabulary
+
+    return load_vocabulary(REPO_ROOT / "content")
+
+
+def test_cloud_and_data_tools_a_real_cv_names_are_found() -> None:
+    from careerpilot.modules.scoring.skills import skills_in
+
+    text = "Deployed to ECS with images in ECR, queues on SQS, secrets in KMS, metrics in CloudWatch, GitLab CI."
+    assert {"ecs", "ecr", "sqs", "kms", "cloudwatch", "gitlab"} <= skills_in(text, _vocabulary())
+
+
+def test_short_acronyms_are_matched_in_capitals_only() -> None:
+    from careerpilot.modules.scoring.skills import skills_in
+
+    vocabulary = _vocabulary()
+    assert "sqs" in skills_in("We use SQS.", vocabulary)
+    assert "iam" in skills_in("Manage IAM roles.", vocabulary)
+    assert "iam" not in skills_in("Tell them iam coming tomorrow", vocabulary)
+    assert "rds" not in skills_in("the cards were rds", vocabulary)
+    assert "glue" not in skills_in("glue the pieces together", vocabulary)  # only "aws glue" counts

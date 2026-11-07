@@ -10,6 +10,8 @@ from careerpilot.core.config import Settings
 from careerpilot.core.llm import tokens_used_today
 from careerpilot.modules.system import repository
 from careerpilot.modules.system.schemas import (
+    AiCallOut,
+    AiCalls,
     AiStatus,
     BackupStatus,
     DatabaseStatus,
@@ -61,4 +63,15 @@ async def build(
             last_backup_at=last_backup,
             age_hours=round((now - last_backup).total_seconds() / 3600, 1) if last_backup else None,
         ),
+    )
+
+
+async def ai_calls(
+    db: AsyncSession, owner_id: uuid.UUID, settings: Settings, *, only_problems: bool, limit: int
+) -> AiCalls:
+    rows = await repository.recent_ai_calls(db, owner_id, only_problems=only_problems, limit=limit)
+    return AiCalls(
+        items=[AiCallOut.model_validate(r) for r in rows],
+        tokens_today=await tokens_used_today(db, owner_id),
+        daily_cap=settings.llm_daily_token_cap,
     )

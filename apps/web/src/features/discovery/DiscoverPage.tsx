@@ -26,6 +26,7 @@ import {
   useSources,
   useUpdateSource,
 } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 const KINDS = ["greenhouse", "lever", "ashby"] as const;
 
@@ -354,7 +355,7 @@ export function DiscoverPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Discover</h1>
+      <PageHeader title="Discover" />
       <DigestCard />
       <AddSource />
 

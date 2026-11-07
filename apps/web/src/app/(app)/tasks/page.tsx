@@ -1,8 +1,8 @@
-import { TasksPage } from "@/features/discovery/TasksPage";
+import { ActivityPage } from "@/features/activity/ActivityPage";
 
 // This page loads its data in the browser, so it may block on navigation.
 export const instant = false;
 
 export default function Page() {
-  return <TasksPage />;
+  return <ActivityPage />;
 }

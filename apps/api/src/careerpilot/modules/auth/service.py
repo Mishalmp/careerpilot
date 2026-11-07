@@ -47,6 +47,23 @@ async def create_user(db: AsyncSession, email: str, password: str) -> User:
     return user
 
 
+class UserNotFoundError(Exception):
+    pass
+
+
+async def reset_password(db: AsyncSession, email: str, password: str) -> None:
+    """Set a new password and sign the user out everywhere (a stolen session must not survive it).
+    There is no "forgot password" email yet: this is the owner's command-line recovery path."""
+    if len(password) < MIN_PASSWORD_LENGTH:
+        raise ValueError(f"password must be at least {MIN_PASSWORD_LENGTH} characters")
+    user = await repository.get_user_by_email(db, normalize_email(email))
+    if user is None:
+        raise UserNotFoundError(email)
+    user.password_hash = await hash_password(password)
+    await repository.delete_user_sessions(db, user.id)
+    await db.commit()
+
+
 async def sole_user(db: AsyncSession) -> User:
     """The one local user, for command-line tools. Refuses to guess if there are several."""
     users = await repository.list_users(db, limit=2)

@@ -81,3 +81,42 @@ async def test_task_counts_follow_the_queue(api: AsyncClient) -> None:
 
 async def test_status_requires_a_session(client: AsyncClient) -> None:
     assert (await client.get(URL)).status_code == 401
+
+
+async def test_the_ai_call_log_lists_calls_and_can_show_only_problems(
+    app: FastAPI, api: AsyncClient, other_api: AsyncClient
+) -> None:
+    from sqlalchemy import select
+
+    from careerpilot.core.llm import LlmCall
+    from careerpilot.modules.auth.models import User
+    from tests.conftest import EMAIL
+
+    async with app.state.sessionmaker() as db:
+        mine = await db.scalar(select(User.id).where(User.email == EMAIL))
+        assert mine is not None
+        for purpose, status, error in (
+            ("research-extract", "ok", None),
+            ("jd-reading", "error", "The model service is busy."),
+        ):
+            db.add(
+                LlmCall(
+                    owner_id=mine,
+                    purpose=purpose,
+                    model="claude-haiku-5-5",
+                    input_tokens=120,
+                    output_tokens=30,
+                    latency_ms=800,
+                    status=status,
+                    error=error,
+                )
+            )
+        await db.commit()
+    everything = (await api.get("/api/v1/system/ai-calls")).json()
+    assert {c["purpose"] for c in everything["items"]} == {"research-extract", "jd-reading"}
+    assert everything["tokens_today"] == 300 and everything["daily_cap"] > 0
+    problems = (await api.get("/api/v1/system/ai-calls?problems_only=true")).json()["items"]
+    assert [c["purpose"] for c in problems] == ["jd-reading"]
+    assert problems[0]["error"] == "The model service is busy."
+    assert (await other_api.get("/api/v1/system/ai-calls")).json()["items"] == []  # not shared
+    assert (await api.get("/api/v1/system/ai-calls?limit=0")).status_code == 422

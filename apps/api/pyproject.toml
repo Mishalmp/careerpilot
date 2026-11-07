@@ -23,7 +23,15 @@ dependencies = [
   "httpx>=0.28.1",
   "cryptography>=46",
   "fsrs>=6.3.2",
+  "pypdf>=7.0.0",  # reads the text layer of an uploaded CV PDF; remove with the CV upload
+  "pillow>=12",  # enlarges scanned CVs before OCR (profile/cvfile.py); was already installed via fastembed
 ]
+
+[project.optional-dependencies]
+# OCR for scanned CVs (a PDF or picture with no text in it). Optional because it pulls in onnxruntime
+# and opencv (about 100 MB); without it the CV reader says so and asks for pasted text. Install with
+# `uv sync --extra ocr`. Remove this extra and profile/cvfile.py's default_ocr to drop OCR.
+ocr = ["rapidocr-onnxruntime>=1.4"]
 
 [dependency-groups]
 dev = [

@@ -317,6 +317,23 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | A07 | Audit rows and a daily summary on Today | A04, B06 | S | |
 | [ ] | A08 | Measure replies per queue pick in Insights | A04 | M | Uses real outcomes only |
 
+## S: account setup, activity and honest audit (2026-11-07)
+| Done | ID | Task | Deps | Size | Done when |
+|---|---|---|---|---|---|
+| [x] | S01 | Profile fields for account setup (name, current role, target roles and levels, regions, work modes, pay, links) and migration 0019 | B03 | M | API and browser tests |
+| [x] | S02 | CV upload: PDF, Word, text, pictures; limits; never stored; OCR optional (`--extra ocr`) | S01 | L | Tests incl. hostile files; real OCR checked on generated scans |
+| [x] | S03 | Read public GitHub repositories for skill suggestions (never saved without a click) | S01 | S | Fake-web tests; **not run live** |
+| [x] | S04 | Scoring reads the account-setup profile (file is the fallback) | S01 | S | Scoring tests |
+| [x] | S05 | Account setup wizard and one-page profile; Today asks to finish setup | S01 | L | Browser tests, axe, phone |
+| [x] | S06 | Task history, progress, retry from where it stopped, cancel (migration 0020), research and apply list resume | B04 | L | Tests incl. simulated crash |
+| [x] | S07 | Activity page (tasks, history, AI call log) | S06 | M | Browser tests |
+| [x] | S08 | Layout audit test at three sizes; fixes | none | M | Passes on 15 pages |
+| [x] | S09 | `reset-password` command; friendly error and not-found pages | none | S | Tests |
+| [x] | S10 | Skill vocabulary widened after measuring recall; `exact_case` implemented | none | S | Tests; 29 to 39 skills on a real CV |
+| [x] | S11 | Written audit (`13`) and the dynamic-roles design with a production list (`12`) | all | M | Reviewed by the owner |
+| [ ] | DY1-DY7 | Role-agnostic domain packs (see `12` Part A) | S01 | XL | A non-software pack passes its own eval set |
+| [ ] | S12 | First live run of search, research, apply list, GitHub and OCR on real data; record accuracy in `13` | owner | M | Numbers in `13` |
+
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)
 - 2026-11-06: plan created.

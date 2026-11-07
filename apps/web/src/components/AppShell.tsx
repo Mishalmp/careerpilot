@@ -9,7 +9,9 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { NAV_GROUPS, isActive, titleFor } from "@/components/nav";
 import { ThemeMenu } from "@/components/ThemeMenu";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useProfile } from "@/features/profile/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/states";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -60,6 +62,21 @@ function NavList({ pathname, collapsed, onNavigate }: { pathname: string; collap
 }
 
 /** Signed-in frame: redirects to /login without a session; sidebar on desktop, drawer on phones. */
+/** You, in the top bar: your name from account setup (your email until you have set it up). */
+function UserChip({ email }: { email: string }) {
+  const profile = useProfile();
+  const name = profile.data?.full_name?.trim() || email;
+  return (
+    <Link
+      href="/profile"
+      className="mr-1 flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition-colors hover:bg-surface-hover"
+    >
+      <Avatar name={name} className="size-7 text-[0.6875rem]" />
+      <span className="max-w-40 truncate text-[0.8125rem] text-muted-foreground max-sm:sr-only">{name}</span>
+    </Link>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -155,16 +172,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Button>
             <span className="text-sm font-medium text-muted-foreground">{titleFor(pathname)}</span>
             <div className="ml-auto flex items-center gap-1">
-              <span className="mr-2 hidden max-w-48 truncate text-[0.8125rem] text-muted-foreground sm:inline">
-                {email}
-              </span>
+              <UserChip email={email} />
               <ThemeMenu />
               <Button variant="ghost" size="icon" aria-label="Sign out" onClick={() => logout.mutate()}>
                 <LogOut aria-hidden="true" />
               </Button>
             </div>
           </header>
-          <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">{children}</main>
+          <main key={pathname} className="page-enter mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">
+            {children}
+          </main>
         </div>
       </div>
     </TooltipProvider>

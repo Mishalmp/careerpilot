@@ -15,6 +15,7 @@ import {
 import { useJobs } from "@/features/tracker/hooks";
 
 import { useDeleteMock, useMockSessions, useStartMock } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 function StartForm() {
   const router = useRouter();
@@ -104,7 +105,7 @@ export function MockPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Mock interviews</h1>
+      <PageHeader title="Mock interviews" />
       <StartForm />
       <section className="space-y-2" aria-labelledby="past-heading">
         <h2 id="past-heading" className="font-semibold">

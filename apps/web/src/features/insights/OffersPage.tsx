@@ -20,6 +20,7 @@ import {
   useRates,
   useSetRate,
 } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 const CURRENCIES = [
   "INR",
@@ -182,7 +183,7 @@ export function OffersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Compare offers</h1>
+      <PageHeader title="Compare offers" />
       <Rates />
       <form
         className="space-y-4"

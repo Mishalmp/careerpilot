@@ -44,6 +44,7 @@ def make_handlers(
     search: SearchProvider | None = None,
 ) -> Mapping[TaskKind, Handler]:
     async def discover(db: AsyncSession, task: Task) -> None:
+        await tasks_service.step("Reading the job board")
         try:
             await discovery_service.run_source(
                 db, task.owner_id, uuid.UUID(task.payload["source_id"]), fetcher
@@ -52,17 +53,20 @@ def make_handlers(
             raise TaskFailure(str(exc)) from exc
 
     async def daily_digest(db: AsyncSession, task: Task) -> None:
+        await tasks_service.step("Building the digest")
         await digest_service.build(db, task.owner_id, today_in(settings.timezone))
 
     async def backup(db: AsyncSession, task: Task) -> None:
         if settings.backup_key is None:
             raise TaskFailure("No backup key is set. Run `careerpilot backup-key` and set it.")
+        await tasks_service.step("Dumping, encrypting and pruning the backup")
         try:
             await asyncio.to_thread(_backup_now, settings)
         except BackupError as exc:
             raise TaskFailure(str(exc)) from exc
 
     async def research(db: AsyncSession, task: Task) -> None:
+        await tasks_service.step("Starting the research run")
         await research_service.execute(
             db,
             task.owner_id,
@@ -74,6 +78,7 @@ def make_handlers(
         )
 
     async def apply_queue(db: AsyncSession, task: Task) -> None:
+        await tasks_service.step("Choosing jobs for today's list")
         await apply_service.build_queue(
             db,
             task.owner_id,

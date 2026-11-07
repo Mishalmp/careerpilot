@@ -1,196 +1,139 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FileText, Plus, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, PartyPopper, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, Input, Textarea } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";
+import { ProgressBar, Stepper } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, ErrorState } from "@/components/ui/states";
-import { api, unwrap } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
 
-type Profile = components["schemas"]["ProfileOut"];
-const KEY = ["profile"] as const;
+import { changes, type Draft, toDraft } from "./draft";
+import { type Profile, useCompleteSetup, useProfile, useUpdateProfile } from "./hooks";
+import { AboutSection, CvSection, GoalsSection, LinksSection, ReadSection, ReviewSection } from "./sections";
 
-function useProfile() {
-  return useQuery({ queryKey: KEY, queryFn: async () => unwrap(await api.GET("/api/v1/profile")) });
-}
+const STEPS = ["About you", "What you want", "Your CV", "Public profiles", "Review"];
 
-function useAnalyse() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (text: string) => unwrap(await api.PUT("/api/v1/profile/cv", { body: { text } })),
-    onSuccess: (data) => qc.setQueryData(KEY, data),
-  });
-}
-
-function useUpdate() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (body: { skills?: string[]; role_titles?: string[]; years_experience?: number | null }) =>
-      unwrap(await api.PATCH("/api/v1/profile", { body })),
-    onSuccess: (data) => qc.setQueryData(KEY, data),
-  });
-}
-
-/** A list of short items you can remove or add to. Saves each change straight away. */
-function Chips({
-  label,
-  items,
-  onChange,
-  placeholder,
-  busy,
-}: {
-  label: string;
-  items: string[];
-  onChange: (next: string[]) => void;
-  placeholder: string;
-  busy: boolean;
-}) {
-  const [draft, setDraft] = useState("");
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className="text-[0.8125rem] font-medium">{label}</h3>
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">None yet.</p>
-      ) : (
-        <ul className="flex flex-wrap gap-1.5" aria-label={label}>
-          {items.map((item) => (
-            <li key={item} className="inline-flex items-center gap-1 rounded-full bg-accent-soft py-0.5 pl-2.5 pr-1 text-[0.8125rem] text-accent-text">
-              {item}
-              <button
-                type="button"
-                aria-label={`Remove ${item}`}
-                disabled={busy}
-                onClick={() => onChange(items.filter((i) => i !== item))}
-                className="rounded-full p-0.5 hover:bg-accent-soft-hover"
-              >
-                <X className="size-3.5" aria-hidden="true" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <form
-        className="flex gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (draft.trim()) {
-            onChange([...items, draft.trim()]);
-            setDraft("");
-          }
-        }}
-      >
-        <Input aria-label={`Add to ${label}`} placeholder={placeholder} value={draft} onChange={(e) => setDraft(e.target.value)} className="max-w-xs" />
-        <Button type="submit" disabled={busy || !draft.trim()}>
-          <Plus aria-hidden="true" /> Add
-        </Button>
-      </form>
-    </div>
-  );
-}
-
+/**
+ * Account setup. Nobody's details are built in: you say who you are and what you want, add a CV,
+ * and everything else (scoring, research, the daily apply list) is aimed from that.
+ * Until setup is finished this is a short wizard; afterwards the same sections are one page.
+ */
 export function ProfilePage() {
   const profile = useProfile();
-  const analyse = useAnalyse();
-  const update = useUpdate();
-  const [cv, setCv] = useState("");
+  if (profile.isPending) return <Skeleton className="h-64" aria-busy="true" aria-label="Loading profile" />;
+  if (profile.isError) {
+    return <ErrorState title="Could not load your profile" description={profile.error.message} onRetry={() => void profile.refetch()} />;
+  }
+  const p = profile.data;
+  // The one-page view remounts after each save so its form starts clean; the wizard must not, or it
+  // would jump back to the first step.
+  return p.setup.complete ? <Settings key={p.updated_at ?? "none"} profile={p} /> : <Wizard profile={p} />;
+}
+
+/** What is on screen: the saved profile with your unsaved edits on top. */
+function useDraft(profile: Profile) {
+  const [edits, setEdits] = useState<Partial<Draft>>({});
+  const draft: Draft = { ...toDraft(profile), ...edits };
+  const edit = (patch: Partial<Draft>) => setEdits((e) => ({ ...e, ...patch }));
+  return { draft, edit, pending: changes(profile, draft, new Set(Object.keys(edits))) };
+}
+
+function Wizard({ profile }: { profile: Profile }) {
+  const router = useRouter();
+  const update = useUpdateProfile();
+  const complete = useCompleteSetup();
+  const { draft, edit, pending } = useDraft(profile);
+  const [step, setStep] = useState(0);
+  const dirty = Object.keys(pending).length > 0;
+  const error = update.error ?? complete.error;
+
+  const next = async () => {
+    try {
+      if (dirty) await update.mutateAsync(pending);
+      setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    } catch {
+      // the error is shown below; stay on this step so nothing typed is lost
+    }
+  };
+  const finish = async () => {
+    if (dirty) await update.mutateAsync(pending);
+    await complete.mutateAsync();
+    router.push("/");
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <PageHeader
-        title="Your profile"
-        description="Paste your CV once. Your skills and the roles you fit are read from it, and used to aim research at what you need. Nothing here is hard-coded: edit anything that is wrong."
-      />
+      <PageHeader title="Set up your account" description="A few questions so CareerPilot works for you and not for someone else. It takes about three minutes, and you can change everything later." />
+      <ProgressBar label="Setup progress" value={(step / (STEPS.length - 1)) * 100} />
+      <Stepper steps={STEPS} current={step} onSelect={setStep} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your CV</CardTitle>
-          <CardDescription>
-            It is read by rules on this computer. The text is stored here, never shown again and never sent to a search service or a model.
-            Only skills and role titles are used in searches.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            className="flex flex-col gap-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              analyse.mutate(cv, { onSuccess: () => setCv("") });
-            }}
-          >
-            <Field label="CV text" help={profile.data?.has_cv ? "A CV is stored. Paste a new one to replace what was read from it." : "Plain text works best."}>
-              {(p) => <Textarea rows={8} value={cv} onChange={(e) => setCv(e.target.value)} {...p} />}
-            </Field>
-            {analyse.error && (
-              <p role="alert" className="text-sm text-danger-text">
-                {analyse.error.message}
-              </p>
-            )}
-            <div>
-              <Button type="submit" variant="primary" loading={analyse.isPending} disabled={cv.trim().length < 20}>
-                <FileText aria-hidden="true" /> Read my CV
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {step === 0 && <AboutSection draft={draft} edit={edit} />}
+      {step === 1 && <GoalsSection draft={draft} edit={edit} suggestions={profile.role_titles} />}
+      {step === 2 && (
+        <>
+          <CvSection profile={profile} />
+          {(profile.skills.length > 0 || profile.role_titles.length > 0) && <ReadSection profile={profile} />}
+        </>
+      )}
+      {step === 3 && <LinksSection draft={draft} edit={edit} profile={profile} />}
+      {step === 4 && <ReviewSection profile={profile} />}
 
-      {profile.isPending && <Skeleton className="h-48" aria-busy="true" aria-label="Loading profile" />}
-      {profile.isError && <ErrorState title="Could not load your profile" description={profile.error.message} onRetry={() => void profile.refetch()} />}
-      {profile.data && <Reading key={profile.data.updated_at ?? "none"} profile={profile.data} busy={update.isPending} onSave={(b) => update.mutate(b)} error={update.error?.message} />}
+      {error && (
+        <p role="alert" className="text-sm text-danger-text">
+          {error.message}
+        </p>
+      )}
+      <div className="flex items-center justify-between gap-2 border-t border-border-subtle pt-4">
+        <Button variant="ghost" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
+          <ArrowLeft aria-hidden="true" /> Back
+        </Button>
+        {step < STEPS.length - 1 ? (
+          <Button variant="primary" onClick={() => void next()} loading={update.isPending}>
+            {dirty ? "Save and continue" : "Continue"} <ArrowRight aria-hidden="true" />
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={() => void finish()} loading={complete.isPending || update.isPending} disabled={profile.setup.missing.length > 0 && !dirty}>
+            <PartyPopper aria-hidden="true" /> Finish setup
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
 
-function Reading({
-  profile,
-  busy,
-  onSave,
-  error,
-}: {
-  profile: Profile;
-  busy: boolean;
-  onSave: (body: { skills?: string[]; role_titles?: string[]; years_experience?: number | null }) => void;
-  error?: string;
-}) {
-  const [years, setYears] = useState<string>(profile.years_experience?.toString() ?? "");
-  if (!profile.has_cv && profile.skills.length === 0 && profile.role_titles.length === 0) {
-    return <Alert tone="info">Nothing yet. Paste your CV above and choose “Read my CV”.</Alert>;
-  }
+function Settings({ profile }: { profile: Profile }) {
+  const update = useUpdateProfile();
+  const { draft, edit, pending } = useDraft(profile);
+  const dirty = Object.keys(pending).length > 0;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>What was read</CardTitle>
-        <CardDescription>Changes save as you make them.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-5">
-        <Chips label="Role titles" items={profile.role_titles} placeholder="e.g. Backend Developer" busy={busy} onChange={(next) => onSave({ role_titles: next })} />
-        <Chips label="Skills" items={profile.skills} placeholder="e.g. postgresql" busy={busy} onChange={(next) => onSave({ skills: next })} />
-        <form
-          className="flex items-end gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSave({ years_experience: years.trim() === "" ? null : Number(years) });
-          }}
-        >
-          <Field label="Years of experience">
-            {(p) => <Input type="number" min={0} max={60} value={years} onChange={(e) => setYears(e.target.value)} className="w-28" {...p} />}
-          </Field>
-          <Button type="submit" disabled={busy}>
-            Save
-          </Button>
-        </form>
-        {error && (
-          <p role="alert" className="text-sm text-danger-text">
-            {error}
-          </p>
-        )}
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-5">
+      <PageHeader
+        title="Your profile"
+        description="Everything the app knows about you. Scoring, research and your daily apply list are aimed from this, so keep it true."
+      />
+      {update.isSuccess && !dirty && <Alert tone="success">Saved.</Alert>}
+      <div className="grid items-start gap-5 lg:grid-cols-2">
+        <div className="flex flex-col gap-5">
+          <AboutSection draft={draft} edit={edit} />
+          <GoalsSection draft={draft} edit={edit} suggestions={profile.role_titles} />
+          <LinksSection draft={draft} edit={edit} profile={profile} />
+        </div>
+        <div className="flex flex-col gap-5">
+          <CvSection profile={profile} />
+          <ReadSection profile={profile} />
+        </div>
+      </div>
+      <div className="sticky bottom-0 -mx-4 flex items-center justify-between gap-3 border-t border-border-subtle bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+        <p className="text-sm text-muted-foreground" role="status">
+          {update.error ? <span className="text-danger-text">{update.error.message}</span> : dirty ? "You have unsaved changes." : "All changes are saved."}
+        </p>
+        <Button variant="primary" disabled={!dirty} loading={update.isPending} onClick={() => update.mutate(pending)}>
+          <Save aria-hidden="true" /> Save changes
+        </Button>
+      </div>
+    </div>
   );
 }

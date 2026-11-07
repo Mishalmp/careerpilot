@@ -10,6 +10,7 @@ from careerpilot.core.errors import ProblemError
 from careerpilot.core.evidence import quote_appears
 from careerpilot.core.llm import LlmClient, call_llm_json
 from careerpilot.core.prompts import data_block, load_prompt
+from careerpilot.modules.profile.schemas import ProfileOut
 from careerpilot.modules.scoring import repository
 from careerpilot.modules.scoring.models import JobScore
 from careerpilot.modules.scoring.profile import Profile, load_profile
@@ -41,9 +42,44 @@ from careerpilot.modules.scoring.skills import (
     years_required,
 )
 from careerpilot.modules.tracker import service as tracker_service
+from careerpilot.modules.tracker.enums import Region
 from careerpilot.modules.verification import service as verification_service
 
 MAX_JD_CHARS = 12_000
+
+
+def profile_for_scoring(mine: ProfileOut, content_dir: Path) -> Profile:
+    """What a job is compared against: your account setup when it has skills, regions and years,
+    otherwise `content/private/profile.yaml`, otherwise a 409 that says what to fill in."""
+    regions = [Region(r) for r in mine.regions if r in {x.value for x in Region}]
+    if mine.skills and regions and mine.years_experience is not None:
+        levels = [lv for lv in mine.target_levels if lv in ("junior", "mid", "senior", "lead")]
+        return Profile(
+            years_experience=mine.years_experience,
+            target_levels=levels or ["junior", "mid"],
+            skills=mine.skills,
+            regions=regions,
+            needs_visa_sponsorship=mine.needs_visa,
+            salary_floor_lpa=mine.salary_floor_lpa or None,
+            salary_target_lpa=mine.salary_target_lpa or None,
+        )
+    try:
+        return load_profile(content_dir)
+    except ProblemError as exc:
+        if exc.status != 409:
+            raise
+        need = [
+            name
+            for name, present in (
+                ("skills", bool(mine.skills)),
+                ("regions", bool(regions)),
+                ("years of experience", mine.years_experience is not None),
+            )
+            if not present
+        ]
+        raise ProblemError(
+            409, "Finish account setup first", "Your profile still needs: " + ", ".join(need) + "."
+        ) from exc
 
 
 def _profile_hash(profile: Profile) -> str:
@@ -69,14 +105,18 @@ def _out(row: JobScore, current_hash: str | None) -> ScoreOut:
 
 
 async def get_score(
-    db: AsyncSession, owner_id: uuid.UUID, job_id: uuid.UUID, settings: Settings
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    job_id: uuid.UUID,
+    settings: Settings,
+    mine: ProfileOut,
 ) -> ScoreOut | None:
     await tracker_service.get_job(db, owner_id, job_id)  # 404 for jobs that are not yours
     row = await repository.get_score(db, owner_id, job_id)
     if row is None:
         return None
     try:
-        current = _profile_hash(load_profile(settings.content_dir))
+        current = _profile_hash(profile_for_scoring(mine, settings.content_dir))
     except ProblemError:
         current = None
     return _out(row, current)
@@ -121,12 +161,13 @@ async def score_job(
     job_id: uuid.UUID,
     *,
     settings: Settings,
+    mine: ProfileOut,
     llm: LlmClient | None,
     use_ai: bool,
 ) -> ScoreOut:
     """Score one job against your profile and store the result. Safe to repeat."""
     job = await tracker_service.get_job(db, owner_id, job_id)
-    profile = load_profile(settings.content_dir)
+    profile = profile_for_scoring(mine, settings.content_dir)
     vocabulary = load_vocabulary(settings.content_dir)
 
     verification = await verification_service.get_verification(

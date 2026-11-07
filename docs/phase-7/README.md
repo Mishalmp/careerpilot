@@ -23,6 +23,8 @@ After Phases 0 to 6 the app works but looks like a developer prototype. The owne
 | [09-product-spec.md](09-product-spec.md) | The foundation A to Z: purpose, domain objects, each feature's inputs, outputs, rules, edge cases, routes, API conventions, targets, scalability path. |
 | [10-test-strategy.md](10-test-strategy.md) | Test layers, data, LLM evals, AI QA agents, CI gates, the test-case catalogue, failure drills. |
 | [11-ai-usage-search-and-apply.md](11-ai-usage-search-and-apply.md) | AI access without a key, costs, model/context rules, MCP and RAG rules, security checklist, free and cheap search APIs with verified rates, and the assisted daily-apply design. |
+| [12-dynamic-platform-and-production-readiness.md](12-dynamic-platform-and-production-readiness.md) | Design for a role-agnostic platform (domain packs, not built) and the production-readiness list with what is urgent, next and later. |
+| [13-honest-audit-2026-11-07.md](13-honest-audit-2026-11-07.md) | Requirements versus what exists, how each part was checked, what was found wrong and fixed, accuracy and durability, and what to do next. |
 | [STATUS.md](STATUS.md) | Where work stopped and what is next. Update before ending any session. |
 | [assets/](assets) | Logo concept files (mark, wordmark light and dark). |
 

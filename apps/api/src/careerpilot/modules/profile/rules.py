@@ -79,3 +79,51 @@ def clean_list(items: list[str], *, limit: int, max_length: int = 60) -> list[st
         if text:
             seen.setdefault(text.casefold(), text)
     return list(seen.values())[:limit]
+
+
+_NOT_A_NAME = re.compile(
+    r"resume|curriculum|vitae|\bcv\b|profile|summary|objective|developer|engineer|@|http|www\.|\d",
+    re.IGNORECASE,
+)
+# Well-known names written in camel case that are not people (and so must not be split in two).
+_CAMEL_WORDS = frozenset(
+    {
+        "javascript",
+        "typescript",
+        "postgresql",
+        "mongodb",
+        "github",
+        "gitlab",
+        "linkedin",
+        "youtube",
+        "devops",
+        "pytorch",
+        "mysql",
+        "fastapi",
+        "openai",
+        "nextjs",
+        "nodejs",
+    }
+)
+_GLUED_NAME = re.compile(r"^[A-Z][a-z]+(?:[A-Z][a-z]+){1,2}$")
+_NAME_WORD = re.compile(r"^[A-Za-z][A-Za-z.'\-]*$")
+
+
+def guess_name(text: str) -> str | None:
+    """A person's name from the top of a CV: a short first line of two to four plain words.
+    A guess for the person to correct, so it is only used to fill an empty field."""
+    for line in text.splitlines()[:6]:
+        words = line.split()
+        if len(words) == 1 and _GLUED_NAME.match(words[0]) and words[0].lower() not in _CAMEL_WORDS:
+            words = re.findall(r"[A-Z][a-z]+", words[0])  # OCR can glue "PriyaSharma" together
+            line = " ".join(words)
+        if not words:
+            continue
+        if (
+            2 <= len(words) <= 4
+            and all(_NAME_WORD.match(w) for w in words)
+            and not _NOT_A_NAME.search(line)
+        ):
+            return " ".join(w if w.isupper() is False else w.capitalize() for w in words)
+        return None  # the first non-empty line is not a name
+    return None

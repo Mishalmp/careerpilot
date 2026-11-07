@@ -1,35 +1,53 @@
 "use client";
 
-import { ArrowRight, BookOpen, Briefcase, CalendarClock, ClipboardCheck, Inbox, Plus } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, CalendarClock, ClipboardCheck, Inbox, ListChecks, Plus, Rocket } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
-import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState, ErrorState } from "@/components/ui/states";
+import { useTasks } from "@/features/activity/hooks";
 import { useApplyQueue } from "@/features/apply/hooks";
 import { useLearnStats } from "@/features/learn/hooks";
 import { useFindings } from "@/features/learn/researchHooks";
+import { useProfile } from "@/features/profile/hooks";
 import { useUpdateDay } from "@/features/prep/hooks";
 import { FollowUp } from "@/features/tracker/JobsTable";
 import { StatusBadge } from "@/features/tracker/StatusBadge";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { ProgressBar } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatTile } from "@/components/ui/stat";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 import type { TodayPrep } from "@/lib/api/types";
 
 import { useTodayData } from "./hooks";
 
-function Stat({ label, value, hint, icon: Icon }: { label: string; value: number | string; hint?: string; icon: typeof Briefcase }) {
+function greeting(): string {
+  const hour = new Date().getHours();
+  return hour < 5 ? "Working late" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+}
+
+/** Shown until account setup is finished: what is missing, and one button to do it. */
+function SetupBanner({ missing, done }: { missing: string[]; done: number }) {
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardDescription>{label}</CardDescription>
-        <Icon className="size-4 text-muted-foreground" aria-hidden="true" />
-      </CardHeader>
-      <CardContent className="pt-2">
-        <p className="text-3xl font-semibold tracking-tight">{value}</p>
-        {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-3 rounded-lg border border-primary/30 bg-accent-soft p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-start gap-3">
+        <Rocket className="mt-0.5 size-5 shrink-0 text-accent-text" aria-hidden="true" />
+        <div className="min-w-0">
+          <p className="font-medium text-accent-text">Finish setting up your account</p>
+          <p className="text-sm text-accent-text">
+            CareerPilot works from what you tell it, not from built-in details. Still needed: {missing.join(", ")}.
+          </p>
+          <ProgressBar label="Setup progress" value={(done / 4) * 100} className="mt-2 max-w-xs" />
+        </div>
+      </div>
+      <Button asChild variant="primary" className="shrink-0">
+        <Link href="/profile">
+          Continue setup <ArrowRight aria-hidden="true" />
+        </Link>
+      </Button>
+    </div>
   );
 }
 
@@ -38,13 +56,15 @@ export function TodayPage() {
   const learn = useLearnStats();
   const inbox = useFindings(1);
   const apply = useApplyQueue(false);
+  const profile = useProfile();
+  const tasks = useTasks();
 
   if (today.isPending) {
     return (
       <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading today">
         <Skeleton className="h-9 w-40" />
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[0, 1, 2].map((i) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
             <Skeleton key={i} className="h-28" />
           ))}
         </div>
@@ -60,11 +80,19 @@ export function TodayPage() {
   const { prep, pipeline, due_followups: followups } = today.data;
   const active = pipeline.filter((p) => p.count > 0);
   const totalJobs = pipeline.reduce((sum, p) => sum + p.count, 0);
+  const me = profile.data;
+  const firstName = me?.full_name?.trim().split(/\s+/)[0];
+  const failed = tasks.data?.counts.failed ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title="Today"
+        title={
+          <span className="flex items-center gap-3">
+            {me?.full_name ? <Avatar name={me.full_name} className="size-10" /> : null}
+            {firstName ? `${greeting()}, ${firstName}` : "Today"}
+          </span>
+        }
         description="What needs your attention, chosen by rules, not by a model."
         actions={
           <Button asChild variant="primary">
@@ -75,35 +103,49 @@ export function TodayPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Jobs tracked" value={totalJobs} icon={Briefcase} hint={active.length ? `${active.length} stages in use` : "Start by adding one"} />
-        <Stat label="Follow-ups due" value={followups.length} icon={CalendarClock} hint={followups.length ? "Open them below" : "Nothing overdue"} />
-        <Link href="/learn/review" className="block rounded-lg focus-visible:outline-offset-2">
-          <Stat
-            label="Questions due"
-            value={learn.data ? learn.data.due_now : "-"}
-            icon={BookOpen}
-            hint={learn.data ? `${learn.data.new_today_left} new allowed today · streak ${learn.data.streak_days} d` : "Learn"}
-          />
-        </Link>
-        <Link href="/learn#inbox" className="block rounded-lg focus-visible:outline-offset-2">
-          <Stat
-            label="Research inbox"
-            value={inbox.data ? inbox.data.total : "-"}
-            icon={Inbox}
-            hint={inbox.data && inbox.data.total > 0 ? "Approve or reject" : "Nothing waiting"}
-          />
-        </Link>
-      </div>
+      {me && !me.setup.complete && <SetupBanner missing={me.setup.missing} done={4 - me.setup.missing.length} />}
 
-      <Link href="/apply" className="block rounded-lg focus-visible:outline-offset-2">
-        <Stat
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
+        <StatTile
+          href="/apply"
           label="Jobs ready to review"
           value={apply.data ? apply.data.ready_count : "-"}
           icon={ClipboardCheck}
-          hint={apply.data && apply.data.ready_count > 0 ? "Pay, interview and company details are waiting for you" : "Build today’s list on the Apply page"}
+          tone="success"
+          hint={apply.data && apply.data.ready_count > 0 ? "Pay, interview and company details are waiting" : "Build today’s list on the Apply page"}
         />
-      </Link>
+        <StatTile href="/jobs" label="Jobs tracked" value={totalJobs} icon={Briefcase} hint={active.length ? `${active.length} ${active.length === 1 ? "stage" : "stages"} in use` : "Start by adding one"} />
+        <StatTile
+          label="Follow-ups due"
+          value={followups.length}
+          icon={CalendarClock}
+          tone={followups.length ? "warning" : "neutral"}
+          hint={followups.length ? "Open them below" : "Nothing overdue"}
+        />
+        <StatTile
+          href="/learn/review"
+          label="Questions due"
+          value={learn.data ? learn.data.due_now : "-"}
+          icon={BookOpen}
+          tone="violet"
+          hint={learn.data ? `${learn.data.new_today_left} new allowed today · streak ${learn.data.streak_days} d` : "Learn"}
+        />
+        <StatTile
+          href="/learn#inbox"
+          label="Research inbox"
+          value={inbox.data ? inbox.data.total : "-"}
+          icon={Inbox}
+          hint={inbox.data && inbox.data.total > 0 ? "Approve or reject" : "Nothing waiting"}
+        />
+        <StatTile
+          href="/tasks"
+          label="Background tasks failed"
+          value={tasks.data ? failed : "-"}
+          icon={ListChecks}
+          tone={failed ? "danger" : "neutral"}
+          hint={failed ? "Open Activity to retry" : "All background work is fine"}
+        />
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

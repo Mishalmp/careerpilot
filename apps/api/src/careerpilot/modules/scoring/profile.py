@@ -1,4 +1,5 @@
-"""Your profile: what job scoring compares a job against. It is a file, not a database row."""
+"""What job scoring compares a job against. It comes from account setup (the database); this file
+is the fallback for people who prefer to keep their profile in `content/private/profile.yaml`."""
 
 from pathlib import Path
 from typing import Annotated
@@ -34,7 +35,8 @@ def load_profile(content_dir: Path) -> Profile:
         raise ProblemError(
             409,
             "No profile yet",
-            "Copy content/profile.example.yaml to content/private/profile.yaml and fill it in.",
+            "Finish account setup on the Profile page (or copy content/profile.example.yaml to "
+            "content/private/profile.yaml and fill it in).",
         )
     try:
         return Profile.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))

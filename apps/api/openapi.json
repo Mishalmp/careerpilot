@@ -20,6 +20,95 @@
         "title": "AcceptOut",
         "type": "object"
       },
+      "AiCallOut": {
+        "description": "One request to the model. The prompt and the answer are deliberately not kept.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "input_tokens": {
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "output_tokens": {
+            "title": "Output Tokens",
+            "type": "integer"
+          },
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "purpose",
+          "model",
+          "input_tokens",
+          "output_tokens",
+          "latency_ms",
+          "status",
+          "error"
+        ],
+        "title": "AiCallOut",
+        "type": "object"
+      },
+      "AiCalls": {
+        "properties": {
+          "daily_cap": {
+            "title": "Daily Cap",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AiCallOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tokens_today": {
+            "title": "Tokens Today",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "tokens_today",
+          "daily_cap"
+        ],
+        "title": "AiCalls",
+        "type": "object"
+      },
       "AiStatus": {
         "properties": {
           "configured": {
@@ -697,6 +786,21 @@
         ],
         "title": "BoardKind",
         "type": "string"
+      },
+      "Body_upload_cv": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "PDF, Word (.docx), text or a picture of a CV",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_cv",
+        "type": "object"
       },
       "BriefOut": {
         "properties": {
@@ -1672,6 +1776,75 @@
           "text"
         ],
         "title": "CvIn",
+        "type": "object"
+      },
+      "CvInfo": {
+        "properties": {
+          "chars": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chars"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "has_cv": {
+            "title": "Has Cv",
+            "type": "boolean"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "required": [
+          "has_cv",
+          "source",
+          "filename",
+          "chars"
+        ],
+        "title": "CvInfo",
+        "type": "object"
+      },
+      "CvUploadOut": {
+        "properties": {
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ProfileOut"
+          }
+        },
+        "required": [
+          "profile",
+          "notes"
+        ],
+        "title": "CvUploadOut",
         "type": "object"
       },
       "DatabaseStatus": {
@@ -2952,6 +3125,66 @@
           "facts"
         ],
         "title": "GenerateRequest",
+        "type": "object"
+      },
+      "GithubLanguage": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "repos": {
+            "title": "Repos",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "repos"
+        ],
+        "title": "GithubLanguage",
+        "type": "object"
+      },
+      "GithubReading": {
+        "properties": {
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/GithubLanguage"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "repos_read": {
+            "title": "Repos Read",
+            "type": "integer"
+          },
+          "suggested_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Skills",
+            "type": "array"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "repos_read",
+          "languages",
+          "suggested_skills",
+          "notes"
+        ],
+        "title": "GithubReading",
         "type": "object"
       },
       "GradedBy": {
@@ -6944,11 +7177,103 @@
         "title": "ProblemSummary",
         "type": "object"
       },
+      "ProfileLink": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "linkedin",
+              "github",
+              "leetcode",
+              "naukri",
+              "portfolio",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2000,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "url"
+        ],
+        "title": "ProfileLink",
+        "type": "object"
+      },
       "ProfileOut": {
         "properties": {
+          "current_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Role"
+          },
+          "cv": {
+            "$ref": "#/components/schemas/CvInfo"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
           "has_cv": {
             "title": "Has Cv",
             "type": "boolean"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileLink"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "needs_visa": {
+            "title": "Needs Visa",
+            "type": "boolean"
+          },
+          "regions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Regions",
+            "type": "array"
           },
           "role_titles": {
             "items": {
@@ -6957,11 +7282,50 @@
             "title": "Role Titles",
             "type": "array"
           },
+          "salary_floor_lpa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Floor Lpa"
+          },
+          "salary_target_lpa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Target Lpa"
+          },
+          "setup": {
+            "$ref": "#/components/schemas/SetupStatus"
+          },
           "skills": {
             "items": {
               "type": "string"
             },
             "title": "Skills",
+            "type": "array"
+          },
+          "target_levels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Levels",
+            "type": "array"
+          },
+          "target_roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Roles",
             "type": "array"
           },
           "updated_at": {
@@ -6975,6 +7339,13 @@
               }
             ],
             "title": "Updated At"
+          },
+          "work_modes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Work Modes",
+            "type": "array"
           },
           "years_experience": {
             "anyOf": [
@@ -6993,7 +7364,21 @@
           "skills",
           "role_titles",
           "years_experience",
-          "updated_at"
+          "updated_at",
+          "full_name",
+          "headline",
+          "current_role",
+          "location",
+          "target_roles",
+          "target_levels",
+          "regions",
+          "work_modes",
+          "needs_visa",
+          "salary_floor_lpa",
+          "salary_target_lpa",
+          "links",
+          "cv",
+          "setup"
         ],
         "title": "ProfileOut",
         "type": "object"
@@ -7001,6 +7386,102 @@
       "ProfileUpdate": {
         "description": "Only the fields you send change. Use this to fix what the CV reading got wrong.",
         "properties": {
+          "current_role": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Role"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "links": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ProfileLink"
+                },
+                "maxItems": 8,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Links"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "needs_visa": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Needs Visa"
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "India",
+                    "Europe",
+                    "USA",
+                    "UAE / Middle East",
+                    "Remote (Global)"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regions"
+          },
           "role_titles": {
             "anyOf": [
               {
@@ -7018,6 +7499,38 @@
             ],
             "title": "Role Titles"
           },
+          "salary_floor_lpa": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Floor Lpa"
+          },
+          "salary_target_lpa": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Target Lpa"
+          },
           "skills": {
             "anyOf": [
               {
@@ -7034,6 +7547,64 @@
               }
             ],
             "title": "Skills"
+          },
+          "target_levels": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "junior",
+                    "mid",
+                    "senior",
+                    "lead"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 4,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Levels"
+          },
+          "target_roles": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 60,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 8,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Roles"
+          },
+          "work_modes": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "Remote",
+                    "Hybrid",
+                    "Onsite"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Modes"
           },
           "years_experience": {
             "anyOf": [
@@ -7744,6 +8315,40 @@
           "kind"
         ],
         "title": "SessionCreate",
+        "type": "object"
+      },
+      "SetupStatus": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          }
+        },
+        "required": [
+          "complete",
+          "completed_at",
+          "missing"
+        ],
+        "title": "SetupStatus",
         "type": "object"
       },
       "SourceCreate": {
@@ -8549,6 +9154,73 @@
         "title": "TaskCounts",
         "type": "object"
       },
+      "TaskDetail": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/TaskEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "task": {
+            "$ref": "#/components/schemas/TaskOut"
+          }
+        },
+        "required": [
+          "task",
+          "events"
+        ],
+        "title": "TaskDetail",
+        "type": "object"
+      },
+      "TaskEventOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "attempt": {
+            "title": "Attempt",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          }
+        },
+        "required": [
+          "id",
+          "at",
+          "attempt",
+          "level",
+          "step",
+          "message"
+        ],
+        "title": "TaskEventOut",
+        "type": "object"
+      },
       "TaskKind": {
         "enum": [
           "discover",
@@ -8630,6 +9302,16 @@
             "title": "Max Attempts",
             "type": "integer"
           },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaskProgress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "run_after": {
             "format": "date-time",
             "title": "Run After",
@@ -8662,9 +9344,45 @@
           "started_at",
           "finished_at",
           "error",
+          "progress",
           "created_at"
         ],
         "title": "TaskOut",
+        "type": "object"
+      },
+      "TaskProgress": {
+        "properties": {
+          "done": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done"
+          },
+          "step": {
+            "title": "Step",
+            "type": "string"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          }
+        },
+        "required": [
+          "step"
+        ],
+        "title": "TaskProgress",
         "type": "object"
       },
       "TaskStatus": {
@@ -11968,7 +12686,7 @@
         ]
       },
       "post": {
-        "description": "Score the job against your profile (content/private/profile.yaml). Safe to repeat.",
+        "description": "Score the job against your profile (from account setup). Safe to repeat.",
         "operationId": "score_job",
         "parameters": [
           {
@@ -15581,6 +16299,166 @@
         ]
       }
     },
+    "/api/v1/profile/cv/file": {
+      "post": {
+        "description": "Reads an uploaded CV in memory (the file is not kept) and fills in the profile from it.",
+        "operationId": "upload_cv",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_cv"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvUploadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Cv",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/github/read": {
+      "post": {
+        "description": "Suggests skills from the public repositories of the GitHub link in your profile.",
+        "operationId": "read_github",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GithubReading"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Github",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/setup/complete": {
+      "post": {
+        "description": "Marks account setup finished. Refused, with what is missing, until the answers are there.",
+        "operationId": "complete_setup",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Setup",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
     "/api/v1/research/findings": {
       "get": {
         "operationId": "list_research_findings",
@@ -16252,6 +17130,78 @@
         ]
       }
     },
+    "/api/v1/system/ai-calls": {
+      "get": {
+        "description": "Recent model calls with tokens, time and errors (no prompts or answers are stored).",
+        "operationId": "list_ai_calls",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "problems_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Problems Only",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiCalls"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Calls",
+        "tags": [
+          "system"
+        ]
+      }
+    },
     "/api/v1/system/status": {
       "get": {
         "operationId": "get_system_status",
@@ -16416,9 +17366,129 @@
         ]
       }
     },
+    "/api/v1/tasks/{task_id}": {
+      "get": {
+        "description": "One task with its step-by-step history (what each attempt did and where it stopped).",
+        "operationId": "get_task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Task",
+        "tags": [
+          "tasks"
+        ]
+      }
+    },
+    "/api/v1/tasks/{task_id}/cancel": {
+      "post": {
+        "description": "Stop a task that is still waiting.",
+        "operationId": "cancel_task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Task",
+        "tags": [
+          "tasks"
+        ]
+      }
+    },
     "/api/v1/tasks/{task_id}/retry": {
       "post": {
-        "description": "Queue a failed task again.",
+        "description": "Queue a failed task again; it continues from where it stopped.",
         "operationId": "retry_task",
         "parameters": [
           {

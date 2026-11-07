@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.modules.tasks.enums import TaskKind, TaskStatus
-from careerpilot.modules.tasks.models import Task
+from careerpilot.modules.tasks.models import Task, TaskEvent
 
 LIST_LIMIT = 100
 
@@ -104,3 +104,37 @@ async def requeue_all_failed(db: AsyncSession, owner_id: uuid.UUID, now: datetim
         .returning(Task.id)
     )
     return len(result.all())
+
+
+def add_event(
+    db: AsyncSession,
+    *,
+    task_id: uuid.UUID,
+    owner_id: uuid.UUID,
+    attempt: int,
+    level: str,
+    step: str | None,
+    message: str,
+) -> None:
+    db.add(
+        TaskEvent(
+            task_id=task_id,
+            owner_id=owner_id,
+            attempt=attempt,
+            level=level,
+            step=step,
+            message=message[:1000],
+        )
+    )
+
+
+async def list_events(
+    db: AsyncSession, owner_id: uuid.UUID, task_id: uuid.UUID, limit: int
+) -> Sequence[TaskEvent]:
+    rows = await db.scalars(
+        select(TaskEvent)
+        .where(TaskEvent.owner_id == owner_id, TaskEvent.task_id == task_id)
+        .order_by(TaskEvent.at.desc())
+        .limit(limit)
+    )
+    return list(reversed(rows.all()))  # oldest first, the last `limit` of them

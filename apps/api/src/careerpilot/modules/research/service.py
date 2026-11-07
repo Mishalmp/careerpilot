@@ -159,6 +159,7 @@ async def execute(
     prompt = load_prompt(settings.prompts_dir, "research-extract")
 
     run.status = RunStatus.RUNNING
+    run.finished_at = None
     profile = await profile_service.get_profile(db, owner_id)
     run.queries = rules.plan_queries(
         role, company, skills=profile.skills, limit=int(budgets["searches"])
@@ -176,30 +177,67 @@ async def execute(
     }
     start_tokens = await tokens_used_today(db, owner_id)
 
-    # 1. search
-    hits: list[SearchHit] = []
-    for query in run.queries:
-        try:
-            hits.extend(await provider.search(query, 5))
-            usage["searches"] += 1
-        except SearchError as error:
-            if not hits:
-                run.status = RunStatus.FAILED
-                run.message = str(error)
-                run.usage = usage
-                run.finished_at = now or datetime.now(UTC)
-                await db.commit()
-                raise TaskFailure(str(error)) from error
-            notes.append(f"Search stopped early: {error}")
-            break
-    pages = rules.select_pages(hits, int(budgets["pages"]))
-    if not pages:
-        notes.append("The searches found no pages worth reading.")
+    # A run that stopped part-way keeps the pages it chose and the ones it finished, so asking
+    # again continues from there instead of searching and paying for the same pages twice.
+    saved = dict(run.usage or {})
+    chosen: list[dict[str, str]] = [p for p in saved.get("pages", []) if isinstance(p, dict)]
+    done_urls: list[str] = [u for u in saved.get("done_urls", []) if isinstance(u, str)]
+    resuming = bool(chosen)
+
+    async def checkpoint() -> None:
+        run.usage = {**usage, "pages": chosen, "done_urls": list(done_urls)}
+        await db.commit()
+
+    if resuming:
+        for key in usage:
+            if isinstance(saved.get(key), int):
+                usage[key] = saved[key]
+        await tasks_service.step(
+            f"Continuing: {len(done_urls)} of {len(chosen)} pages were already read"
+        )
+        pages = [SearchHit(p["title"], p["url"], "") for p in chosen if p["url"] not in done_urls]
+    else:
+        # 1. search
+        hits: list[SearchHit] = []
+        queries: list[str] = list(run.queries)
+        for number, query in enumerate(queries, 1):
+            await tasks_service.step(
+                f"Searching {number} of {len(queries)}", done=number - 1, total=len(queries)
+            )
+            try:
+                hits.extend(await provider.search(query, 5))
+                usage["searches"] += 1
+            except SearchError as error:
+                if not hits:
+                    run.status = RunStatus.FAILED
+                    run.message = str(error)
+                    run.usage = usage
+                    run.finished_at = now or datetime.now(UTC)
+                    await db.commit()
+                    raise TaskFailure(str(error)) from error
+                notes.append(f"Search stopped early: {error}")
+                await tasks_service.warn(f"Search stopped early: {error}")
+                break
+        pages = rules.select_pages(hits, int(budgets["pages"]))
+        chosen = [{"url": p.url, "title": p.title or ""} for p in pages]
+        if not pages:
+            notes.append("The searches found no pages worth reading.")
+        await checkpoint()
 
     # 2. read pages one at a time (one database session cannot be shared between parallel tasks)
     known = await repository.existing_keys(db, owner_id)
     stopped_by_budget = False
+    previous: str | None = None
     for page in pages:
+        if previous is not None:  # the page before this one is finished, whatever came of it
+            done_urls.append(previous)
+            await checkpoint()
+        previous = page.url
+        await tasks_service.step(
+            f"Reading page {len(done_urls) + 1} of {len(chosen)}",
+            done=len(done_urls),
+            total=len(chosen),
+        )
         used = await tokens_used_today(db, owner_id) - start_tokens
         if used >= int(budgets["tokens"]):
             notes.append("Stopped: the token budget for this run was used.")
@@ -264,8 +302,10 @@ async def execute(
             )
             usage["items_found"] += 1
 
-    usage["tokens"] = await tokens_used_today(db, owner_id) - start_tokens
-    run.usage = usage
+    if previous is not None and not stopped_by_budget:
+        done_urls.append(previous)
+    usage["tokens"] += await tokens_used_today(db, owner_id) - start_tokens
+    run.usage = {**usage, "pages": chosen, "done_urls": list(done_urls)}
     run.finished_at = now or datetime.now(UTC)
     if usage["items_found"] == 0 and usage["pages_read"] == 0:
         run.status = RunStatus.FAILED

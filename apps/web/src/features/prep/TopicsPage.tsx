@@ -12,6 +12,7 @@ import { useProblems } from "@/features/practice/hooks";
 
 import { PrepNav } from "./PrepNav";
 import { todayLocal } from "@/lib/dates";
+import { PageHeader } from "@/components/ui/page-header";
 
 const STATUSES: TopicStatus[] = ["Not started", "Learning", "Revised", "Mock-tested"];
 const KINDS: StudyKind[] = ["learn", "practice", "review", "mock"];
@@ -43,7 +44,7 @@ export function TopicsPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Prep</h1>
+      <PageHeader title="Prep" />
       <PrepNav />
 
       <div className="flex flex-wrap gap-3">

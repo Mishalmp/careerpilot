@@ -119,3 +119,33 @@ async def test_expired_session_is_rejected(app: FastAPI, client: AsyncClient) ->
             {"t": datetime.now(UTC) - timedelta(minutes=1)},
         )
     assert (await client.get(ME, headers=cookie)).status_code == 401
+
+
+async def test_resetting_a_password_changes_it_and_signs_every_session_out(
+    app: FastAPI, user: None, client: AsyncClient
+) -> None:
+    from careerpilot.modules.auth import service
+
+    login = await client.post("/api/v1/auth/login", json={"email": EMAIL, "password": PASSWORD})
+    assert login.status_code == 200
+    async with app.state.sessionmaker() as db:
+        await service.reset_password(db, EMAIL.upper(), "a brand new password 2026")
+    assert (await client.get("/api/v1/auth/me")).status_code == 401  # the old session is gone
+    old = await client.post("/api/v1/auth/login", json={"email": EMAIL, "password": PASSWORD})
+    assert old.status_code == 401
+    new = await client.post(
+        "/api/v1/auth/login", json={"email": EMAIL, "password": "a brand new password 2026"}
+    )
+    assert new.status_code == 200
+
+
+async def test_resetting_refuses_a_short_password_and_an_unknown_user(
+    app: FastAPI, user: None
+) -> None:
+    from careerpilot.modules.auth import service
+
+    async with app.state.sessionmaker() as db:
+        with pytest.raises(ValueError, match="at least"):
+            await service.reset_password(db, EMAIL, "short")
+        with pytest.raises(service.UserNotFoundError):
+            await service.reset_password(db, "nobody@example.com", "a long enough password 1")

@@ -27,12 +27,14 @@ def load_vocabulary(content_dir: Path) -> Vocabulary:
         spellings = [name, *entry.get("aliases", [])]
         for spelling in spellings:
             aliases[spelling.lower()] = name
+        # `exact_case: true` is for short acronyms (SQS, IAM): matched in capitals only.
+        exact = bool(entry.get("exact_case"))
+        flags = 0 if exact else re.IGNORECASE
+        written = [spelling.upper() for spelling in spellings] if exact else spellings
         # A skill name is delimited by anything that cannot be part of a name, so "java" does not
         # match inside "javascript" and "c++" is found even though "+" is not a word character.
-        alternatives = "|".join(re.escape(s) for s in sorted(spellings, key=len, reverse=True))
-        patterns[name] = re.compile(
-            rf"(?<![\w+#.])(?:{alternatives})(?![\w+#]|\.\w)", re.IGNORECASE
-        )
+        alternatives = "|".join(re.escape(s) for s in sorted(written, key=len, reverse=True))
+        patterns[name] = re.compile(rf"(?<![\w+#.])(?:{alternatives})(?![\w+#]|\.\w)", flags)
     return Vocabulary(aliases, patterns)
 
 

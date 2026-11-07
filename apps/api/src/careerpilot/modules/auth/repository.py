@@ -48,3 +48,8 @@ async def delete_session(db: AsyncSession, session_id: uuid.UUID) -> None:
 
 async def delete_expired_sessions(db: AsyncSession, now: datetime) -> None:
     await db.execute(delete(AuthSession).where(AuthSession.expires_at <= now))
+
+
+async def delete_user_sessions(db: AsyncSession, user_id: uuid.UUID) -> None:
+    """Sign a user out everywhere."""
+    await db.execute(delete(AuthSession).where(AuthSession.user_id == user_id))

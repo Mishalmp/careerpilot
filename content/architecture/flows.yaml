@@ -199,3 +199,30 @@ flows:
         to: api
         label: "You read the list and press Approve"
         detail: "The job becomes Shortlisted. You open the apply page yourself and press I applied afterwards."
+
+  - id: account-setup
+    title: "Set up your account and read your CV"
+    summary: "How the app learns who you are and what you want, instead of having a person's details built in."
+    status: built
+    proof: [apps/api/tests/test_profile_setup.py, apps/web/e2e/profile.spec.ts]
+    steps:
+      - from: browser
+        to: api
+        label: "Answer the setup questions"
+        detail: "Name, current role, the roles you want, levels, regions, work modes, pay, public links. Only fields you edited are sent."
+      - from: browser
+        to: api
+        label: "Upload a CV (PDF, Word, text or a picture)"
+        detail: "The file is read in memory with size, page and text limits; its type is decided by its first bytes; it is never stored."
+        failure:
+          label: "The file is a scan, damaged or hostile"
+          detail: "A scan needs the optional OCR extra, otherwise you are asked to paste the text. Damaged, password-protected and oversized files are refused with a plain reason."
+      - from: api
+        to: db
+        label: "Save skills, role titles and years read by rules"
+        detail: "No model is used and nothing is sent anywhere. A name you typed is never overwritten by a guess."
+      - from: browser
+        to: api
+        label: "Optionally read your public GitHub"
+        detail: "Only the public repositories of the link you gave, through the safe fetcher; it suggests skills and saves nothing until you click one. LinkedIn and Naukri are never read."
+

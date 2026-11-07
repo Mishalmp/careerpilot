@@ -67,7 +67,9 @@ async def test_a_missing_profile_explains_what_to_do(
     shutil.copy(REPO_ROOT / "content" / "skills.yaml", tmp_path / "skills.yaml")
     app.state.settings = app.state.settings.model_copy(update={"content_dir": tmp_path})
     response = await api.post(url(await new_job(api)))
-    assert response.status_code == 409 and "profile.example.yaml" in response.json()["detail"]
+    assert response.status_code == 409
+    assert response.json()["title"] == "Finish account setup first"
+    assert "skills, regions, years of experience" in response.json()["detail"]
 
 
 async def test_an_invalid_profile_is_reported_not_ignored(api: AsyncClient, content: Path) -> None:

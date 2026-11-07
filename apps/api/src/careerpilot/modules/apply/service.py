@@ -207,10 +207,6 @@ async def build_queue(
     profile = await profile_service.get_profile(db, owner_id)
     _need_profile(profile)
 
-    remaining = policy.daily_limit - await repository.count_counted_on(db, owner_id, today)
-    if remaining <= 0:
-        return BuildResult(0, 0, 0)
-
     already = await repository.listed_job_ids(db, owner_id)
     candidates = [
         pair
@@ -235,11 +231,39 @@ async def build_queue(
         if job.est_ctc_lpa is not None
     ]
 
-    listed = held = examined = 0
+    # An earlier build that stopped part-way (a crash, a restart) leaves items that were listed but
+    # never looked up. Finish those first: this is what "retry continues from where it stopped"
+    # means for this task.
+    held = 0
+    for stale in await repository.unfinished(db, owner_id):
+        job = await tracker_service.get_job(db, owner_id, stale.job_id)
+        await tasks_service.step(f"Finishing {job.company.name}: {job.title}")
+        found = matching.match(
+            job_title=job.title,
+            job_skills=scoring_service.detect_skills(settings.content_dir, _job_text(job)),
+            profile_skills=profile.skills,
+            profile_titles=profile.role_titles,
+            posted_on=job.posted_on or job.found_on,
+            today=today,
+        )
+        if await _fill(
+            db, owner_id, stale, job, found, pool, policy, settings, search, fetcher, today, now
+        ):
+            held += 1
+        await db.commit()
+
+    remaining = policy.daily_limit - await repository.count_counted_on(db, owner_id, today)
+    if remaining <= 0:
+        return BuildResult(0, held, 0)
+
+    listed = examined = 0
     for job, found in candidates[: remaining * EXAMINE_FACTOR + 2]:
         if listed >= remaining:
             break
         examined += 1
+        await tasks_service.step(
+            f"Researching {job.company.name}: {job.title}", done=listed, total=remaining
+        )
         item = await repository.add_if_new(
             db,
             owner_id,

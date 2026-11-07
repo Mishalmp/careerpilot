@@ -19,13 +19,15 @@ Also worked as Python Full Stack Developer at Beta Ltd. Open to SDE and Software
 
 async def test_a_new_user_has_an_empty_profile(api: AsyncClient) -> None:
     body = (await api.get(BASE)).json()
-    assert body == {
-        "has_cv": False,
-        "skills": [],
-        "role_titles": [],
-        "years_experience": None,
-        "updated_at": None,
-    }
+    assert body["has_cv"] is False and body["skills"] == [] and body["role_titles"] == []
+    assert body["full_name"] is None and body["target_roles"] == [] and body["links"] == []
+    assert body["setup"]["complete"] is False
+    assert body["setup"]["missing"] == [
+        "your name",
+        "your current role",
+        "the roles you want",
+        "your CV or your skills",
+    ]
 
 
 async def test_analysing_a_cv_fills_skills_titles_and_years(api: AsyncClient) -> None:

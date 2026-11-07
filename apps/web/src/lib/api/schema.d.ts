@@ -697,7 +697,7 @@ export interface paths {
         put?: never;
         /**
          * Score Job
-         * @description Score the job against your profile (content/private/profile.yaml). Safe to repeat.
+         * @description Score the job against your profile (from account setup). Safe to repeat.
          */
         post: operations["score_job"];
         delete?: never;
@@ -1448,6 +1448,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/profile/cv/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Cv
+         * @description Reads an uploaded CV in memory (the file is not kept) and fills in the profile from it.
+         */
+        post: operations["upload_cv"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/github/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Read Github
+         * @description Suggests skills from the public repositories of the GitHub link in your profile.
+         */
+        post: operations["read_github"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/setup/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete Setup
+         * @description Marks account setup finished. Refused, with what is missing, until the answers are there.
+         */
+        post: operations["complete_setup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/research/findings": {
         parameters: {
             query?: never;
@@ -1573,6 +1633,26 @@ export interface paths {
         patch: operations["update_story"];
         trace?: never;
     };
+    "/api/v1/system/ai-calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ai Calls
+         * @description Recent model calls with tokens, time and errors (no prompts or answers are stored).
+         */
+        get: operations["list_ai_calls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/system/status": {
         parameters: {
             query?: never;
@@ -1627,6 +1707,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tasks/{task_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Task
+         * @description One task with its step-by-step history (what each attempt did and where it stopped).
+         */
+        get: operations["get_task"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/{task_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Task
+         * @description Stop a task that is still waiting.
+         */
+        post: operations["cancel_task"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tasks/{task_id}/retry": {
         parameters: {
             query?: never;
@@ -1638,7 +1758,7 @@ export interface paths {
         put?: never;
         /**
          * Retry Task
-         * @description Queue a failed task again.
+         * @description Queue a failed task again; it continues from where it stopped.
          */
         post: operations["retry_task"];
         delete?: never;
@@ -1711,6 +1831,45 @@ export interface components {
              * Format: uuid
              */
             job_id: string;
+        };
+        /**
+         * AiCallOut
+         * @description One request to the model. The prompt and the answer are deliberately not kept.
+         */
+        AiCallOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Error */
+            error: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Latency Ms */
+            latency_ms: number;
+            /** Model */
+            model: string;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Purpose */
+            purpose: string;
+            /** Status */
+            status: string;
+        };
+        /** AiCalls */
+        AiCalls: {
+            /** Daily Cap */
+            daily_cap: number;
+            /** Items */
+            items: components["schemas"]["AiCallOut"][];
+            /** Tokens Today */
+            tokens_today: number;
         };
         /** AiStatus */
         AiStatus: {
@@ -1911,6 +2070,14 @@ export interface components {
          * @enum {string}
          */
         BoardKind: "greenhouse" | "lever" | "ashby";
+        /** Body_upload_cv */
+        Body_upload_cv: {
+            /**
+             * File
+             * @description PDF, Word (.docx), text or a picture of a CV
+             */
+            file: string;
+        };
         /** BriefOut */
         BriefOut: {
             /** Likely Questions */
@@ -2229,6 +2396,23 @@ export interface components {
         CvIn: {
             /** Text */
             text: string;
+        };
+        /** CvInfo */
+        CvInfo: {
+            /** Chars */
+            chars: number | null;
+            /** Filename */
+            filename: string | null;
+            /** Has Cv */
+            has_cv: boolean;
+            /** Source */
+            source: string | null;
+        };
+        /** CvUploadOut */
+        CvUploadOut: {
+            /** Notes */
+            notes: string[];
+            profile: components["schemas"]["ProfileOut"];
         };
         /** DatabaseStatus */
         DatabaseStatus: {
@@ -2676,6 +2860,26 @@ export interface components {
             facts: components["schemas"]["FactIn"][];
             /** Sender Name */
             sender_name: string;
+        };
+        /** GithubLanguage */
+        GithubLanguage: {
+            /** Name */
+            name: string;
+            /** Repos */
+            repos: number;
+        };
+        /** GithubReading */
+        GithubReading: {
+            /** Languages */
+            languages: components["schemas"]["GithubLanguage"][];
+            /** Notes */
+            notes: string[];
+            /** Repos Read */
+            repos_read: number;
+            /** Suggested Skills */
+            suggested_skills: string[];
+            /** Username */
+            username: string;
         };
         /**
          * GradedBy
@@ -3910,16 +4114,52 @@ export interface components {
             /** Topic Keys */
             topic_keys: string[];
         };
+        /** ProfileLink */
+        ProfileLink: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "linkedin" | "github" | "leetcode" | "naukri" | "portfolio" | "other";
+            /** Url */
+            url: string;
+        };
         /** ProfileOut */
         ProfileOut: {
+            /** Current Role */
+            current_role: string | null;
+            cv: components["schemas"]["CvInfo"];
+            /** Full Name */
+            full_name: string | null;
             /** Has Cv */
             has_cv: boolean;
+            /** Headline */
+            headline: string | null;
+            /** Links */
+            links: components["schemas"]["ProfileLink"][];
+            /** Location */
+            location: string | null;
+            /** Needs Visa */
+            needs_visa: boolean;
+            /** Regions */
+            regions: string[];
             /** Role Titles */
             role_titles: string[];
+            /** Salary Floor Lpa */
+            salary_floor_lpa: number | null;
+            /** Salary Target Lpa */
+            salary_target_lpa: number | null;
+            setup: components["schemas"]["SetupStatus"];
             /** Skills */
             skills: string[];
+            /** Target Levels */
+            target_levels: string[];
+            /** Target Roles */
+            target_roles: string[];
             /** Updated At */
             updated_at: string | null;
+            /** Work Modes */
+            work_modes: string[];
             /** Years Experience */
             years_experience: number | null;
         };
@@ -3928,10 +4168,34 @@ export interface components {
          * @description Only the fields you send change. Use this to fix what the CV reading got wrong.
          */
         ProfileUpdate: {
+            /** Current Role */
+            current_role?: string | null;
+            /** Full Name */
+            full_name?: string | null;
+            /** Headline */
+            headline?: string | null;
+            /** Links */
+            links?: components["schemas"]["ProfileLink"][] | null;
+            /** Location */
+            location?: string | null;
+            /** Needs Visa */
+            needs_visa?: boolean | null;
+            /** Regions */
+            regions?: ("India" | "Europe" | "USA" | "UAE / Middle East" | "Remote (Global)")[] | null;
             /** Role Titles */
             role_titles?: string[] | null;
+            /** Salary Floor Lpa */
+            salary_floor_lpa?: number | string | null;
+            /** Salary Target Lpa */
+            salary_target_lpa?: number | string | null;
             /** Skills */
             skills?: string[] | null;
+            /** Target Levels */
+            target_levels?: ("junior" | "mid" | "senior" | "lead")[] | null;
+            /** Target Roles */
+            target_roles?: string[] | null;
+            /** Work Modes */
+            work_modes?: ("Remote" | "Hybrid" | "Onsite")[] | null;
             /** Years Experience */
             years_experience?: number | null;
         };
@@ -4212,6 +4476,15 @@ export interface components {
             /** Studied On */
             studied_on?: string | null;
         };
+        /** SetupStatus */
+        SetupStatus: {
+            /** Complete */
+            complete: boolean;
+            /** Completed At */
+            completed_at: string | null;
+            /** Missing */
+            missing: string[];
+        };
         /**
          * SourceCreate
          * @description Either paste text you read yourself, or give a page for CareerPilot to fetch.
@@ -4470,6 +4743,33 @@ export interface components {
             /** Succeeded */
             succeeded: number;
         };
+        /** TaskDetail */
+        TaskDetail: {
+            /** Events */
+            events: components["schemas"]["TaskEventOut"][];
+            task: components["schemas"]["TaskOut"];
+        };
+        /** TaskEventOut */
+        TaskEventOut: {
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /** Attempt */
+            attempt: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Level */
+            level: string;
+            /** Message */
+            message: string;
+            /** Step */
+            step: string | null;
+        };
         /**
          * TaskKind
          * @enum {string}
@@ -4504,6 +4804,7 @@ export interface components {
             kind: components["schemas"]["TaskKind"];
             /** Max Attempts */
             max_attempts: number;
+            progress: components["schemas"]["TaskProgress"] | null;
             /**
              * Run After
              * Format: date-time
@@ -4512,6 +4813,15 @@ export interface components {
             /** Started At */
             started_at: string | null;
             status: components["schemas"]["TaskStatus"];
+        };
+        /** TaskProgress */
+        TaskProgress: {
+            /** Done */
+            done?: number | null;
+            /** Step */
+            step: string;
+            /** Total */
+            total?: number | null;
         };
         /**
          * TaskStatus
@@ -8145,6 +8455,103 @@ export interface operations {
             };
         };
     };
+    upload_cv: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_cv"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CvUploadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_github: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GithubReading"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_setup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_research_findings: {
         parameters: {
             query?: {
@@ -8484,6 +8891,40 @@ export interface operations {
             };
         };
     };
+    list_ai_calls: {
+        parameters: {
+            query?: {
+                problems_only?: boolean;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiCalls"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_system_status: {
         parameters: {
             query?: never;
@@ -8566,6 +9007,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RetryAllOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_task: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_task: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"];
                 };
             };
             /** @description Validation Error */

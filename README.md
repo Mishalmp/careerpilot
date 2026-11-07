@@ -26,7 +26,8 @@ uv run python -m careerpilot.cli seed-prep        # optional: the Prep page also
 **On Windows (cmd or PowerShell):**
 - `cp` does not exist there: use `copy .env.example .env`, and only if `.env` is not there yet (it holds your settings).
 - If `pip install uv` leaves `uv` "not recognized", the program is installed but its folder is not on your PATH. Put `python -m` in front instead, and use that everywhere below: `python -m uv sync`, `python -m uv run alembic upgrade head`, and so on.
-- `create-user` asks for a password of at least 12 characters.
+- `create-user` asks for a password of at least 12 characters. Forgot it? `uv run python -m careerpilot.cli reset-password --email you@example.com` sets a new one and signs every session out (there is no email reset yet).
+- After signing in, open **Profile**: account setup asks who you are, what role you want, and reads your CV (PDF, Word, text or paste). Scanned CVs need OCR: `uv sync --extra ocr` (about 100 MB; optional).
 
 Optional: index your notes for search (the first run downloads a ~130 MB model; see [docs/learn/rag.md](docs/learn/rag.md)).
 Written answers need an Anthropic API key in `.env` (`ANTHROPIC_API_KEY=...`); without one you still get the matching passages.

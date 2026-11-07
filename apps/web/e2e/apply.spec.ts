@@ -1,17 +1,10 @@
-import { execFileSync } from "node:child_process";
-
 import type { Page } from "@playwright/test";
 
-import { createJob, expect, expectNoA11yViolations, login, setTheme, test, type Theme } from "./fixtures";
+import { createJob, expect, runSeed, expectNoA11yViolations, login, setTheme, test, type Theme } from "./fixtures";
 
 // covers: the assisted daily apply list (docs/phase-7/11): sources shown, you decide, no submit action
 
-function seedApply(mode: "seed" | "reset") {
-  execFileSync("python", ["-m", "uv", "run", "python", "scripts/seed_e2e_apply.py", mode], {
-    cwd: "../api",
-    stdio: "pipe",
-  });
-}
+const seedApply = (mode: "seed" | "reset") => runSeed("apply", mode);
 
 async function trackerStatus(page: Page, company: string): Promise<string> {
   const list = (await (await page.request.get(`/api/v1/jobs?q=${encodeURIComponent(company)}`)).json()) as {

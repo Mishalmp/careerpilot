@@ -28,7 +28,7 @@ from careerpilot.modules.profile.models import UserProfile
 from careerpilot.modules.research.models import ResearchFinding, ResearchRun
 from careerpilot.modules.scoring.models import JobScore
 from careerpilot.modules.stories.models import StarStory
-from careerpilot.modules.tasks.models import Task
+from careerpilot.modules.tasks.models import Task, TaskEvent
 from careerpilot.modules.tracker.models import (
     Application,
     ApplicationEvent,
@@ -61,6 +61,7 @@ REGISTERED_MODELS = (
     DiscoverySource,
     DiscoveredJob,
     Task,
+    TaskEvent,
     Digest,
     FxRate,
     StarStory,

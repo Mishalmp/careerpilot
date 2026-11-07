@@ -11,6 +11,7 @@ import {
   useSaveStory,
   useStories,
 } from "./hooks";
+import { PageHeader } from "@/components/ui/page-header";
 
 const PARTS = [
   ["situation", "Situation: what was happening?"],
@@ -179,7 +180,7 @@ export function StoriesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Story bank</h1>
+      <PageHeader title="Story bank" />
       <p className={muted}>
         Behavioural questions (&ldquo;tell me about a time...&rdquo;) are
         answered from stories you have prepared. Keep each one true and

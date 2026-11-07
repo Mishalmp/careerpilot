@@ -56,6 +56,32 @@ def _create_user(args: argparse.Namespace) -> int:
     return 0
 
 
+def _reset_password(args: argparse.Namespace) -> int:
+    try:
+        email = TypeAdapter(EmailStr).validate_python(args.email)
+    except ValidationError:
+        print("That is not a valid email address.", file=sys.stderr)
+        return 2
+    password = getpass("New password: ")
+    if password != getpass("Repeat new password: "):
+        print("Passwords do not match.", file=sys.stderr)
+        return 2
+
+    async def action(db: AsyncSession) -> None:
+        await auth_service.reset_password(db, email, password)
+
+    try:
+        asyncio.run(_run(action))
+    except ValueError as exc:
+        print(exc, file=sys.stderr)
+        return 2
+    except auth_service.UserNotFoundError:
+        print("No user with that email.", file=sys.stderr)
+        return 1
+    print(f"Password changed for {email}. Every session of that user was signed out.")
+    return 0
+
+
 def _seed_prep(_: argparse.Namespace) -> int:
     settings = get_settings()
 
@@ -283,6 +309,9 @@ def build_parser() -> argparse.ArgumentParser:
     create = commands.add_parser("create-user", help="create the single local user")
     create.add_argument("--email", required=True)
     create.set_defaults(run=_create_user)
+    reset = commands.add_parser("reset-password", help="set a new password and sign the user out")
+    reset.add_argument("--email", required=True)
+    reset.set_defaults(run=_reset_password)
     seed = commands.add_parser("seed-prep", help="load the prep curriculum (safe to repeat)")
     seed.set_defaults(run=_seed_prep)
     imp = commands.add_parser("import-tracker", help="import jobs from the tracker workbook")

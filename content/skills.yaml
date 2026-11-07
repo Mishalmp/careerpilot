@@ -109,3 +109,57 @@ skills:
   - {name: multi-tenant, aliases: [multitenant, multi tenant]}
   - {name: saas}
   - {name: i18n, aliases: [internationalization, internationalisation, next-intl]}
+  # added 2026-11-07 after measuring recall on a real CV (it named many cloud and data tools the list
+  # did not know). Short acronyms are matched in capitals only, so they do not hit ordinary words.
+  - {name: cloudwatch, aliases: [amazon cloudwatch, aws cloudwatch]}
+  - {name: ecr, exact_case: true}
+  - {name: kms, exact_case: true}
+  - {name: rds, exact_case: true}
+  - {name: sqs, exact_case: true}
+  - {name: sns, exact_case: true}
+  - {name: eks, exact_case: true}
+  - {name: ec2, aliases: [amazon ec2]}
+  - {name: iam, exact_case: true}
+  - {name: dynamodb, aliases: [dynamo db]}
+  - {name: kinesis, aliases: [aws kinesis]}
+  - {name: step functions, aliases: [aws step functions]}
+  - {name: cloudformation, aliases: [aws cloudformation]}
+  - {name: aws glue, aliases: [glue jobs]}
+  - {name: athena, aliases: [aws athena, amazon athena]}
+  - {name: pulumi}
+  - {name: ansible}
+  - {name: helm}
+  - {name: gitlab}
+  - {name: jira}
+  - {name: sonarqube}
+  - {name: databricks}
+  - {name: flink, aliases: [apache flink]}
+  - {name: debezium}
+  - {name: cdc, aliases: [change data capture]}
+  - {name: airbyte}
+  - {name: data lake, aliases: [data lakes, lakehouse, medallion architecture]}
+  - {name: data warehouse, aliases: [data warehousing, dwh]}
+  - {name: mlflow}
+  - {name: scikit-learn, aliases: [sklearn]}
+  - {name: power bi, aliases: [powerbi]}
+  - {name: tableau}
+  - {name: looker}
+  - {name: apache superset, aliases: [superset]}
+  - {name: metabase}
+  - {name: datadog}
+  - {name: sentry}
+  - {name: splunk}
+  - {name: keycloak}
+  - {name: hashicorp vault, aliases: [vault secrets]}
+  - {name: swagger, aliases: [openapi, swagger ui]}
+  - {name: postman}
+  - {name: react native}
+  - {name: flutter}
+  - {name: firebase}
+  - {name: supabase}
+  - {name: laravel}
+  - {name: ruby on rails, aliases: [rails]}
+  - {name: swiftui, aliases: [swift programming]}
+  - {name: circuit breaker, aliases: [circuit breakers]}
+  - {name: idempotency, aliases: [idempotent]}
+  - {name: message queue, aliases: [message queues, dead letter queue, dlq]}
