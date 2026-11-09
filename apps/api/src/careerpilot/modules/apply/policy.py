@@ -24,6 +24,9 @@ class Policy(BaseModel):
     # of 100 does not mean 500 searches; any of them can be researched later with one click.
     deep_limit: Annotated[int, Field(ge=0, le=100)] = 10
     use_search_profiles: bool = True  # only jobs that fit the searches you described
+    # New listings from the boards you follow that fit your searches are copied into the tracker
+    # before the list is chosen, up to this many per build (0 = only jobs you added yourself).
+    auto_add_limit: Annotated[int, Field(ge=0, le=300)] = 30
     min_match_score: Annotated[int, Field(ge=0, le=100)] = 40
     regions: list[Name] = []  # empty = any region
     work_modes: list[Literal["Remote", "Hybrid", "Onsite"]] = []  # empty = any

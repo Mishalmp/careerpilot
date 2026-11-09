@@ -12,7 +12,11 @@ from careerpilot.core.errors import register_error_handlers
 from careerpilot.core.fetcher import Fetcher
 from careerpilot.core.llm import make_llm
 from careerpilot.core.logging import configure_logging
-from careerpilot.core.middleware import OriginCheckMiddleware, RequestContextMiddleware
+from careerpilot.core.middleware import (
+    LimitsMiddleware,
+    OriginCheckMiddleware,
+    RequestContextMiddleware,
+)
 from careerpilot.core.search import make_search
 from careerpilot.modules.analytics.router import router as analytics_router
 from careerpilot.modules.apply.router import router as apply_router
@@ -73,7 +77,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             await worker
         await engine.dispose()
 
-    app = FastAPI(title="CareerPilot", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(
+        title="CareerPilot",
+        version="0.1.0",
+        lifespan=lifespan,
+        docs_url="/docs" if settings.expose_api_docs else None,
+        redoc_url=None,
+        openapi_url="/openapi.json" if settings.expose_api_docs else None,
+    )
     app.state.settings = settings
     app.state.engine = engine
     app.state.sessionmaker = create_sessionmaker(engine)
@@ -90,7 +101,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Last added is outermost: host check, then request context, then origin check.
     app.add_middleware(OriginCheckMiddleware, allowed_origins=settings.allowed_origins)
-    app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(
+        LimitsMiddleware,
+        per_minute=settings.rate_limit_per_minute,
+        max_body_bytes=settings.max_body_bytes,
+    )
+    app.add_middleware(RequestContextMiddleware, hsts=settings.cookie_secure)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
     register_error_handlers(app)
 

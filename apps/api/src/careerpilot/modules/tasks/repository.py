@@ -106,6 +106,25 @@ async def requeue_all_failed(db: AsyncSession, owner_id: uuid.UUID, now: datetim
     return len(result.all())
 
 
+async def latest_event_messages(
+    db: AsyncSession, owner_id: uuid.UUID, kind: TaskKind, level: str
+) -> list[str]:
+    task_id = await db.scalar(
+        select(Task.id)
+        .where(Task.owner_id == owner_id, Task.kind == kind)
+        .order_by(Task.created_at.desc())
+        .limit(1)
+    )
+    if task_id is None:
+        return []
+    rows = await db.scalars(
+        select(TaskEvent.message)
+        .where(TaskEvent.task_id == task_id, TaskEvent.level == level)
+        .order_by(TaskEvent.at)
+    )
+    return list(rows)
+
+
 def add_event(
     db: AsyncSession,
     *,

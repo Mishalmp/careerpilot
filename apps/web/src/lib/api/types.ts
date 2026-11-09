@@ -6,6 +6,7 @@ export type Status = Schemas["Status"];
 export type JobSummary = Schemas["JobSummary"];
 export type JobDetail = Schemas["JobDetail"];
 export type JobCreate = Schemas["JobCreate"];
+export type LinkResult = Schemas["LinkResult"];
 export type JobUpdate = Schemas["JobUpdate"];
 export type ApplicationUpdate = Schemas["ApplicationUpdate"];
 export type ContactCreate = Schemas["ContactCreate"];

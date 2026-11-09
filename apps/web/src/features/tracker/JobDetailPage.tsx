@@ -8,7 +8,14 @@ import { ChevronLeft, Trash2 } from "lucide-react";
 
 import { button, card, input, muted, primaryButton } from "@/components/ui";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +30,7 @@ import type {
 
 import {
   useAddContact,
+  useFindContacts,
   useDeleteContact,
   useDeleteJob,
   useJob,
@@ -35,12 +43,33 @@ import { StatusSelect, useStatusChanger } from "./StatusChanger";
 import { STATUSES } from "./status";
 
 const PORTAL_MODES: PortalMode[] = ["Not yet", "Done", "Not available"];
-const EMAIL_MODES: EmailMode[] = ["Not yet", "Draft ready", "Sent", "No email found"];
+const EMAIL_MODES: EmailMode[] = [
+  "Not yet",
+  "Draft ready",
+  "Sent",
+  "No email found",
+];
 const WORK_MODES: WorkMode[] = ["Remote", "Hybrid", "Onsite"];
-const REGIONS: Region[] = ["India", "Europe", "USA", "UAE / Middle East", "Remote (Global)"];
-const CONTACT_KINDS: ContactKind[] = ["published_business", "recruiter", "referral"];
+const REGIONS: Region[] = [
+  "India",
+  "Europe",
+  "USA",
+  "UAE / Middle East",
+  "Remote (Global)",
+];
+const CONTACT_KINDS: ContactKind[] = [
+  "published_business",
+  "recruiter",
+  "referral",
+];
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block space-y-1 text-sm">
       <span>{label}</span>
@@ -59,7 +88,11 @@ export function JobDetailPage() {
 
   if (job.isPending) {
     return (
-      <div className="flex flex-col gap-4" aria-busy="true" aria-label="Loading job">
+      <div
+        className="flex flex-col gap-4"
+        aria-busy="true"
+        aria-label="Loading job"
+      >
         <Skeleton className="h-6 w-24" />
         <Skeleton className="h-10 w-2/3" />
         <Skeleton className="h-64 w-full" />
@@ -69,7 +102,11 @@ export function JobDetailPage() {
   if (job.isError) {
     return (
       <div className="flex flex-col gap-3">
-        <ErrorState title="Could not load this job" description={job.error.message} onRetry={() => void job.refetch()} />
+        <ErrorState
+          title="Could not load this job"
+          description={job.error.message}
+          onRetry={() => void job.refetch()}
+        />
         <Link href="/jobs" className="text-sm text-accent-text underline">
           Back to jobs
         </Link>
@@ -89,7 +126,10 @@ export function JobDetailPage() {
 
       <header className="flex flex-col gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">
-          {data.company.name} <span className="font-normal text-muted-foreground">· {data.title}</span>
+          {data.company.name}{" "}
+          <span className="font-normal text-muted-foreground">
+            · {data.title}
+          </span>
         </h1>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <StatusSelect
@@ -99,9 +139,15 @@ export function JobDetailPage() {
             onChange={(status) => changer.request(data, status)}
           />
           <nav aria-label="Links" className="flex gap-4 text-sm">
-            {data.apply_url && <ExternalLink href={data.apply_url}>Apply</ExternalLink>}
-            {data.jd_url && <ExternalLink href={data.jd_url}>Job description</ExternalLink>}
-            {data.careers_url && <ExternalLink href={data.careers_url}>Careers page</ExternalLink>}
+            {data.apply_url && (
+              <ExternalLink href={data.apply_url}>Apply</ExternalLink>
+            )}
+            {data.jd_url && (
+              <ExternalLink href={data.jd_url}>Job description</ExternalLink>
+            )}
+            {data.careers_url && (
+              <ExternalLink href={data.careers_url}>Careers page</ExternalLink>
+            )}
           </nav>
         </div>
         {changer.error && (
@@ -136,7 +182,9 @@ export function JobDetailPage() {
         <TabsContent value="description">
           {data.jd_text ? (
             <section className={card}>
-              <pre className="whitespace-pre-wrap font-sans text-sm">{data.jd_text}</pre>
+              <pre className="whitespace-pre-wrap font-sans text-sm">
+                {data.jd_text}
+              </pre>
             </section>
           ) : (
             <EmptyState
@@ -153,9 +201,15 @@ export function JobDetailPage() {
           <section className="flex items-center justify-between gap-4 rounded-lg border border-danger/40 p-4">
             <div>
               <h2 className="font-medium">Delete this job</h2>
-              <p className="text-sm text-muted-foreground">Removes the job, its history and contacts. This cannot be undone.</p>
+              <p className="text-sm text-muted-foreground">
+                Removes the job, its history and contacts. This cannot be
+                undone.
+              </p>
             </div>
-            <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
+            <Button
+              variant="destructive"
+              onClick={() => setConfirmDelete(true)}
+            >
               <Trash2 aria-hidden="true" /> Delete job
             </Button>
           </section>
@@ -167,7 +221,8 @@ export function JobDetailPage() {
           <DialogHeader>
             <DialogTitle>Delete this job?</DialogTitle>
             <DialogDescription>
-              {data.title} at {data.company.name} and its history will be removed. This cannot be undone.
+              {data.title} at {data.company.name} and its history will be
+              removed. This cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -175,7 +230,11 @@ export function JobDetailPage() {
             <Button
               variant="destructive"
               loading={remove.isPending}
-              onClick={() => remove.mutate(data.id, { onSuccess: () => router.replace("/jobs") })}
+              onClick={() =>
+                remove.mutate(data.id, {
+                  onSuccess: () => router.replace("/jobs"),
+                })
+              }
             >
               Delete job
             </Button>
@@ -187,9 +246,20 @@ export function JobDetailPage() {
   );
 }
 
-function ExternalLink({ href, children }: { href: string; children: React.ReactNode }) {
+function ExternalLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline underline-offset-2"
+    >
       {children}
     </a>
   );
@@ -234,9 +304,13 @@ function Timeline({ job }: { job: JobDetail }) {
             <div>
               {event.from_status ? `${event.from_status} → ` : ""}
               <strong>{event.to_status}</strong>
-              {event.type === "reopened" && <span className={muted}> (reopened)</span>}
+              {event.type === "reopened" && (
+                <span className={muted}> (reopened)</span>
+              )}
             </div>
-            <div className={muted}>{new Date(event.at).toLocaleString("en-GB")}</div>
+            <div className={muted}>
+              {new Date(event.at).toLocaleString("en-GB")}
+            </div>
             {event.note && <div>{event.note}</div>}
           </li>
         ))}
@@ -276,37 +350,73 @@ function ApplicationPanel({ job }: { job: JobDetail }) {
       <h2 className="font-semibold">Application</h2>
       <div className="grid grid-cols-3 gap-3">
         <Field label="Job portal">
-          <select value={portal} onChange={(e) => setPortal(e.target.value as PortalMode)} className={input}>
-            {PORTAL_MODES.map((m) => <option key={m}>{m}</option>)}
+          <select
+            value={portal}
+            onChange={(e) => setPortal(e.target.value as PortalMode)}
+            className={input}
+          >
+            {PORTAL_MODES.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
           </select>
         </Field>
         <Field label="Company site">
-          <select value={site} onChange={(e) => setSite(e.target.value as PortalMode)} className={input}>
-            {PORTAL_MODES.map((m) => <option key={m}>{m}</option>)}
+          <select
+            value={site}
+            onChange={(e) => setSite(e.target.value as PortalMode)}
+            className={input}
+          >
+            {PORTAL_MODES.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
           </select>
         </Field>
         <Field label="Email">
-          <select value={email} onChange={(e) => setEmail(e.target.value as EmailMode)} className={input}>
-            {EMAIL_MODES.map((m) => <option key={m}>{m}</option>)}
+          <select
+            value={email}
+            onChange={(e) => setEmail(e.target.value as EmailMode)}
+            className={input}
+          >
+            {EMAIL_MODES.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
           </select>
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Next follow-up">
-          <input type="date" value={followup} onChange={(e) => setFollowup(e.target.value)} className={input} />
+          <input
+            type="date"
+            value={followup}
+            onChange={(e) => setFollowup(e.target.value)}
+            className={input}
+          />
         </Field>
         <Field label="Resume used">
-          <input value={resume} onChange={(e) => setResume(e.target.value)} className={input} />
+          <input
+            value={resume}
+            onChange={(e) => setResume(e.target.value)}
+            className={input}
+          />
         </Field>
       </div>
       <p className={muted}>Applied on: {app.applied_on ?? "not yet"}</p>
       <Field label="Notes">
-        <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={input} />
+        <textarea
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className={input}
+        />
       </Field>
       <p role="alert" className="min-h-5 text-sm text-danger-text">
         {update.error?.message}
       </p>
-      <button type="submit" disabled={update.isPending} className={primaryButton}>
+      <button
+        type="submit"
+        disabled={update.isPending}
+        className={primaryButton}
+      >
         {update.isPending ? "Saving..." : "Save"}
       </button>
     </form>
@@ -327,8 +437,9 @@ function EditJobForm({ job }: { job: JobDetail }) {
     careers_url: job.careers_url ?? "",
     jd_text: job.jd_text ?? "",
   });
-  const set = (name: keyof typeof form) => (event: { target: { value: string } }) =>
-    setForm((current) => ({ ...current, [name]: event.target.value }));
+  const set =
+    (name: keyof typeof form) => (event: { target: { value: string } }) =>
+      setForm((current) => ({ ...current, [name]: event.target.value }));
   const orNull = (value: string) => value.trim() || null;
 
   return (
@@ -351,31 +462,103 @@ function EditJobForm({ job }: { job: JobDetail }) {
       }}
     >
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Role"><input required value={form.title} onChange={set("title")} className={input} /></Field>
-        <Field label="Location"><input value={form.location_text} onChange={set("location_text")} className={input} /></Field>
+        <Field label="Role">
+          <input
+            required
+            value={form.title}
+            onChange={set("title")}
+            className={input}
+          />
+        </Field>
+        <Field label="Location">
+          <input
+            value={form.location_text}
+            onChange={set("location_text")}
+            className={input}
+          />
+        </Field>
         <Field label="Region">
-          <select value={form.region} onChange={set("region")} className={input}>
+          <select
+            value={form.region}
+            onChange={set("region")}
+            className={input}
+          >
             <option value="">-</option>
-            {REGIONS.map((r) => <option key={r}>{r}</option>)}
+            {REGIONS.map((r) => (
+              <option key={r}>{r}</option>
+            ))}
           </select>
         </Field>
         <Field label="Work mode">
-          <select value={form.work_mode} onChange={set("work_mode")} className={input}>
+          <select
+            value={form.work_mode}
+            onChange={set("work_mode")}
+            className={input}
+          >
             <option value="">-</option>
-            {WORK_MODES.map((m) => <option key={m}>{m}</option>)}
+            {WORK_MODES.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
           </select>
         </Field>
-        <Field label="Est. CTC (LPA)"><input type="number" min="0" step="0.1" value={form.est_ctc_lpa} onChange={set("est_ctc_lpa")} className={input} /></Field>
-        <Field label="Salary as posted"><input value={form.salary_text} onChange={set("salary_text")} className={input} /></Field>
-        <Field label="Apply link"><input type="url" value={form.apply_url} onChange={set("apply_url")} className={input} /></Field>
-        <Field label="Job description link"><input type="url" value={form.jd_url} onChange={set("jd_url")} className={input} /></Field>
-        <Field label="Careers page"><input type="url" value={form.careers_url} onChange={set("careers_url")} className={input} /></Field>
+        <Field label="Est. CTC (LPA)">
+          <input
+            type="number"
+            min="0"
+            step="0.1"
+            value={form.est_ctc_lpa}
+            onChange={set("est_ctc_lpa")}
+            className={input}
+          />
+        </Field>
+        <Field label="Salary as posted">
+          <input
+            value={form.salary_text}
+            onChange={set("salary_text")}
+            className={input}
+          />
+        </Field>
+        <Field label="Apply link">
+          <input
+            type="url"
+            value={form.apply_url}
+            onChange={set("apply_url")}
+            className={input}
+          />
+        </Field>
+        <Field label="Job description link">
+          <input
+            type="url"
+            value={form.jd_url}
+            onChange={set("jd_url")}
+            className={input}
+          />
+        </Field>
+        <Field label="Careers page">
+          <input
+            type="url"
+            value={form.careers_url}
+            onChange={set("careers_url")}
+            className={input}
+          />
+        </Field>
       </div>
       <Field label="Job description text">
-        <textarea rows={6} value={form.jd_text} onChange={set("jd_text")} className={input} />
+        <textarea
+          rows={6}
+          value={form.jd_text}
+          onChange={set("jd_text")}
+          className={input}
+        />
       </Field>
-      <p role="alert" className="min-h-5 text-sm text-danger-text">{update.error?.message}</p>
-      <button type="submit" disabled={update.isPending} className={primaryButton}>
+      <p role="alert" className="min-h-5 text-sm text-danger-text">
+        {update.error?.message}
+      </p>
+      <button
+        type="submit"
+        disabled={update.isPending}
+        className={primaryButton}
+      >
         {update.isPending ? "Saving..." : "Save details"}
       </button>
     </form>
@@ -385,31 +568,79 @@ function EditJobForm({ job }: { job: JobDetail }) {
 function ContactsPanel({ job }: { job: JobDetail }) {
   const add = useAddContact(job.id);
   const remove = useDeleteContact(job.id);
-  const [form, setForm] = useState({ name: "", role: "", email: "", phone: "", kind: "recruiter" as ContactKind, source_url: "" });
-  const set = (name: keyof typeof form) => (event: { target: { value: string } }) =>
-    setForm((current) => ({ ...current, [name]: event.target.value }));
+  const find = useFindContacts(job.id);
+  const [form, setForm] = useState({
+    name: "",
+    role: "",
+    email: "",
+    phone: "",
+    kind: "recruiter" as ContactKind,
+    source_url: "",
+  });
+  const set =
+    (name: keyof typeof form) => (event: { target: { value: string } }) =>
+      setForm((current) => ({ ...current, [name]: event.target.value }));
 
   return (
     <section className={`${card} space-y-3`}>
       <h2 className="font-semibold">Contacts</h2>
       <p className={muted}>
-        Only add contact details a company has published itself, with the page where you found them.
+        Only add contact details a company has published itself, with the page
+        where you found them.
       </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className={button}
+          disabled={find.isPending}
+          onClick={() => find.mutate()}
+        >
+          {find.isPending ? "Looking…" : "Find published hiring emails"}
+        </button>
+        <span className={muted}>
+          Reads the company&apos;s own website (careers, jobs, contact pages);
+          no AI, no cost.
+        </span>
+      </div>
+      {find.isError && (
+        <p role="alert" className="text-sm text-danger-text">
+          {find.error.message}
+        </p>
+      )}
+      {find.data && (
+        <p role="status" className={muted}>
+          {find.data.added.length > 0
+            ? `Added ${find.data.added.length} address${find.data.added.length === 1 ? "" : "es"} from ${find.data.pages_read} pages.`
+            : `Nothing new found on ${find.data.pages_read} pages. ${find.data.notes[0] ?? ""}`}
+        </p>
+      )}
       {job.contacts.length === 0 && <p className={muted}>No contacts yet.</p>}
       <ul className="space-y-2 text-sm">
         {job.contacts.map((contact) => (
-          <li key={contact.id} className="flex items-start justify-between gap-3">
+          <li
+            key={contact.id}
+            className="flex items-start justify-between gap-3"
+          >
             <div>
               <div className="font-medium">
-                {contact.name} {contact.role && <span className="font-normal text-muted-foreground">· {contact.role}</span>}
+                {contact.name}{" "}
+                {contact.role && (
+                  <span className="font-normal text-muted-foreground">
+                    · {contact.role}
+                  </span>
+                )}
               </div>
-              <div>{[contact.email, contact.phone].filter(Boolean).join(" · ")}</div>
+              <div>
+                {[contact.email, contact.phone].filter(Boolean).join(" · ")}
+              </div>
               <div className={muted}>
                 {contact.kind.replace("_", " ")}
                 {contact.source_url && (
                   <>
                     {" · "}
-                    <ExternalLink href={contact.source_url}>source</ExternalLink>
+                    <ExternalLink href={contact.source_url}>
+                      source
+                    </ExternalLink>
                   </>
                 )}
               </div>
@@ -439,25 +670,70 @@ function ContactsPanel({ job }: { job: JobDetail }) {
               kind: form.kind,
               source_url: text(form.source_url),
             },
-            { onSuccess: () => setForm({ ...form, name: "", role: "", email: "", phone: "", source_url: "" }) },
+            {
+              onSuccess: () =>
+                setForm({
+                  ...form,
+                  name: "",
+                  role: "",
+                  email: "",
+                  phone: "",
+                  source_url: "",
+                }),
+            },
           );
         }}
       >
-        <Field label="Name"><input required value={form.name} onChange={set("name")} className={input} /></Field>
-        <Field label="Role"><input value={form.role} onChange={set("role")} className={input} /></Field>
-        <Field label="Email"><input type="email" value={form.email} onChange={set("email")} className={input} /></Field>
-        <Field label="Phone"><input value={form.phone} onChange={set("phone")} className={input} /></Field>
+        <Field label="Name">
+          <input
+            required
+            value={form.name}
+            onChange={set("name")}
+            className={input}
+          />
+        </Field>
+        <Field label="Role">
+          <input value={form.role} onChange={set("role")} className={input} />
+        </Field>
+        <Field label="Email">
+          <input
+            type="email"
+            value={form.email}
+            onChange={set("email")}
+            className={input}
+          />
+        </Field>
+        <Field label="Phone">
+          <input value={form.phone} onChange={set("phone")} className={input} />
+        </Field>
         <Field label="Kind">
           <select value={form.kind} onChange={set("kind")} className={input}>
-            {CONTACT_KINDS.map((k) => <option key={k} value={k}>{k.replace("_", " ")}</option>)}
+            {CONTACT_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {k.replace("_", " ")}
+              </option>
+            ))}
           </select>
         </Field>
         <Field label="Source page (required for published)">
-          <input type="url" value={form.source_url} onChange={set("source_url")} className={input} />
+          <input
+            type="url"
+            value={form.source_url}
+            onChange={set("source_url")}
+            className={input}
+          />
         </Field>
-        <p role="alert" className="col-span-2 min-h-5 text-sm text-danger-text">{add.error?.message}</p>
+        <p role="alert" className="col-span-2 min-h-5 text-sm text-danger-text">
+          {add.error?.message}
+        </p>
         <div className="col-span-2">
-          <button type="submit" disabled={add.isPending} className={primaryButton}>Add contact</button>
+          <button
+            type="submit"
+            disabled={add.isPending}
+            className={primaryButton}
+          >
+            Add contact
+          </button>
         </div>
       </form>
     </section>

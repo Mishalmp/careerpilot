@@ -23,6 +23,10 @@
       "AiCallOut": {
         "description": "One request to the model. The prompt and the answer are deliberately not kept.",
         "properties": {
+          "cost_micro_usd": {
+            "title": "Cost Micro Usd",
+            "type": "integer"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -76,6 +80,7 @@
           "model",
           "input_tokens",
           "output_tokens",
+          "cost_micro_usd",
           "latency_ms",
           "status",
           "error"
@@ -85,6 +90,10 @@
       },
       "AiCalls": {
         "properties": {
+          "daily_budget_usd": {
+            "title": "Daily Budget Usd",
+            "type": "number"
+          },
           "daily_cap": {
             "title": "Daily Cap",
             "type": "integer"
@@ -96,6 +105,18 @@
             "title": "Items",
             "type": "array"
           },
+          "monthly_budget_usd": {
+            "title": "Monthly Budget Usd",
+            "type": "number"
+          },
+          "spent_month_usd": {
+            "title": "Spent Month Usd",
+            "type": "number"
+          },
+          "spent_today_usd": {
+            "title": "Spent Today Usd",
+            "type": "number"
+          },
           "tokens_today": {
             "title": "Tokens Today",
             "type": "integer"
@@ -104,7 +125,11 @@
         "required": [
           "items",
           "tokens_today",
-          "daily_cap"
+          "daily_cap",
+          "spent_today_usd",
+          "spent_month_usd",
+          "daily_budget_usd",
+          "monthly_budget_usd"
         ],
         "title": "AiCalls",
         "type": "object"
@@ -115,9 +140,25 @@
             "title": "Configured",
             "type": "boolean"
           },
+          "daily_budget_usd": {
+            "title": "Daily Budget Usd",
+            "type": "number"
+          },
           "daily_cap": {
             "title": "Daily Cap",
             "type": "integer"
+          },
+          "monthly_budget_usd": {
+            "title": "Monthly Budget Usd",
+            "type": "number"
+          },
+          "spent_month_usd": {
+            "title": "Spent Month Usd",
+            "type": "number"
+          },
+          "spent_today_usd": {
+            "title": "Spent Today Usd",
+            "type": "number"
           },
           "tokens_today": {
             "title": "Tokens Today",
@@ -127,7 +168,11 @@
         "required": [
           "configured",
           "tokens_today",
-          "daily_cap"
+          "daily_cap",
+          "spent_today_usd",
+          "spent_month_usd",
+          "daily_budget_usd",
+          "monthly_budget_usd"
         ],
         "title": "AiStatus",
         "type": "object"
@@ -636,6 +681,13 @@
             "title": "Items",
             "type": "array"
           },
+          "last_build": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Last Build",
+            "type": "array"
+          },
           "notice": {
             "default": "This list is a starting point, not a decision. Everything below says where it came from; open the sources before you apply. CareerPilot never submits an application for you.",
             "title": "Notice",
@@ -663,6 +715,7 @@
         "required": [
           "items",
           "ready_count",
+          "last_build",
           "policy",
           "policy_source",
           "policy_problems"
@@ -1770,6 +1823,40 @@
         "title": "ContactOut",
         "type": "object"
       },
+      "ContactsFound": {
+        "properties": {
+          "added": {
+            "items": {
+              "$ref": "#/components/schemas/ContactOut"
+            },
+            "title": "Added",
+            "type": "array"
+          },
+          "already_known": {
+            "title": "Already Known",
+            "type": "integer"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "pages_read": {
+            "title": "Pages Read",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "added",
+          "already_known",
+          "pages_read",
+          "notes"
+        ],
+        "title": "ContactsFound",
+        "type": "object"
+      },
       "Currency": {
         "enum": [
           "INR",
@@ -2342,6 +2429,17 @@
             ],
             "title": "Last Error"
           },
+          "last_kept": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Kept"
+          },
           "last_listed": {
             "anyOf": [
               {
@@ -2365,6 +2463,13 @@
             ],
             "title": "Last Run At"
           },
+          "left_out": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Left Out",
+            "type": "object"
+          },
           "new_count": {
             "title": "New Count",
             "type": "integer"
@@ -2381,6 +2486,8 @@
           "last_run_at",
           "last_error",
           "last_listed",
+          "last_kept",
+          "left_out",
           "new_count"
         ],
         "title": "DiscoverySourceOut",
@@ -2942,6 +3049,24 @@
         "title": "FlowStep",
         "type": "object"
       },
+      "FollowSuggested": {
+        "properties": {
+          "keys": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "title": "FollowSuggested",
+        "type": "object"
+      },
       "FollowUp": {
         "properties": {
           "company": {
@@ -2977,6 +3102,24 @@
           "due_on"
         ],
         "title": "FollowUp",
+        "type": "object"
+      },
+      "FollowedOut": {
+        "properties": {
+          "added": {
+            "title": "Added",
+            "type": "integer"
+          },
+          "already": {
+            "title": "Already",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "added",
+          "already"
+        ],
+        "title": "FollowedOut",
         "type": "object"
       },
       "FunctionTestOut": {
@@ -6065,6 +6208,124 @@
         "title": "LearnTopicUpdate",
         "type": "object"
       },
+      "LinkResult": {
+        "properties": {
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "link": {
+            "title": "Link",
+            "type": "string"
+          },
+          "needs_details": {
+            "default": false,
+            "title": "Needs Details",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "portal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Portal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "added",
+              "already_saved",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "link",
+          "status"
+        ],
+        "title": "LinkResult",
+        "type": "object"
+      },
+      "LinksIn": {
+        "description": "Job links pasted from LinkedIn, Indeed, Naukri or anywhere else, one per entry.",
+        "properties": {
+          "links": {
+            "items": {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Links",
+            "type": "array"
+          }
+        },
+        "required": [
+          "links"
+        ],
+        "title": "LinksIn",
+        "type": "object"
+      },
+      "LinksOut": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/LinkResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "title": "LinksOut",
+        "type": "object"
+      },
       "LintOut": {
         "properties": {
           "flags": {
@@ -6917,6 +7178,13 @@
       "Policy": {
         "additionalProperties": false,
         "properties": {
+          "auto_add_limit": {
+            "default": 30,
+            "maximum": 300.0,
+            "minimum": 0.0,
+            "title": "Auto Add Limit",
+            "type": "integer"
+          },
           "block_if_company_suspicious": {
             "default": true,
             "title": "Block If Company Suspicious",
@@ -8186,6 +8454,14 @@
             "title": "Kept",
             "type": "integer"
           },
+          "left_out": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "default": {},
+            "title": "Left Out",
+            "type": "object"
+          },
           "listed": {
             "title": "Listed",
             "type": "integer"
@@ -8198,6 +8474,11 @@
             "default": 0,
             "title": "Outside Search",
             "type": "integer"
+          },
+          "source": {
+            "default": "",
+            "title": "Source",
+            "type": "string"
           }
         },
         "required": [
@@ -9510,6 +9791,61 @@
           "created_at"
         ],
         "title": "SubmissionOut",
+        "type": "object"
+      },
+      "SuggestedBoardOut": {
+        "properties": {
+          "board": {
+            "title": "Board",
+            "type": "string"
+          },
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "followed": {
+            "title": "Followed",
+            "type": "boolean"
+          },
+          "india": {
+            "title": "India",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/BoardKind"
+          },
+          "remote": {
+            "title": "Remote",
+            "type": "integer"
+          },
+          "roles": {
+            "title": "Roles",
+            "type": "integer"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "board",
+          "company",
+          "tags",
+          "roles",
+          "india",
+          "remote",
+          "followed"
+        ],
+        "title": "SuggestedBoardOut",
         "type": "object"
       },
       "SystemStatus": {
@@ -12158,6 +12494,119 @@
         ]
       }
     },
+    "/api/v1/discovery/suggestions": {
+      "get": {
+        "description": "Company boards that were checked and are worth following (content/job-boards.yaml).",
+        "operationId": "list_suggested_boards",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SuggestedBoardOut"
+                  },
+                  "title": "Response List Suggested Boards",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Suggested",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/discovery/suggestions/follow": {
+      "post": {
+        "operationId": "follow_suggested_boards",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowSuggested"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Follow Suggested",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
     "/api/v1/jobs": {
       "get": {
         "operationId": "list_jobs",
@@ -12442,6 +12891,66 @@
           }
         },
         "summary": "Export Jobs",
+        "tags": [
+          "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/links": {
+      "post": {
+        "description": "Save pasted job links (LinkedIn, Indeed, Naukri, company pages) without opening them.",
+        "operationId": "add_job_links",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinksIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Job Links",
         "tags": [
           "tracker"
         ]
@@ -12758,6 +13267,66 @@
         "summary": "Add Contact",
         "tags": [
           "tracker"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/contacts/find": {
+      "post": {
+        "description": "Look for hiring addresses the company publishes on its own website (no model, no cost).",
+        "operationId": "find_contacts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "cp_session",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cp Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactsFound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Find Contacts",
+        "tags": [
+          "outreach"
         ]
       }
     },

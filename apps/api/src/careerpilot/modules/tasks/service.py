@@ -123,6 +123,18 @@ async def step(message: str, *, done: int | None = None, total: int | None = Non
         await _write(run, "info", message, message, done=done, total=total, progress=True)
 
 
+async def note(message: str) -> None:
+    """Record an outcome in plain words ("Read 99 jobs, 4 fit your searches"). Shown in bold."""
+    run = _current.get()
+    if run is not None:
+        await _write(run, "result", message, None)
+
+
+async def latest_results(db: AsyncSession, owner_id: uuid.UUID, kind: TaskKind) -> list[str]:
+    """The outcome lines of the most recent task of this kind (empty when there is none)."""
+    return await repository.latest_event_messages(db, owner_id, kind, "result")
+
+
 async def warn(message: str) -> None:
     """Record something that went wrong but did not stop the task."""
     run = _current.get()

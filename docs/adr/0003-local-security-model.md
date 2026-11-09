@@ -16,5 +16,5 @@ The API listens on localhost, but any website open in the same browser can send 
 - Validation errors drop the submitted value so passwords are never echoed or logged.
 
 ## Deferred
-- A strict page-wide Content-Security-Policy with nonces. Decided in [0007](0007-practice-runner.md): not added yet; the code runner's workers get their own policies instead. The app sets frame, nosniff, referrer and permissions headers.
+- A strict page-wide Content-Security-Policy with nonces. Decided in [0007](0007-practice-runner.md): not added; the code runner's workers get their own policies. Update 2026-11-09: a baseline page policy without nonces is now set in `next.config.ts` (same-origin scripts and connections, no framing; inline scripts still allowed); a nonce policy needs dynamic rendering and stays a later step. The app sets frame, nosniff, referrer and permissions headers.
 - TLS and a real identity provider, required before the app is ever exposed beyond localhost.

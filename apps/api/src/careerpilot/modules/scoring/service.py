@@ -175,9 +175,16 @@ async def score_job(
     )
     checked = any(check.source is not None for check in verification.checks)
 
+    # The model's reading depends only on the description, so scoring again (a changed profile, a
+    # new verification) reuses it. The description's hash is kept inside the stored reading.
     reading: ReadingOut | None = None
+    jd_hash = hashlib.sha256((job.jd_text or "")[:MAX_JD_CHARS].encode()).hexdigest()[:16]
     if use_ai and llm is not None and job.jd_text:
-        reading = await read_description(db, owner_id, llm, settings, job.jd_text)
+        earlier = await repository.get_score(db, owner_id, job_id)
+        if earlier is not None and earlier.reading and earlier.reading.get("jd_hash") == jd_hash:
+            reading = ReadingOut.model_validate(earlier.reading)
+        else:
+            reading = await read_description(db, owner_id, llm, settings, job.jd_text)
 
     my_skills = {vocabulary.canonical(skill) for skill in profile.skills}
     jd_skills = skills_in(f"{job.title}\n{job.jd_text or ''}", vocabulary)
@@ -205,7 +212,7 @@ async def score_job(
             for c in components
         ],
         "blockers": list(total.blockers),
-        "reading": reading.model_dump() if reading else None,
+        "reading": {**reading.model_dump(), "jd_hash": jd_hash} if reading else None,
     }
     stored = await repository.upsert_score(db, owner_id=owner_id, job_id=job_id, **values)
     await db.commit()

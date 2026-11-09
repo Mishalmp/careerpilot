@@ -500,6 +500,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/discovery/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Suggested
+         * @description Company boards that were checked and are worth following (content/job-boards.yaml).
+         */
+        get: operations["list_suggested_boards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/discovery/suggestions/follow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Follow Suggested */
+        post: operations["follow_suggested_boards"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/jobs": {
         parameters: {
             query?: never;
@@ -529,6 +566,26 @@ export interface paths {
         get: operations["export_jobs_csv"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Job Links
+         * @description Save pasted job links (LinkedIn, Indeed, Naukri, company pages) without opening them.
+         */
+        post: operations["add_job_links"];
         delete?: never;
         options?: never;
         head?: never;
@@ -582,6 +639,26 @@ export interface paths {
         put?: never;
         /** Add Contact */
         post: operations["add_contact"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/contacts/find": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Find Contacts
+         * @description Look for hiring addresses the company publishes on its own website (no model, no cost).
+         */
+        post: operations["find_contacts"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1896,6 +1973,8 @@ export interface components {
          * @description One request to the model. The prompt and the answer are deliberately not kept.
          */
         AiCallOut: {
+            /** Cost Micro Usd */
+            cost_micro_usd: number;
             /**
              * Created At
              * Format: date-time
@@ -1923,10 +2002,18 @@ export interface components {
         };
         /** AiCalls */
         AiCalls: {
+            /** Daily Budget Usd */
+            daily_budget_usd: number;
             /** Daily Cap */
             daily_cap: number;
             /** Items */
             items: components["schemas"]["AiCallOut"][];
+            /** Monthly Budget Usd */
+            monthly_budget_usd: number;
+            /** Spent Month Usd */
+            spent_month_usd: number;
+            /** Spent Today Usd */
+            spent_today_usd: number;
             /** Tokens Today */
             tokens_today: number;
         };
@@ -1934,8 +2021,16 @@ export interface components {
         AiStatus: {
             /** Configured */
             configured: boolean;
+            /** Daily Budget Usd */
+            daily_budget_usd: number;
             /** Daily Cap */
             daily_cap: number;
+            /** Monthly Budget Usd */
+            monthly_budget_usd: number;
+            /** Spent Month Usd */
+            spent_month_usd: number;
+            /** Spent Today Usd */
+            spent_today_usd: number;
             /** Tokens Today */
             tokens_today: number;
         };
@@ -2074,6 +2169,8 @@ export interface components {
         ApplyQueueOut: {
             /** Items */
             items: components["schemas"]["ApplyItemOut"][];
+            /** Last Build */
+            last_build: string[];
             /**
              * Notice
              * @default This list is a starting point, not a decision. Everything below says where it came from; open the sources before you apply. CareerPilot never submits an application for you.
@@ -2450,6 +2547,17 @@ export interface components {
             /** Source Url */
             source_url: string | null;
         };
+        /** ContactsFound */
+        ContactsFound: {
+            /** Added */
+            added: components["schemas"]["ContactOut"][];
+            /** Already Known */
+            already_known: number;
+            /** Notes */
+            notes: string[];
+            /** Pages Read */
+            pages_read: number;
+        };
         /**
          * Currency
          * @enum {string}
@@ -2657,10 +2765,16 @@ export interface components {
             kind: components["schemas"]["BoardKind"];
             /** Last Error */
             last_error: string | null;
+            /** Last Kept */
+            last_kept: number | null;
             /** Last Listed */
             last_listed: number | null;
             /** Last Run At */
             last_run_at: string | null;
+            /** Left Out */
+            left_out: {
+                [key: string]: number;
+            };
             /** New Count */
             new_count: number;
         };
@@ -2857,6 +2971,11 @@ export interface components {
             /** Target */
             target: string;
         };
+        /** FollowSuggested */
+        FollowSuggested: {
+            /** Keys */
+            keys: string[];
+        };
         /** FollowUp */
         FollowUp: {
             /** Company */
@@ -2870,6 +2989,13 @@ export interface components {
             job_id: string;
             /** Title */
             title: string;
+        };
+        /** FollowedOut */
+        FollowedOut: {
+            /** Added */
+            added: number;
+            /** Already */
+            already: number;
         };
         /**
          * FunctionTestOut
@@ -3770,6 +3896,43 @@ export interface components {
             /** Title */
             title?: string | null;
         };
+        /** LinkResult */
+        LinkResult: {
+            /** Company */
+            company?: string | null;
+            /** Job Id */
+            job_id?: string | null;
+            /** Link */
+            link: string;
+            /**
+             * Needs Details
+             * @default false
+             */
+            needs_details: boolean;
+            /** Note */
+            note?: string | null;
+            portal?: components["schemas"]["Portal"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "added" | "already_saved" | "rejected";
+            /** Title */
+            title?: string | null;
+        };
+        /**
+         * LinksIn
+         * @description Job links pasted from LinkedIn, Indeed, Naukri or anywhere else, one per entry.
+         */
+        LinksIn: {
+            /** Links */
+            links: string[];
+        };
+        /** LinksOut */
+        LinksOut: {
+            /** Results */
+            results: components["schemas"]["LinkResult"][];
+        };
         /** LintOut */
         LintOut: {
             /** Flags */
@@ -4065,6 +4228,11 @@ export interface components {
         };
         /** Policy */
         Policy: {
+            /**
+             * Auto Add Limit
+             * @default 30
+             */
+            auto_add_limit: number;
             /**
              * Block If Company Suspicious
              * @default true
@@ -4491,6 +4659,13 @@ export interface components {
         RunOut: {
             /** Kept */
             kept: number;
+            /**
+             * Left Out
+             * @default {}
+             */
+            left_out: {
+                [key: string]: number;
+            };
             /** Listed */
             listed: number;
             /** New */
@@ -4500,6 +4675,11 @@ export interface components {
              * @default 0
              */
             outside_search: number;
+            /**
+             * Source
+             * @default
+             */
+            source: string;
         };
         /**
          * RunStatus
@@ -4901,6 +5081,26 @@ export interface components {
             runtime_ms: number;
             /** Total */
             total: number;
+        };
+        /** SuggestedBoardOut */
+        SuggestedBoardOut: {
+            /** Board */
+            board: string;
+            /** Company */
+            company: string;
+            /** Followed */
+            followed: boolean;
+            /** India */
+            india: number;
+            /** Key */
+            key: string;
+            kind: components["schemas"]["BoardKind"];
+            /** Remote */
+            remote: number;
+            /** Roles */
+            roles: number;
+            /** Tags */
+            tags: string[];
         };
         /**
          * SystemStatus
@@ -6241,6 +6441,72 @@ export interface operations {
             };
         };
     };
+    list_suggested_boards: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuggestedBoardOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    follow_suggested_boards: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FollowSuggested"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FollowedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_jobs: {
         parameters: {
             query?: {
@@ -6343,6 +6609,41 @@ export interface operations {
                 };
                 content: {
                     "text/plain": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_job_links: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinksIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinksOut"];
                 };
             };
             /** @description Validation Error */
@@ -6518,6 +6819,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContactOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    find_contacts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: {
+                cp_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContactsFound"];
                 };
             };
             /** @description Validation Error */

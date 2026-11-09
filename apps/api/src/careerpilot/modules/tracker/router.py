@@ -22,6 +22,8 @@ from careerpilot.modules.tracker.schemas import (
     JobPage,
     JobSummary,
     JobUpdate,
+    LinksIn,
+    LinksOut,
     StatusChange,
 )
 
@@ -56,6 +58,17 @@ async def create_job(
     if not result.created:
         response.status_code = status.HTTP_200_OK
     return JobSummary.model_validate(result.job)
+
+
+@router.post("/jobs/links", operation_id="add_job_links")
+async def add_job_links(
+    body: LinksIn, session: Authenticated, db: DbSession, settings: AppSettings
+) -> LinksOut:
+    """Save pasted job links (LinkedIn, Indeed, Naukri, company pages) without opening them."""
+    results = await service.add_links(
+        db, session.user_id, body.links, today=today_in(settings.timezone)
+    )
+    return LinksOut(results=results)
 
 
 @router.get("/jobs", operation_id="list_jobs")

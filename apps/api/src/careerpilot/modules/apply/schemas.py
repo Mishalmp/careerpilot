@@ -96,6 +96,7 @@ class ApplyItemOut(BaseModel):
 class ApplyQueueOut(BaseModel):
     items: list[ApplyItemOut]
     ready_count: int
+    last_build: list[str]  # what the latest build chose from and why jobs were left out
     policy: Policy
     policy_source: str
     policy_problems: list[str]  # non-empty: the policy file is wrong and nothing is built

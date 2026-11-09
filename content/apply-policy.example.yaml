@@ -2,7 +2,10 @@
 # yours (that file is never committed). Change any value and the next list follows it.
 # There is no "auto submit" setting on purpose: the app prepares and you apply.
 
-daily_limit: 3                  # how many jobs appear in the list each day (1 to 10)
+daily_limit: 3                  # how many jobs appear in the list each day (1 to 100)
+deep_limit: 10                  # of those, how many get web research (pay, interview); the rest are quick items
+auto_add_limit: 30              # new listings from boards you follow copied into the tracker per build (0 = none)
+use_search_profiles: true       # only jobs that fit the searches on the Discover page
 min_match_score: 40             # 0-100 from your CV skills, role titles and freshness
 regions: []                     # for example [India, "Remote (Global)"]; empty means any
 work_modes: []                  # for example [Remote, Hybrid]; empty means any

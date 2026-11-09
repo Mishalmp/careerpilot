@@ -81,6 +81,8 @@ async def refused(fetcher: Fetcher, url: str) -> FetchError:
         "::ffff:10.0.0.1",
         "::ffff:169.254.169.254",
         "64:ff9b::7f00:1",  # NAT64 wrapping 127.0.0.1
+        "64:ff9b::a00:1",  # NAT64 wrapping 10.0.0.1
+        "64:ff9b::a9fe:a9fe",  # NAT64 wrapping the cloud metadata address
         "2002:7f00:1::",  # 6to4 wrapping 127.0.0.1
         "not-an-ip",
         "",
@@ -90,7 +92,17 @@ def test_internal_addresses_are_not_public(address: str) -> None:
     assert not is_public_address(address)
 
 
-@pytest.mark.parametrize("address", [PUBLIC, "8.8.8.8", "1.1.1.1", "2606:4700:4700::1111"])
+@pytest.mark.parametrize(
+    "address",
+    [
+        PUBLIC,
+        "8.8.8.8",
+        "1.1.1.1",
+        "2606:4700:4700::1111",
+        "64:ff9b::14cf:4952",  # NAT64 wrapping 20.207.73.82: ordinary sites on IPv6-only networks
+        "2002:1409:1::",  # 6to4 wrapping 20.9.0.1
+    ],
+)
 def test_public_addresses_are_public(address: str) -> None:
     assert is_public_address(address)
 

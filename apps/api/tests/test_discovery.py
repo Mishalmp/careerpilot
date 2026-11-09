@@ -210,9 +210,9 @@ async def test_running_a_board_fills_the_inbox_and_running_again_adds_nothing(
     source = await add_source(api)
 
     first = (await api.post(f"{DISCOVERY}/sources/{source['id']}/run")).json()
-    assert first == {"listed": 2, "kept": 2, "new": 2, "outside_search": 0}
+    assert first == {**first, "listed": 2, "kept": 2, "new": 2, "outside_search": 0, "left_out": {}}
     second = (await api.post(f"{DISCOVERY}/sources/{source['id']}/run")).json()
-    assert second == {"listed": 2, "kept": 2, "new": 0, "outside_search": 0}
+    assert second == {**second, "listed": 2, "kept": 2, "new": 0, "outside_search": 0}
     assert len(await inbox(api)) == 2
 
     listed = (await api.get(f"{DISCOVERY}/sources")).json()[0]
@@ -288,7 +288,7 @@ async def test_keyword_filters_decide_what_reaches_the_inbox(
     )
     source = await add_source(api, include=["engineer"], exclude=["senior"])
     result = (await api.post(f"{DISCOVERY}/sources/{source['id']}/run")).json()
-    assert result == {"listed": 3, "kept": 1, "new": 1, "outside_search": 0}
+    assert result == {**result, "listed": 3, "kept": 1, "new": 1, "outside_search": 0}
     assert [c["title"] for c in await inbox(api)] == ["Backend Engineer"]
 
 

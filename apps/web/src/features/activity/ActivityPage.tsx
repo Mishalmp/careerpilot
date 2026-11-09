@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   ChevronDown,
   CircleAlert,
+  ClipboardList,
   Clock,
   Cpu,
   DatabaseBackup,
@@ -31,16 +32,48 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-import { type AiCall, type Task, type TaskStatus, useAiCalls, useCancelTask, useRetryFailed, useRetryTask, useTask, useTasks } from "./hooks";
+import {
+  type AiCall,
+  type Task,
+  type TaskStatus,
+  useAiCalls,
+  useCancelTask,
+  useRetryFailed,
+  useRetryTask,
+  useTask,
+  useTasks,
+} from "./hooks";
 
-const KIND: Record<Task["kind"], { label: string; icon: LucideIcon; tone: Tone }> = {
+const KIND: Record<
+  Task["kind"],
+  { label: string; icon: LucideIcon; tone: Tone }
+> = {
   discover: { label: "Read a job board", icon: Radar, tone: "accent" },
-  daily_digest: { label: "Build the daily digest", icon: CalendarCheck, tone: "violet" },
-  backup: { label: "Back up the database", icon: DatabaseBackup, tone: "neutral" },
-  research: { label: "Research interview topics", icon: FlaskConical, tone: "warning" },
-  apply_queue: { label: "Build the daily apply list", icon: ListChecks, tone: "success" },
+  daily_digest: {
+    label: "Build the daily digest",
+    icon: CalendarCheck,
+    tone: "violet",
+  },
+  backup: {
+    label: "Back up the database",
+    icon: DatabaseBackup,
+    tone: "neutral",
+  },
+  research: {
+    label: "Research interview topics",
+    icon: FlaskConical,
+    tone: "warning",
+  },
+  apply_queue: {
+    label: "Build the daily apply list",
+    icon: ListChecks,
+    tone: "success",
+  },
 };
-const STATUS: Record<TaskStatus, { label: string; tone: "neutral" | "accent" | "success" | "danger" }> = {
+const STATUS: Record<
+  TaskStatus,
+  { label: string; tone: "neutral" | "accent" | "success" | "danger" }
+> = {
   queued: { label: "Waiting", tone: "neutral" },
   running: { label: "Running", tone: "accent" },
   succeeded: { label: "Done", tone: "success" },
@@ -49,7 +82,10 @@ const STATUS: Record<TaskStatus, { label: string; tone: "neutral" | "accent" | "
 
 /** "2 min ago" for recent times, a date for old ones. */
 export function ago(iso: string, now = Date.now()): string {
-  const seconds = Math.max(0, Math.round((now - new Date(iso).getTime()) / 1000));
+  const seconds = Math.max(
+    0,
+    Math.round((now - new Date(iso).getTime()) / 1000),
+  );
   if (seconds < 60) return "just now";
   if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
   if (seconds < 86_400) return `${Math.floor(seconds / 3600)} h ago`;
@@ -69,7 +105,11 @@ export function ActivityPage() {
         description="Everything the app does in the background, step by step: tasks, what each attempt did, and every AI call. A failed task can be retried here and continues from where it stopped."
         actions={
           counts && counts.failed > 0 ? (
-            <Button variant="primary" onClick={() => retryAll.mutate()} loading={retryAll.isPending}>
+            <Button
+              variant="primary"
+              onClick={() => retryAll.mutate()}
+              loading={retryAll.isPending}
+            >
               <RotateCw aria-hidden="true" /> Retry all failed ({counts.failed})
             </Button>
           ) : undefined
@@ -82,13 +122,32 @@ export function ActivityPage() {
             type="button"
             aria-pressed={filter === s}
             onClick={() => setFilter(filter === s ? "all" : s)}
-            className={cn("rounded-lg text-left transition-shadow", filter === s && "ring-2 ring-primary")}
+            className={cn(
+              "rounded-lg text-left transition-shadow",
+              filter === s && "ring-2 ring-primary",
+            )}
           >
             <StatTile
               label={STATUS[s].label}
               value={counts ? counts[s] : "-"}
-              icon={s === "failed" ? CircleAlert : s === "running" ? Loader2 : s === "succeeded" ? CheckCircle2 : Clock}
-              tone={s === "failed" ? "danger" : s === "running" ? "accent" : s === "succeeded" ? "success" : "neutral"}
+              icon={
+                s === "failed"
+                  ? CircleAlert
+                  : s === "running"
+                    ? Loader2
+                    : s === "succeeded"
+                      ? CheckCircle2
+                      : Clock
+              }
+              tone={
+                s === "failed"
+                  ? "danger"
+                  : s === "running"
+                    ? "accent"
+                    : s === "succeeded"
+                      ? "success"
+                      : "neutral"
+              }
             />
           </button>
         ))}
@@ -100,13 +159,31 @@ export function ActivityPage() {
           <TabsTrigger value="ai">AI calls</TabsTrigger>
         </TabsList>
         <TabsContent value="tasks">
-          {tasks.isPending && <Skeleton className="h-32" aria-busy="true" aria-label="Loading tasks" />}
-          {tasks.isError && <ErrorState title="Could not load tasks" description={tasks.error.message} onRetry={() => void tasks.refetch()} />}
+          {tasks.isPending && (
+            <Skeleton
+              className="h-32"
+              aria-busy="true"
+              aria-label="Loading tasks"
+            />
+          )}
+          {tasks.isError && (
+            <ErrorState
+              title="Could not load tasks"
+              description={tasks.error.message}
+              onRetry={() => void tasks.refetch()}
+            />
+          )}
           {tasks.data && tasks.data.items.length === 0 && (
             <EmptyState
               icon={<ListChecks aria-hidden="true" />}
-              title={filter === "all" ? "No background work yet" : "Nothing here"}
-              description={filter === "all" ? "Job boards, the digest, the daily apply list, research runs and backups show up here as they run." : "No task has this status."}
+              title={
+                filter === "all" ? "No background work yet" : "Nothing here"
+              }
+              description={
+                filter === "all"
+                  ? "Job boards, the digest, the daily apply list, research runs and backups show up here as they run."
+                  : "No task has this status."
+              }
             />
           )}
           {retryAll.error && (
@@ -134,21 +211,29 @@ function TaskCard({ task }: { task: Task }) {
   const cancel = useCancelTask();
   const kind = KIND[task.kind];
   const progress = task.progress;
-  const pct = progress?.total ? ((progress.done ?? 0) / progress.total) * 100 : null;
+  const pct = progress?.total
+    ? ((progress.done ?? 0) / progress.total) * 100
+    : null;
   const error = retry.error ?? cancel.error;
   return (
-    <li className="rounded-lg border border-border-subtle bg-surface p-4" aria-label={kind.label}>
+    <li
+      className="rounded-lg border border-border-subtle bg-surface p-4"
+      aria-label={kind.label}
+    >
       <div className="flex flex-wrap items-start gap-3">
         <IconChip icon={kind.icon} tone={kind.tone} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-medium">{kind.label}</h3>
             <Badge tone={STATUS[task.status].tone}>
-              {task.status === "running" && <Loader2 className="animate-spin" aria-hidden="true" />}
+              {task.status === "running" && (
+                <Loader2 className="animate-spin" aria-hidden="true" />
+              )}
               {STATUS[task.status].label}
             </Badge>
             <span className="text-xs text-muted-foreground">
-              attempt {task.attempts} of {task.max_attempts} · {ago(task.created_at)}
+              attempt {task.attempts} of {task.max_attempts} ·{" "}
+              {ago(task.created_at)}
             </span>
           </div>
           {task.status === "running" && (
@@ -159,32 +244,70 @@ function TaskCard({ task }: { task: Task }) {
               </p>
             </div>
           )}
-          {task.status === "queued" && task.attempts > 0 && <p className="mt-1 text-xs text-muted-foreground">Next try at {new Date(task.run_after).toLocaleTimeString()}.</p>}
-          {task.error && task.status !== "succeeded" && (
-            <p className="mt-2 flex items-start gap-1.5 text-sm text-danger-text">
-              <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> {task.error}
+          {task.status === "queued" && task.attempts > 0 && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Next try at {new Date(task.run_after).toLocaleTimeString()}.
             </p>
           )}
-          {task.status === "failed" && progress && <p className="mt-1 text-xs text-muted-foreground">Stopped at: {progress.step}</p>}
+          {task.error && task.status !== "succeeded" && (
+            <p className="mt-2 flex items-start gap-1.5 text-sm text-danger-text">
+              <TriangleAlert
+                className="mt-0.5 size-4 shrink-0"
+                aria-hidden="true"
+              />{" "}
+              {task.error}
+            </p>
+          )}
+          {task.status === "failed" && progress && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Stopped at: {progress.step}
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {task.status === "failed" && task.error !== "Cancelled by you." && (
-            <Button size="sm" variant="primary" onClick={() => retry.mutate(task.id)} loading={retry.isPending} aria-label={`Retry: ${kind.label}`}>
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={() => retry.mutate(task.id)}
+              loading={retry.isPending}
+              aria-label={`Retry: ${kind.label}`}
+            >
               <RotateCw aria-hidden="true" /> Retry
             </Button>
           )}
           {task.status === "failed" && task.error === "Cancelled by you." && (
-            <Button size="sm" onClick={() => retry.mutate(task.id)} loading={retry.isPending} aria-label={`Run again: ${kind.label}`}>
+            <Button
+              size="sm"
+              onClick={() => retry.mutate(task.id)}
+              loading={retry.isPending}
+              aria-label={`Run again: ${kind.label}`}
+            >
               <RotateCw aria-hidden="true" /> Run again
             </Button>
           )}
           {task.status === "queued" && (
-            <Button size="sm" onClick={() => cancel.mutate(task.id)} loading={cancel.isPending} aria-label={`Cancel: ${kind.label}`}>
+            <Button
+              size="sm"
+              onClick={() => cancel.mutate(task.id)}
+              loading={cancel.isPending}
+              aria-label={`Cancel: ${kind.label}`}
+            >
               <X aria-hidden="true" /> Cancel
             </Button>
           )}
-          <Button size="sm" variant="ghost" aria-expanded={open} aria-label={`${open ? "Hide" : "Show"} history: ${kind.label}`} onClick={() => setOpen((o) => !o)}>
-            History <ChevronDown className={cn("transition-transform", open && "rotate-180")} aria-hidden="true" />
+          <Button
+            size="sm"
+            variant="ghost"
+            aria-expanded={open}
+            aria-label={`${open ? "Hide" : "Show"} history: ${kind.label}`}
+            onClick={() => setOpen((o) => !o)}
+          >
+            History{" "}
+            <ChevronDown
+              className={cn("transition-transform", open && "rotate-180")}
+              aria-hidden="true"
+            />
           </Button>
         </div>
       </div>
@@ -202,20 +325,47 @@ const EVENT_ICON = {
   info: { Icon: Info, cls: "text-muted-foreground" },
   warning: { Icon: TriangleAlert, cls: "text-warning-text" },
   error: { Icon: CircleAlert, cls: "text-danger-text" },
+  result: { Icon: ClipboardList, cls: "text-accent-text" },
 } as const;
 
 function History({ id }: { id: string }) {
   const detail = useTask(id, true);
-  if (detail.isPending) return <Skeleton className="mt-3 h-16" aria-busy="true" aria-label="Loading history" />;
-  if (detail.isError) return <p role="alert" className="mt-3 text-sm text-danger-text">{detail.error.message}</p>;
+  if (detail.isPending)
+    return (
+      <Skeleton
+        className="mt-3 h-16"
+        aria-busy="true"
+        aria-label="Loading history"
+      />
+    );
+  if (detail.isError)
+    return (
+      <p role="alert" className="mt-3 text-sm text-danger-text">
+        {detail.error.message}
+      </p>
+    );
   return (
-    <ol className="mt-3 flex flex-col gap-1.5 border-l-2 border-border-subtle pl-4" aria-label="History">
+    <ol
+      className="mt-3 flex flex-col gap-1.5 border-l-2 border-border-subtle pl-4"
+      aria-label="History"
+    >
       {detail.data.events.map((e) => {
-        const { Icon, cls } = EVENT_ICON[e.level as keyof typeof EVENT_ICON] ?? EVENT_ICON.info;
+        const { Icon, cls } =
+          EVENT_ICON[e.level as keyof typeof EVENT_ICON] ?? EVENT_ICON.info;
         return (
           <li key={e.id} className="flex items-start gap-2 text-sm">
-            <Icon className={cn("mt-0.5 size-3.5 shrink-0", cls)} aria-hidden="true" />
-            <span className="min-w-0 flex-1">{e.message}</span>
+            <Icon
+              className={cn("mt-0.5 size-3.5 shrink-0", cls)}
+              aria-hidden="true"
+            />
+            <span
+              className={cn(
+                "min-w-0 flex-1",
+                e.level === "result" && "font-medium",
+              )}
+            >
+              {e.message}
+            </span>
             <span className="shrink-0 text-xs text-muted-foreground tabular">
               {e.attempt > 0 ? `#${e.attempt} · ` : ""}
               {new Date(e.at).toLocaleTimeString()}
@@ -230,9 +380,29 @@ function History({ id }: { id: string }) {
 function AiCalls() {
   const [problems, setProblems] = useState(false);
   const calls = useAiCalls(problems);
-  if (calls.isPending) return <Skeleton className="h-32" aria-busy="true" aria-label="Loading AI calls" />;
-  if (calls.isError) return <ErrorState title="Could not load AI calls" description={calls.error.message} onRetry={() => void calls.refetch()} />;
+  if (calls.isPending)
+    return (
+      <Skeleton
+        className="h-32"
+        aria-busy="true"
+        aria-label="Loading AI calls"
+      />
+    );
+  if (calls.isError)
+    return (
+      <ErrorState
+        title="Could not load AI calls"
+        description={calls.error.message}
+        onRetry={() => void calls.refetch()}
+      />
+    );
   const { tokens_today: used, daily_cap: cap, items } = calls.data;
+  const {
+    spent_today_usd: today,
+    spent_month_usd: month,
+    daily_budget_usd: dayBudget,
+    monthly_budget_usd: monthBudget,
+  } = calls.data;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -240,13 +410,26 @@ function AiCalls() {
           <IconChip icon={Cpu} tone="violet" />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">
-              {used.toLocaleString()} of {cap.toLocaleString()} tokens used today
+              ${month.toFixed(2)} of ${monthBudget.toFixed(2)} spent this month;
+              ${today.toFixed(2)} of ${dayBudget.toFixed(2)} today
             </p>
-            <ProgressBar label="Daily AI token budget" value={cap ? (used / cap) * 100 : 0} className="mt-1.5 max-w-sm" />
+            <ProgressBar
+              label="Monthly AI budget"
+              value={monthBudget ? (month / monthBudget) * 100 : 0}
+              className="mt-1.5 max-w-sm"
+            />
+            <p className="mt-1.5 text-xs text-muted-foreground tabular">
+              {used.toLocaleString()} of {cap.toLocaleString()} tokens used
+              today
+            </p>
           </div>
         </div>
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={problems} onCheckedChange={setProblems} aria-label="Only problems" />
+          <Switch
+            checked={problems}
+            onCheckedChange={setProblems}
+            aria-label="Only problems"
+          />
           Only problems
         </label>
       </div>
@@ -258,13 +441,16 @@ function AiCalls() {
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border-subtle bg-surface">
-          <table className="w-full min-w-[40rem] text-sm">
+          <table className="w-full min-w-[44rem] text-sm">
             <thead>
               <tr className="border-b border-border-subtle text-left text-xs text-muted-foreground">
                 <th className="px-4 py-2 font-medium">When</th>
                 <th className="px-4 py-2 font-medium">Feature</th>
                 <th className="px-4 py-2 font-medium">Model</th>
-                <th className="px-4 py-2 text-right font-medium">Tokens in / out</th>
+                <th className="px-4 py-2 text-right font-medium">
+                  Tokens in / out
+                </th>
+                <th className="px-4 py-2 text-right font-medium">Cost</th>
                 <th className="px-4 py-2 text-right font-medium">Time</th>
                 <th className="px-4 py-2 font-medium">Result</th>
               </tr>
@@ -284,16 +470,28 @@ function AiCalls() {
 function CallRow({ call }: { call: AiCall }) {
   return (
     <tr className="border-b border-border-subtle last:border-0 hover:bg-surface-muted">
-      <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">{ago(call.created_at)}</td>
+      <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
+        {ago(call.created_at)}
+      </td>
       <td className="px-4 py-2 font-medium">{call.purpose}</td>
       <td className="px-4 py-2 text-muted-foreground">{call.model}</td>
       <td className="px-4 py-2 text-right tabular">
-        {call.input_tokens.toLocaleString()} / {call.output_tokens.toLocaleString()}
+        {call.input_tokens.toLocaleString()} /{" "}
+        {call.output_tokens.toLocaleString()}
       </td>
-      <td className="px-4 py-2 text-right tabular">{(call.latency_ms / 1000).toFixed(1)} s</td>
+      <td className="px-4 py-2 text-right tabular">
+        ${(call.cost_micro_usd / 1_000_000).toFixed(4)}
+      </td>
+      <td className="px-4 py-2 text-right tabular">
+        {(call.latency_ms / 1000).toFixed(1)} s
+      </td>
       <td className="px-4 py-2">
-        <Badge tone={call.status === "ok" ? "success" : "danger"}>{call.status}</Badge>
-        {call.error ? <span className="ml-2 text-xs text-danger-text">{call.error}</span> : null}
+        <Badge tone={call.status === "ok" ? "success" : "danger"}>
+          {call.status}
+        </Badge>
+        {call.error ? (
+          <span className="ml-2 text-xs text-danger-text">{call.error}</span>
+        ) : null}
       </td>
     </tr>
   );

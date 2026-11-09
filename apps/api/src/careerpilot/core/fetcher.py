@@ -95,10 +95,12 @@ def is_blocked_domain(host: str) -> bool:
     return any(host == d or host.endswith("." + d) for d in BLOCKED_DOMAINS)
 
 
-# NAT64 and 6to4 embed an IPv4 address that could be internal; the ranges are refused outright.
+# NAT64 (64:ff9b::/96, last 4 bytes) and 6to4 (2002::/16, bytes 2 to 6) wrap an IPv4 address that
+# could be internal. Such an address is allowed only when the IPv4 address inside it is public:
+# networks that translate IPv4 sites into IPv6 (DNS64) hand out exactly these for ordinary sites.
 _EMBEDDED_V4_NETWORKS: Final = (
-    ipaddress.IPv6Network("64:ff9b::/96"),
-    ipaddress.IPv6Network("2002::/16"),
+    (ipaddress.IPv6Network("64:ff9b::/96"), slice(12, 16)),
+    (ipaddress.IPv6Network("2002::/16"), slice(2, 6)),
 )
 
 
@@ -111,8 +113,9 @@ def is_public_address(value: str) -> bool:
     if isinstance(address, ipaddress.IPv6Address):
         if address.ipv4_mapped is not None:
             return is_public_address(str(address.ipv4_mapped))
-        if any(address in network for network in _EMBEDDED_V4_NETWORKS):
-            return False
+        for network, where in _EMBEDDED_V4_NETWORKS:
+            if address in network:
+                return is_public_address(str(ipaddress.IPv4Address(address.packed[where])))
     return address.is_global and not (
         address.is_multicast or address.is_reserved or address.is_unspecified
     )

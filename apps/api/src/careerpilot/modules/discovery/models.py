@@ -42,6 +42,9 @@ class DiscoverySource(Base):
     last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_error: Mapped[str | None] = mapped_column(Text)
     last_listed: Mapped[int | None] = mapped_column(Integer)  # jobs on the board at the last run
+    last_kept: Mapped[int | None] = mapped_column(Integer)  # of those, how many fit your searches
+    # Why the others were left out at the last run: {"it is remote, not onsite": 61, ...}
+    last_left_out: Mapped[dict[str, int] | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

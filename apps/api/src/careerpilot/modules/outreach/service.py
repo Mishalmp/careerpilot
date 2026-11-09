@@ -14,11 +14,12 @@ from careerpilot.core.llm import LlmClient, call_llm_json
 from careerpilot.core.prompts import data_block, load_prompt
 from careerpilot.modules.knowledge import service as knowledge_service
 from careerpilot.modules.knowledge.embeddings import Embedder
-from careerpilot.modules.outreach import repository
+from careerpilot.modules.outreach import contacts, repository
 from careerpilot.modules.outreach.enums import Channel, OutreachStatus
 from careerpilot.modules.outreach.lint import LintResult, lint
 from careerpilot.modules.outreach.models import OutreachDraft
 from careerpilot.modules.outreach.schemas import (
+    ContactsFound,
     DraftCreate,
     DraftEdit,
     DraftOut,
@@ -32,7 +33,7 @@ from careerpilot.modules.outreach.schemas import (
 from careerpilot.modules.outreach.workflow import can_move
 from careerpilot.modules.tracker import service as tracker_service
 from careerpilot.modules.tracker.enums import ContactKind, EmailMode
-from careerpilot.modules.tracker.schemas import ApplicationUpdate
+from careerpilot.modules.tracker.schemas import ApplicationUpdate, ContactCreate, ContactOut
 from careerpilot.modules.tracker.service import Contact, Job
 from careerpilot.modules.verification import service as verification_service
 from careerpilot.modules.verification.enums import VerdictLabel
@@ -386,3 +387,42 @@ async def _check_can_approve(
             f"{used} messages were approved today; the limit is {settings.outreach_daily_cap}. "
             "Small volumes keep outreach personal.",
         )
+
+
+async def find_contacts(
+    db: AsyncSession, owner_id: uuid.UUID, job_id: uuid.UUID, fetcher: Fetcher
+) -> ContactsFound:
+    """Read the company's own website for hiring addresses it publishes, and keep them as contacts.
+
+    Rules only (no model, no cost). Each kept address records the page it was found on.
+    """
+    job = await tracker_service.get_job(db, owner_id, job_id)
+    website = job.company.website
+    if not website:
+        raise ProblemError(
+            422, "No company website", "Add the company's website to the job first, then try again."
+        )
+    found, pages_read, notes = await contacts.find_on_site(fetcher, website)
+    have = {c.email.lower() for c in job.company.contacts if c.email}
+    added: list[ContactOut] = []
+    known = 0
+    for address, page in found:
+        if address in have:
+            known += 1
+            continue
+        contact = await tracker_service.add_contact(
+            db,
+            owner_id,
+            job_id,
+            ContactCreate(
+                name=address,
+                role="Published hiring address",
+                email=address,
+                kind=ContactKind.PUBLISHED_BUSINESS,
+                source_url=page,
+            ),
+        )
+        added.append(ContactOut.model_validate(contact))
+    if not found and pages_read:
+        notes.append("None of the pages read shows a careers, jobs, HR or contact address.")
+    return ContactsFound(added=added, already_known=known, pages_read=pages_read, notes=notes)

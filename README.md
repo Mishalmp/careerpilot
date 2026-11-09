@@ -80,6 +80,8 @@ While the app runs, a backup is made every night (14 are kept). Restore always c
 Features that use the model need `ANTHROPIC_API_KEY` in `.env`. Without a key everything still works except the model steps. Once you have one, run a small real request to prove the key, model name and JSON handling work:
 ```bash
 cd apps/api && uv run python -m careerpilot.cli llm-check
+# Telegram: after creating a bot with @BotFather and setting TELEGRAM_BOT_TOKEN, message your bot, then:
+cd apps/api && uv run python -m careerpilot.cli telegram-setup
 ```
 Every model call is capped per day (`CAREERPILOT_LLM_DAILY_TOKEN_CAP`, default 200,000 tokens) and logged in the `llm_calls` table without the prompts. The model calls in this project have only been tested against a scripted stand-in, so treat the first live use as a test.
 

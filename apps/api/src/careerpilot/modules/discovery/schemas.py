@@ -49,7 +49,30 @@ class DiscoverySourceOut(BaseModel):
     last_run_at: datetime | None
     last_error: str | None
     last_listed: int | None
+    last_kept: int | None  # of the listed jobs, how many fit your searches
+    left_out: dict[str, int]  # why the rest did not, with counts
     new_count: int  # listings waiting for your decision
+
+
+class SuggestedBoardOut(BaseModel):
+    key: str  # "greenhouse/okta"
+    kind: BoardKind
+    board: str
+    company: str
+    tags: list[str]
+    roles: int
+    india: int
+    remote: int
+    followed: bool
+
+
+class FollowSuggested(BaseModel):
+    keys: Annotated[list[str], Field(min_length=1, max_length=60)]
+
+
+class FollowedOut(BaseModel):
+    added: int
+    already: int
 
 
 class RunOut(BaseModel):
@@ -57,6 +80,18 @@ class RunOut(BaseModel):
     kept: int  # after your keyword filters
     new: int  # not seen before
     outside_search: int = 0  # kept by your words, but not in the places or ways you search
+    left_out: dict[str, int] = {}  # why, with counts
+    source: str = ""  # whose board this was
+
+
+class Listing(BaseModel):
+    """What a caller may look at to decide whether a waiting listing is worth adding."""
+
+    title: str
+    company: str
+    location: str | None
+    published_on: date | None
+    remote: bool
 
 
 class CandidateOut(BaseModel):

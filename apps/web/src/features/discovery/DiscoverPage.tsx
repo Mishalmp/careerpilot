@@ -30,6 +30,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 import { Feeds } from "./Feeds";
 import { SearchProfiles } from "./SearchProfiles";
+import { SuggestedBoards } from "./SuggestedBoards";
 
 const KINDS = ["greenhouse", "lever", "ashby"] as const;
 
@@ -248,6 +249,16 @@ function SourceRow({ source }: { source: DiscoverySource }) {
         {source.new_count} waiting.
         {!source.enabled && " Paused."}
       </p>
+      {source.last_run_at && source.last_kept !== null && (
+        <p className={muted}>
+          {source.last_kept} of {source.last_listed ?? 0} fit your searches.
+          {Object.keys(source.left_out).length > 0 &&
+            ` Left out: ${Object.entries(source.left_out)
+              .slice(0, 3)
+              .map(([why, n]) => `${n} ${why}`)
+              .join("; ")}.`}
+        </p>
+      )}
       {source.last_error && (
         <p role="alert" className="text-sm text-danger-text">
           Last read failed: {source.last_error}
@@ -287,14 +298,14 @@ function CandidateRow({ candidate }: { candidate: Candidate }) {
           </a>{" "}
           · {candidate.company_name}
           {candidate.location && ` · ${candidate.location}`}
-          {candidate.remote && (candidate.location ? " · remote" : " · remote (where from: not stated)")}
+          {candidate.remote &&
+            (candidate.location
+              ? " · remote"
+              : " · remote (where from: not stated)")}
           {candidate.via && ` · via ${candidate.via}`}
           {candidate.published_on && ` · posted ${candidate.published_on}`}
           {!candidate.listed && (
-            <span className="text-warning-text">
-              {" "}
-              · no longer on the board
-            </span>
+            <span className="text-warning-text"> · no longer on the board</span>
           )}
         </span>
         <span className="flex gap-2">
@@ -367,6 +378,7 @@ export function DiscoverPage() {
       />
       <DigestCard />
       <SearchProfiles />
+      <SuggestedBoards />
       <Feeds followed={sources.data ?? []} />
       <AddSource />
 

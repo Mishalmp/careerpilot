@@ -7,7 +7,7 @@ from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.core.config import Settings
-from careerpilot.core.llm import tokens_used_today
+from careerpilot.core.llm import spend, tokens_used_today
 from careerpilot.modules.system import repository
 from careerpilot.modules.system.schemas import (
     AiCallOut,
@@ -42,6 +42,7 @@ async def build(
     listing = await tasks_service.list_tasks(db, owner_id, None)
     finished = [t.finished_at for t in listing.items if t.finished_at is not None]
     last_backup = _last_backup(settings.backup_dir)
+    money = await spend(db, owner_id, settings, now)
     return SystemStatus(
         checked_at=now,
         database=DatabaseStatus(ok=revision is not None, revision=revision),
@@ -56,6 +57,10 @@ async def build(
             configured=settings.anthropic_api_key is not None,
             tokens_today=await tokens_used_today(db, owner_id),
             daily_cap=settings.llm_daily_token_cap,
+            spent_today_usd=money.today_usd,
+            spent_month_usd=money.month_usd,
+            daily_budget_usd=money.daily_budget_usd,
+            monthly_budget_usd=money.monthly_budget_usd,
         ),
         search=SearchStatus(provider=settings.search_provider, configured=search_configured),
         backups=BackupStatus(
@@ -70,8 +75,13 @@ async def ai_calls(
     db: AsyncSession, owner_id: uuid.UUID, settings: Settings, *, only_problems: bool, limit: int
 ) -> AiCalls:
     rows = await repository.recent_ai_calls(db, owner_id, only_problems=only_problems, limit=limit)
+    money = await spend(db, owner_id, settings)
     return AiCalls(
         items=[AiCallOut.model_validate(r) for r in rows],
         tokens_today=await tokens_used_today(db, owner_id),
         daily_cap=settings.llm_daily_token_cap,
+        spent_today_usd=money.today_usd,
+        spent_month_usd=money.month_usd,
+        daily_budget_usd=money.daily_budget_usd,
+        monthly_budget_usd=money.monthly_budget_usd,
     )

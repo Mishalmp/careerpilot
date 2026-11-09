@@ -58,6 +58,6 @@ class TaskEvent(Base):
     )
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     attempt: Mapped[int] = mapped_column(Integer)
-    level: Mapped[str] = mapped_column(Text)  # info | warning | error
+    level: Mapped[str] = mapped_column(Text)  # info | warning | error | result
     step: Mapped[str | None] = mapped_column(Text)
     message: Mapped[str] = mapped_column(Text)

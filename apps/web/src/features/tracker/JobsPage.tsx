@@ -1,6 +1,14 @@
 "use client";
 
-import { Briefcase, Download, LayoutGrid, Plus, Rows3, Search } from "lucide-react";
+import {
+  Briefcase,
+  Download,
+  LayoutGrid,
+  Link2,
+  Plus,
+  Rows3,
+  Search,
+} from "lucide-react";
 import { useDeferredValue, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +23,7 @@ import { AddJobDialog } from "./AddJobDialog";
 import { useJobs } from "./hooks";
 import { JobsBoard } from "./JobsBoard";
 import { JobsTable } from "./JobsTable";
+import { PasteLinksDialog } from "./PasteLinksDialog";
 import { STATUSES } from "./status";
 import { useStatusChanger } from "./StatusChanger";
 
@@ -28,6 +37,7 @@ const VIEWS = [
 export function JobsPage() {
   const [view, setView] = useState<View>("table");
   const [adding, setAdding] = useState(false);
+  const [pasting, setPasting] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<Status | "">("");
   const q = useDeferredValue(search.trim());
@@ -55,6 +65,9 @@ export function JobsPage() {
               <a href="/api/v1/jobs/export.csv" download>
                 <Download aria-hidden="true" /> Export CSV
               </a>
+            </Button>
+            <Button variant="secondary" onClick={() => setPasting(true)}>
+              <Link2 aria-hidden="true" /> Paste links
             </Button>
             <Button variant="primary" onClick={() => setAdding(true)}>
               <Plus aria-hidden="true" /> Add job
@@ -103,7 +116,9 @@ export function JobsPage() {
               className={cn(
                 "inline-flex h-[calc(var(--control-h)-0.5rem)] items-center gap-1.5 rounded px-2.5 text-[0.8125rem] font-medium",
                 "transition-colors duration-[var(--dur-fast)]",
-                view === id ? "bg-accent-soft text-accent-text" : "text-muted-foreground hover:text-foreground",
+                view === id
+                  ? "bg-accent-soft text-accent-text"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Icon className="size-3.5" aria-hidden="true" /> {label}
@@ -119,7 +134,11 @@ export function JobsPage() {
       )}
 
       {jobs.isPending && (
-        <div className="flex flex-col gap-2" aria-busy="true" aria-label="Loading jobs">
+        <div
+          className="flex flex-col gap-2"
+          aria-busy="true"
+          aria-label="Loading jobs"
+        >
           {[0, 1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-14 w-full" />
           ))}
@@ -169,7 +188,10 @@ export function JobsPage() {
 
       {hasMore && view === "table" && (
         <div>
-          <Button onClick={() => jobs.fetchNextPage()} loading={jobs.isFetchingNextPage}>
+          <Button
+            onClick={() => jobs.fetchNextPage()}
+            loading={jobs.isFetchingNextPage}
+          >
             Load more
           </Button>
         </div>
@@ -181,6 +203,7 @@ export function JobsPage() {
       )}
 
       <AddJobDialog open={adding} onClose={() => setAdding(false)} />
+      <PasteLinksDialog open={pasting} onClose={() => setPasting(false)} />
       {changer.dialog}
     </div>
   );

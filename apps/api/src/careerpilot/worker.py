@@ -32,6 +32,7 @@ from careerpilot.modules.tasks import service as tasks_service
 from careerpilot.modules.tasks.enums import TaskKind
 from careerpilot.modules.tasks.models import Task
 from careerpilot.modules.tasks.service import Handler, TaskFailure
+from careerpilot.modules.telegram import poller as telegram_poller
 
 log = structlog.get_logger()
 
@@ -43,14 +44,28 @@ def make_handlers(
     llm: LlmClient | None = None,
     search: SearchProvider | None = None,
 ) -> Mapping[TaskKind, Handler]:
+    telegram = telegram_poller.make_client(settings)
+
     async def discover(db: AsyncSession, task: Task) -> None:
         await tasks_service.step("Reading the job board")
         try:
-            await discovery_service.run_source(
+            run = await discovery_service.run_source(
                 db, task.owner_id, uuid.UUID(task.payload["source_id"]), fetcher
             )
         except AdapterError as exc:
             raise TaskFailure(str(exc)) from exc
+        await tasks_service.note(
+            f"{run.source}: {run.listed} jobs listed, {run.kept} fit your searches, "
+            f"{run.new} of them new."
+        )
+        if run.left_out:
+            why = "; ".join(f"{n} {reason}" for reason, n in run.left_out.items())
+            await tasks_service.note(f"Left out: {why}.")
+        if run.listed and not run.kept:
+            await tasks_service.warn(
+                "Nothing on this board fits your searches. Free job feeds are mostly remote: "
+                "add an 'India: remote' or 'Abroad remote' search on the Discover page to see them."
+            )
 
     async def daily_digest(db: AsyncSession, task: Task) -> None:
         await tasks_service.step("Building the digest")
@@ -87,6 +102,7 @@ def make_handlers(
             search=search,
             fetcher=fetcher,
         )
+        await telegram_poller.notify_queue_ready(db, task.owner_id, settings, telegram)
 
     return {
         TaskKind.APPLY_QUEUE: apply_queue,
@@ -190,6 +206,12 @@ async def worker_loop(
 ) -> None:
     handlers = make_handlers(fetcher, settings, llm=llm, search=search)
     log.info("worker_started", poll_seconds=settings.worker_poll_seconds)
+
+    async def owner_of(db: AsyncSession) -> uuid.UUID | None:
+        owners = await auth_service.user_ids(db)
+        return owners[0] if owners else None
+
+    chat = asyncio.create_task(telegram_poller.poll_loop(sessionmaker, settings, stop, owner_of))
     while not stop.is_set():
         try:
             await tick(sessionmaker, handlers, settings)
@@ -197,4 +219,7 @@ async def worker_loop(
             log.exception("worker_tick_failed")  # never let one bad pass end the loop
         with contextlib.suppress(TimeoutError):
             await asyncio.wait_for(stop.wait(), timeout=settings.worker_poll_seconds)
+    chat.cancel()
+    with contextlib.suppress(asyncio.CancelledError):
+        await chat
     log.info("worker_stopped")

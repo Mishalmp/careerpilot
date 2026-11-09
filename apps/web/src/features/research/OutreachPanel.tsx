@@ -17,6 +17,14 @@ import {
 
 type Contact = JobDetail["contacts"][number];
 
+/** A mailto: link opens your own mail program with the approved text filled in; you press send. */
+function mailtoLink(draft: OutreachDraft): string {
+  const to = draft.recipient_email
+    ? encodeURIComponent(draft.recipient_email).replace("%40", "@")
+    : "";
+  return `mailto:${to}?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;
+}
+
 function DraftCard({ jobId, draft }: { jobId: string; draft: OutreachDraft }) {
   const move = useMoveOutreach(jobId);
   const edit = useEditOutreach(jobId);
@@ -170,6 +178,11 @@ function DraftCard({ jobId, draft }: { jobId: string; draft: OutreachDraft }) {
             >
               {copied ? "Copied" : "Copy to send myself"}
             </button>
+            {draft.channel === "email" && (
+              <a className={button} href={mailtoLink(draft)}>
+                Open in my mail app
+              </a>
+            )}
             <button
               type="button"
               className={primaryButton}

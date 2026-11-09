@@ -9,15 +9,39 @@ const apiOrigin = process.env.API_ORIGIN ?? "http://127.0.0.1:8010";
 // response. JavaScript gets no network at all. Python and SQL may fetch only their own runtime
 // files, with paths pinned to this app's origin(s) so they cannot call /api (which would carry
 // the session cookie). RUNNER_ORIGINS must list every origin you open the app from.
-const runnerOrigins = (process.env.RUNNER_ORIGINS ?? "http://localhost:3100,http://127.0.0.1:3100").split(",");
+const runnerOrigins = (
+  process.env.RUNNER_ORIGINS ?? "http://localhost:3100,http://127.0.0.1:3100"
+).split(",");
 const onlyPaths = (...paths: string[]) =>
-  runnerOrigins.flatMap((origin) => paths.map((path) => `${origin}${path}`)).join(" ");
+  runnerOrigins
+    .flatMap((origin) => paths.map((path) => `${origin}${path}`))
+    .join(" ");
 
 const workerPolicies = {
-  "/runner/js-worker.js": "default-src 'none'; script-src 'unsafe-eval'; connect-src 'none'",
+  "/runner/js-worker.js":
+    "default-src 'none'; script-src 'unsafe-eval'; connect-src 'none'",
   "/runner/python-worker.js": `default-src 'none'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval'; connect-src ${onlyPaths("/pyodide/", "/runner/harness.py")}`,
   "/runner/sql-worker.js": `default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src ${onlyPaths("/runner/pglite/")}`,
 };
+
+// Policy for the app's own pages (docs: node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md,
+// "Without Nonces"). It stops scripts, frames, forms and requests from going anywhere but this origin,
+// even though inline scripts stay allowed (Next needs them without a nonce). The practice runner's
+// workers are excluded below: each has its own, stricter policy, and a second one would block WebAssembly.
+const isDev = process.env.NODE_ENV === "development";
+const pagePolicy = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' blob: data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+].join("; ");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -40,12 +64,19 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Content-Security-Policy", value: policy }],
       })),
       {
+        source: "/((?!runner/).*)",
+        headers: [{ key: "Content-Security-Policy", value: pagePolicy }],
+      },
+      {
         source: "/:path*",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "same-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
         ],
       },
     ];

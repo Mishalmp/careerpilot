@@ -15,6 +15,7 @@ becomes Applied - Pending, with a follow-up date). CareerPilot has no way to sub
 """
 
 import uuid
+from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -44,6 +45,7 @@ from careerpilot.modules.apply.schemas import (
 from careerpilot.modules.apply.web import JobWeb
 from careerpilot.modules.discovery import service as discovery_service
 from careerpilot.modules.discovery.locations import SearchSpec
+from careerpilot.modules.discovery.schemas import Listing
 from careerpilot.modules.profile import service as profile_service
 from careerpilot.modules.profile.schemas import ProfileOut
 from careerpilot.modules.scoring import service as scoring_service
@@ -117,18 +119,21 @@ async def request_build(
 # --- choosing -------------------------------------------------------------------------------
 
 
-def _allowed(job: JobRecord, policy: Policy, today: date, specs: list[SearchSpec]) -> bool:
-    """The policy's hard rules. A field the post does not state never excludes a job."""
+def _refusal(job: JobRecord, policy: Policy, today: date, specs: list[SearchSpec]) -> str | None:
+    """Why the policy's hard rules refuse a job, in words (None when they allow it).
+
+    A field the post does not state never excludes a job.
+    """
     if policy.regions and job.region is not None and job.region.value not in policy.regions:
-        return False
+        return "outside the regions in your policy"
     if (
         policy.work_modes
         and job.work_mode is not None
         and job.work_mode.value not in policy.work_modes
     ):
-        return False
+        return "not a way of working in your policy"
     if policy.max_age_days and job.posted_on and (today - job.posted_on).days > policy.max_age_days:
-        return False  # an old post is probably filled or closed
+        return f"posted more than {policy.max_age_days} days ago"
     judged = bool(
         specs and (job.location_text or job.work_mode)
     )  # nothing stated: nothing to judge
@@ -138,11 +143,13 @@ def _allowed(job: JobRecord, policy: Policy, today: date, specs: list[SearchSpec
         location=job.location_text,
         remote=job.work_mode is WorkMode.REMOTE,
     ):
-        return False
+        return "outside the places and ways you search"
     skipped = {name.casefold() for name in policy.skip_companies}
     if job.company.name.casefold() in skipped:
-        return False
-    return not (policy.require_apply_link and not (job.apply_url or job.jd_url))
+        return "the company is on your skip list"
+    if policy.require_apply_link and not (job.apply_url or job.jd_url):
+        return "no link to apply"
+    return None
 
 
 async def _open_jobs(db: AsyncSession, owner_id: uuid.UUID, filters: JobFilters) -> list[JobRecord]:
@@ -169,10 +176,18 @@ def _rank(
     content_dir: Path,
     today: date,
     specs: list[SearchSpec],
+    tally: Counter[str] | None = None,
 ) -> list[tuple[JobRecord, matching.Match]]:
+    """Jobs the policy allows with a match at or above the minimum, best first.
+
+    `tally` (if given) is filled with how many jobs were left out and why.
+    """
     ranked: list[tuple[JobRecord, matching.Match]] = []
     for job in jobs:
-        if not _allowed(job, policy, today, specs):
+        reason = _refusal(job, policy, today, specs)
+        if reason is not None:
+            if tally is not None:
+                tally[reason] += 1
             continue
         found = matching.match(
             job_title=job.title,
@@ -184,6 +199,8 @@ def _rank(
         )
         if found.score >= policy.min_match_score:
             ranked.append((job, found))
+        elif tally is not None:
+            tally[f"match below {policy.min_match_score} (the minimum in your policy)"] += 1
     ranked.sort(key=lambda pair: (-pair[1].score, pair[0].title.casefold()))
     return ranked
 
@@ -221,6 +238,25 @@ async def _pool(db: AsyncSession, owner_id: uuid.UUID) -> list[PoolEntry]:
 # --- building -------------------------------------------------------------------------------
 
 
+async def _explain_choice(
+    open_count: int, tally: Counter[str], listed_before: int, available: int
+) -> None:
+    """Write, in plain words, what the build had to choose from and why jobs were left out."""
+    await tasks_service.note(f"Your tracker has {open_count} open job(s) (New or Shortlisted).")
+    if open_count == 0:
+        await tasks_service.note(
+            "Nothing to choose from. Follow job boards on the Discover page, paste job links on "
+            "the Jobs page, or add jobs by hand; boards only add jobs that fit your searches."
+        )
+        return
+    if tally:
+        parts = [f"{n} {why}" for why, n in tally.most_common(5)]
+        await tasks_service.note("Left out: " + "; ".join(parts) + ".")
+    if listed_before:
+        await tasks_service.note(f"{listed_before} good match(es) were already on an earlier list.")
+    await tasks_service.note(f"{available} job(s) are available to put on today's list.")
+
+
 async def build_queue(
     db: AsyncSession,
     owner_id: uuid.UUID,
@@ -238,20 +274,50 @@ async def build_queue(
     profile = await profile_service.get_profile(db, owner_id)
     _need_profile(profile)
 
+    if policy.auto_add_limit:
+        await tasks_service.step("Adding new listings from your boards to the tracker")
+
+        def score(listing: Listing) -> int:
+            # A listing from a board has only a title to judge by. Skills named in a long
+            # description can make a product manager look like a fit, so the title must also be
+            # like a role on your CV before it is copied into your tracker.
+            if not matching.is_development_title(listing.title) or not any(
+                matching.similar_titles(listing.title, t) for t in profile.role_titles
+            ):
+                return 0
+            return matching.match(
+                job_title=listing.title,
+                job_skills=scoring_service.detect_skills(settings.content_dir, listing.title),
+                profile_skills=profile.skills,
+                profile_titles=profile.role_titles,
+                posted_on=listing.published_on,
+                today=today,
+            ).score
+
+        auto = await discovery_service.auto_accept(
+            db,
+            owner_id,
+            fetcher,
+            limit=policy.auto_add_limit,
+            today=today,
+            score=score,
+            minimum=policy.min_match_score,
+        )
+        said = f"Copied {auto.added} new listing{'s' if auto.added != 1 else ''} from the boards "
+        said += "you follow into your tracker."
+        if auto.unwanted:
+            said += f" {auto.unwanted} stayed waiting because their title does not match your CV."
+        if auto.failed:
+            said += f" {auto.failed} could not be added."
+        await tasks_service.note(said)
+
     specs = await discovery_service.search_specs(db, owner_id) if policy.use_search_profiles else []
     already = await repository.listed_job_ids(db, owner_id)
-    candidates = [
-        pair
-        for pair in _rank(
-            await _open_jobs(db, owner_id, JobFilters(statuses=OPEN)),
-            policy,
-            profile,
-            settings.content_dir,
-            today,
-            specs,
-        )
-        if pair[0].id not in already
-    ]
+    open_jobs = await _open_jobs(db, owner_id, JobFilters(statuses=OPEN))
+    tally: Counter[str] = Counter()
+    ranked = _rank(open_jobs, policy, profile, settings.content_dir, today, specs, tally)
+    candidates = [pair for pair in ranked if pair[0].id not in already]
+    await _explain_choice(len(open_jobs), tally, len(ranked) - len(candidates), len(candidates))
     pool = await _pool(db, owner_id)
 
     # An earlier build that stopped part-way (a crash, a restart) leaves items that were listed but
@@ -290,6 +356,9 @@ async def build_queue(
     counted = await repository.count_counted_on(db, owner_id, today)
     remaining = policy.daily_limit - counted
     if remaining <= 0:
+        await tasks_service.note(
+            f"Today's limit of {policy.daily_limit} is already reached ({counted} listed)."
+        )
         return BuildResult(0, held, 0)
 
     listed = examined = 0
@@ -334,6 +403,9 @@ async def build_queue(
         else:
             listed += 1
         await db.commit()
+    await tasks_service.note(
+        f"Listed {listed} job(s) for today; {held} more were held back for a reason shown on them."
+    )
     return BuildResult(listed, held, examined)
 
 
@@ -508,6 +580,7 @@ async def get_queue(
     return ApplyQueueOut(
         items=out,
         ready_count=sum(1 for o in out if o.status is ApplyStatus.READY),
+        last_build=await tasks_service.latest_results(db, owner_id, TaskKind.APPLY_QUEUE),
         policy=policy,
         policy_source=source,
         policy_problems=problems,

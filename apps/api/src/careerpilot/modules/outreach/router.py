@@ -8,6 +8,7 @@ from careerpilot.modules.auth.dependencies import Authenticated
 from careerpilot.modules.knowledge.dependencies import AppEmbedder
 from careerpilot.modules.outreach import service
 from careerpilot.modules.outreach.schemas import (
+    ContactsFound,
     DraftCreate,
     DraftEdit,
     DraftOut,
@@ -95,3 +96,11 @@ async def move_outreach(
 )
 async def delete_outreach(draft_id: uuid.UUID, session: Authenticated, db: DbSession) -> None:
     await service.delete(db, session.user_id, draft_id)
+
+
+@router.post("/jobs/{job_id}/contacts/find", operation_id="find_contacts")
+async def find_contacts(
+    job_id: uuid.UUID, session: Authenticated, db: DbSession, fetcher: AppFetcher
+) -> ContactsFound:
+    """Look for hiring addresses the company publishes on its own website (no model, no cost)."""
+    return await service.find_contacts(db, session.user_id, job_id, fetcher)

@@ -114,3 +114,27 @@ async def test_a_per_call_model_overrides_the_default_and_nothing_else_changes()
         assert body["output_config"] == {"effort": "low"}
         assert not {"thinking", "temperature", "top_p", "top_k"} & set(body)
         assert body["messages"][-1]["role"] == "user"
+
+
+async def test_an_empty_credit_balance_is_named_and_not_asked_again_for_a_while() -> None:
+    calls = 0
+
+    def handler(_: httpx2.Request) -> httpx2.Response:
+        nonlocal calls
+        calls += 1
+        body = {
+            "type": "error",
+            "error": {
+                "type": "invalid_request_error",
+                "message": "Your credit balance is too low to access the Anthropic API.",
+            },
+        }
+        return httpx2.Response(400, json=body)
+
+    client = client_for(handler)
+    for _ in range(3):
+        with pytest.raises(LlmError) as error:
+            await client.complete(system="s", user="u", max_tokens=10)
+        assert error.value.status == 402 and "no credit left" in error.value.message
+        assert "Everything that does not use the model" in error.value.message
+    assert calls == 1  # the second and third did not reach the network

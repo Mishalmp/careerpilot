@@ -243,6 +243,24 @@ async def test_the_daily_cap_stops_the_reading_but_not_the_rest(
     app.state.llm = FakeLlm(reading(), input_tokens=100, output_tokens=50)
     job = await new_job(api)
     assert (await api.post(url(job))).status_code == 200
-    blocked = await api.post(url(job))
+    other = await new_job(api, title="Platform Engineer", jd_text=JD + " Different text.")
+    blocked = await api.post(url(other))
     assert blocked.status_code == 429
-    assert (await api.post(url(job), params={"ai": "false"})).status_code == 200
+    assert (await api.post(url(other), params={"ai": "false"})).status_code == 200
+
+
+async def test_scoring_again_reuses_the_reading_until_the_description_changes(
+    app: FastAPI, api: AsyncClient, content: Path
+) -> None:
+    llm = FakeLlm(reading())
+    app.state.llm = llm
+    job = await new_job(api)
+    first = (await api.post(url(job))).json()
+    again = (await api.post(url(job))).json()
+    assert len(llm.calls) == 1  # the second score paid nothing
+    assert again["reading"] == first["reading"] and again["reading"] is not None
+    assert "jd_hash" not in again["reading"]  # the cache key is not part of the answer
+    changed = await api.patch(f"{JOBS}/{job['id']}", json={"jd_text": JD + " One more line."})
+    assert changed.status_code == 200
+    await api.post(url(job))
+    assert len(llm.calls) == 2

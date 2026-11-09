@@ -1,6 +1,11 @@
 "use client";
 
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { api, unwrap } from "@/lib/api/client";
 import type {
@@ -9,6 +14,7 @@ import type {
   JobCreate,
   JobDetail,
   JobUpdate,
+  LinkResult,
   Region,
   Status,
   WorkMode,
@@ -52,7 +58,11 @@ export function useJob(id: string) {
   return useQuery({
     queryKey: jobKey(id),
     queryFn: async () =>
-      unwrap(await api.GET("/api/v1/jobs/{job_id}", { params: { path: { job_id: id } } })),
+      unwrap(
+        await api.GET("/api/v1/jobs/{job_id}", {
+          params: { path: { job_id: id } },
+        }),
+      ),
   });
 }
 
@@ -63,6 +73,15 @@ export function useCreateJob() {
       const result = await api.POST("/api/v1/jobs", { body });
       return { job: unwrap(result), existed: result.response.status === 200 };
     },
+    onSuccess: () => refresh(),
+  });
+}
+
+export function useAddLinks() {
+  const refresh = useRefreshAfterChange();
+  return useMutation({
+    mutationFn: async (links: string[]): Promise<LinkResult[]> =>
+      unwrap(await api.POST("/api/v1/jobs/links", { body: { links } })).results,
     onSuccess: () => refresh(),
   });
 }
@@ -100,7 +119,10 @@ export function useUpdateJob(id: string) {
   return useMutation({
     mutationFn: async (body: JobUpdate) =>
       unwrap(
-        await api.PATCH("/api/v1/jobs/{job_id}", { params: { path: { job_id: id } }, body }),
+        await api.PATCH("/api/v1/jobs/{job_id}", {
+          params: { path: { job_id: id } },
+          body,
+        }),
       ),
     onSuccess: refresh,
   });
@@ -109,7 +131,10 @@ export function useUpdateJob(id: string) {
 export function useUpdateApplication() {
   const refresh = useRefreshAfterChange();
   return useMutation({
-    mutationFn: async (args: { applicationId: string; body: ApplicationUpdate }) =>
+    mutationFn: async (args: {
+      applicationId: string;
+      body: ApplicationUpdate;
+    }) =>
       unwrap(
         await api.PATCH("/api/v1/applications/{application_id}", {
           params: { path: { application_id: args.applicationId } },
@@ -147,13 +172,29 @@ export function useAddContact(jobId: string) {
   });
 }
 
+export function useFindContacts(jobId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () =>
+      unwrap(
+        await api.POST("/api/v1/jobs/{job_id}/contacts/find", {
+          params: { path: { job_id: jobId } },
+        }),
+      ),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: jobKey(jobId) }),
+  });
+}
+
 export function useDeleteContact(jobId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (contactId: string) => {
-      const { error, response } = await api.DELETE("/api/v1/contacts/{contact_id}", {
-        params: { path: { contact_id: contactId } },
-      });
+      const { error, response } = await api.DELETE(
+        "/api/v1/contacts/{contact_id}",
+        {
+          params: { path: { contact_id: contactId } },
+        },
+      );
       if (!response.ok) unwrap({ error, response });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: jobKey(jobId) }),

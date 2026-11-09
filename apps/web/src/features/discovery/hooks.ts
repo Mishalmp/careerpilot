@@ -26,6 +26,9 @@ function useRefresh() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: SOURCES });
     void queryClient.invalidateQueries({ queryKey: CANDIDATES });
+    void queryClient.invalidateQueries({
+      queryKey: ["discovery", "suggestions"],
+    });
     void queryClient.invalidateQueries({ queryKey: ["tasks"] });
     void queryClient.invalidateQueries({ queryKey: ["digest"] });
   };
@@ -36,6 +39,28 @@ export function useAddSource() {
   return useMutation({
     mutationFn: async (body: NewSource) =>
       unwrap(await api.POST("/api/v1/discovery/sources", { body })),
+    onSuccess: refresh,
+  });
+}
+
+export type SuggestedBoard = components["schemas"]["SuggestedBoardOut"];
+
+export function useSuggestedBoards() {
+  return useQuery({
+    queryKey: ["discovery", "suggestions"],
+    queryFn: async () => unwrap(await api.GET("/api/v1/discovery/suggestions")),
+  });
+}
+
+export function useFollowSuggested() {
+  const refresh = useRefresh();
+  return useMutation({
+    mutationFn: async (keys: string[]) =>
+      unwrap(
+        await api.POST("/api/v1/discovery/suggestions/follow", {
+          body: { keys },
+        }),
+      ),
     onSuccess: refresh,
   });
 }

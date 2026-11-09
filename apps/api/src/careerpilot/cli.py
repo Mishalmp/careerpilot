@@ -231,6 +231,39 @@ def _llm_check(_: argparse.Namespace) -> int:
     return _guarded(action) or status["code"]
 
 
+def _telegram_setup(_: argparse.Namespace) -> int:
+    """Find your chat id: send your bot any message first, then run this."""
+    from careerpilot.core.config import get_settings
+    from careerpilot.core.telegram import TelegramClient, TelegramError
+
+    settings = get_settings()
+    if settings.telegram_bot_token is None:
+        print("Create a bot with @BotFather, then set TELEGRAM_BOT_TOKEN in .env.", file=sys.stderr)
+        return 1
+    client = TelegramClient(settings.telegram_bot_token.get_secret_value())
+
+    async def run() -> int:
+        try:
+            found = [u for u in await client.updates(None, 0) if u.chat_id]
+            if not found:
+                print("No messages yet. Open your bot in Telegram, press Start, send 'hi', retry.")
+                return 1
+            ids = sorted({u.chat_id for u in found})
+            print("Chats that wrote to your bot: " + ", ".join(str(i) for i in ids))
+            print("Yours is the one you just used. Set CAREERPILOT_TELEGRAM_CHAT_ID=<id> in .env")
+            if settings.telegram_chat_id is not None:
+                await client.send(
+                    settings.telegram_chat_id, "CareerPilot is connected. /help lists commands."
+                )
+                print("Sent a test message to the configured chat.")
+            return 0
+        except TelegramError as exc:
+            print(f"Failed: {exc}", file=sys.stderr)
+            return 1
+
+    return asyncio.run(run())
+
+
 def _backup_key(_: argparse.Namespace) -> int:
     from careerpilot.core.backup import generate_key
 
@@ -326,6 +359,9 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("llm-check", help="one small real request to Claude").set_defaults(
         run=_llm_check
     )
+    commands.add_parser(
+        "telegram-setup", help="find your Telegram chat id (message your bot first)"
+    ).set_defaults(run=_telegram_setup)
     commands.add_parser("backup-key", help="make a new backup key").set_defaults(run=_backup_key)
     commands.add_parser("backup", help="write an encrypted backup now").set_defaults(run=_backup)
     restore = commands.add_parser("restore", help="restore a backup into a NEW database")

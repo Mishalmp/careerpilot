@@ -3,7 +3,7 @@ from datetime import date, datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import ColumnElement, delete, func, select, tuple_, update
+from sqlalchemy import ColumnElement, delete, func, or_, select, tuple_, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
@@ -61,6 +61,15 @@ async def find_job_id_by_fingerprint(
 ) -> uuid.UUID | None:
     return await db.scalar(
         select(Job.id).where(Job.owner_id == owner_id, Job.fingerprint == fingerprint)
+    )
+
+
+async def find_job_id_by_link(db: AsyncSession, owner_id: uuid.UUID, url: str) -> uuid.UUID | None:
+    """A job already saved with this link, however its title and company were spelled then."""
+    return await db.scalar(
+        select(Job.id)
+        .where(Job.owner_id == owner_id, or_(Job.apply_url == url, Job.jd_url == url))
+        .limit(1)
     )
 
 

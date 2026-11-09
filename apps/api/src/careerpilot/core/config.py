@@ -21,7 +21,13 @@ class Settings(BaseSettings):
     database_url: str
     allowed_hosts: list[str] = ["localhost", "127.0.0.1"]
     allowed_origins: list[str] = ["http://localhost:3100", "http://127.0.0.1:3100"]
-    cookie_secure: bool = False
+    cookie_secure: bool = False  # MUST be true behind HTTPS (also turns on the HSTS header)
+    # Generic safety nets against a runaway loop or a hostile caller (the login has its own, tighter
+    # throttle): requests per client address per minute (0 = off), and the largest request body.
+    rate_limit_per_minute: int = Field(default=1200, ge=0)
+    max_body_bytes: int = Field(default=12_000_000, ge=1000)
+    # The interactive API docs list every route to whoever can reach the server: off unless asked.
+    expose_api_docs: bool = False
     session_ttl_hours: int = Field(default=24 * 7, ge=1)
     login_max_failures: int = Field(default=5, ge=1)
     login_window_seconds: int = Field(default=900, ge=1)
@@ -57,6 +63,25 @@ class Settings(BaseSettings):
         "jd-reading",
     ]
     llm_daily_token_cap: int = Field(default=200_000, ge=1)
+
+    # Telegram (optional): the daily list and reports go to YOUR chat, and you can answer there.
+    # Create a bot with @BotFather, send it a message, then run `careerpilot telegram-setup`.
+    # Only messages from this one chat id are ever answered; everyone else is ignored.
+    telegram_bot_token: SecretStr | None = Field(
+        default=None, validation_alias="TELEGRAM_BOT_TOKEN"
+    )
+    telegram_chat_id: int | None = None
+    # Money limits, checked BEFORE every call against what the call could cost at most (its
+    # input size plus max_tokens). The monthly one is the real budget; the daily one stops one bad
+    # day (a loop, a huge import) from eating the month. Both are in US dollars.
+    llm_monthly_budget_usd: float = Field(default=12.0, gt=0)
+    llm_daily_budget_usd: float = Field(default=1.0, gt=0)
+    # US dollars per million tokens (input, output), Anthropic's pricing page 2026-11-06. A model
+    # not listed here is priced like the dearest one, so a new model name can never look free.
+    llm_prices: dict[str, tuple[float, float]] = {
+        "claude-haiku-5-5": (0.10, 0.50),
+        "claude-sonnet-5-5": (2.0, 10.0),
+    }
 
     # Outreach stays personal: at most this many messages can be approved per day.
     outreach_daily_cap: int = Field(default=10, ge=1)
@@ -94,7 +119,13 @@ class Settings(BaseSettings):
     research_max_tokens: int = Field(default=80_000, ge=1000)
 
     @field_validator(
-        "anthropic_api_key", "backup_key", "brave_api_key", "tavily_api_key", mode="before"
+        "anthropic_api_key",
+        "telegram_bot_token",
+        "telegram_chat_id",
+        "backup_key",
+        "brave_api_key",
+        "tavily_api_key",
+        mode="before",
     )
     @classmethod
     def _blank_key_means_none(cls, value: object) -> object:

@@ -5,7 +5,7 @@ from typing import Annotated
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from careerpilot.modules.outreach.enums import Channel, OutreachStatus
-from careerpilot.modules.tracker.schemas import Url
+from careerpilot.modules.tracker.schemas import ContactOut, Url
 
 Subject = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 Body = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=3000)]
@@ -105,3 +105,10 @@ class RawVariants(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
     variants: Annotated[list[RawVariant], Field(min_length=1, max_length=2)]
+
+
+class ContactsFound(BaseModel):
+    added: list[ContactOut]  # new published hiring addresses, each with the page it was found on
+    already_known: int  # addresses found that you already had
+    pages_read: int
+    notes: list[str]  # pages that could not be read, and why

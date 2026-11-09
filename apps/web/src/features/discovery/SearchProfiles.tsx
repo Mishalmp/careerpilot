@@ -5,14 +5,27 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";
 import { IconChip } from "@/components/ui/stat";
 import { Switch } from "@/components/ui/switch";
 import { TagInput, ToggleChips } from "@/features/profile/Chips";
 import { REGIONS, WORK_MODES } from "@/features/profile/draft";
 
-import { type NewSearchProfile, type SearchProfile, useCreateSearch, useDeleteSearch, useSearches, useToggleSearch } from "./searchHooks";
+import {
+  type NewSearchProfile,
+  type SearchProfile,
+  useCreateSearch,
+  useDeleteSearch,
+  useSearches,
+  useToggleSearch,
+} from "./searchHooks";
 
 type Preset = { label: string; body: NewSearchProfile };
 
@@ -23,16 +36,38 @@ const PRESETS: Preset[] = [
     body: {
       name: "India on site or hybrid",
       regions: ["India"],
-      cities: ["Bengaluru", "Hyderabad", "Pune", "Chennai", "Mumbai", "Delhi NCR"],
+      cities: [
+        "Bengaluru",
+        "Hyderabad",
+        "Pune",
+        "Chennai",
+        "Mumbai",
+        "Delhi NCR",
+      ],
       work_modes: ["Hybrid", "Onsite"],
     },
   },
-  { label: "India: remote", body: { name: "India remote", regions: ["India"], work_modes: ["Remote"] } },
+  {
+    label: "India: remote",
+    body: { name: "India remote", regions: ["India"], work_modes: ["Remote"] },
+  },
   {
     label: "Dubai: on site or remote",
-    body: { name: "Dubai", regions: ["UAE / Middle East"], cities: ["Dubai"], work_modes: ["Onsite", "Remote"] },
+    body: {
+      name: "Dubai",
+      regions: ["UAE / Middle East"],
+      cities: ["Dubai"],
+      work_modes: ["Onsite", "Remote"],
+    },
   },
-  { label: "Europe and USA: remote", body: { name: "Abroad remote", regions: ["Europe", "USA"], work_modes: ["Remote"] } },
+  {
+    label: "Europe and USA: remote",
+    body: {
+      name: "Abroad remote",
+      regions: ["Europe", "USA"],
+      work_modes: ["Remote"],
+    },
+  },
 ];
 
 export function SearchProfiles() {
@@ -50,16 +85,28 @@ export function SearchProfiles() {
         <div className="min-w-0">
           <CardTitle>Where and how I search</CardTitle>
           <CardDescription className="mt-1">
-            Each search is one combination: regions, cities, and remote, hybrid or on site. A job is kept when it fits <strong>any</strong> of
-            your searches. Cities take any spelling (Bangalore finds Bengaluru). With no search, nothing is filtered.
+            Each search is one combination: regions, cities, and remote, hybrid
+            or on site. A job is kept when it fits <strong>any</strong> of your
+            searches. Cities take any spelling (Bangalore finds Bengaluru). With
+            no search, nothing is filtered.
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {searches.data?.length === 0 && <p className="text-sm text-muted-foreground">No searches yet: every listing is shown. Add one below.</p>}
+        {searches.data?.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            No searches yet: every listing is shown. Add one below.
+          </p>
+        )}
         <ul className="flex flex-col gap-2">
           {searches.data?.map((s) => (
-            <SearchRow key={s.id} search={s} onToggle={(enabled) => toggle.mutate({ id: s.id, enabled })} onDelete={() => remove.mutate(s.id)} busy={toggle.isPending || remove.isPending} />
+            <SearchRow
+              key={s.id}
+              search={s}
+              onToggle={(enabled) => toggle.mutate({ id: s.id, enabled })}
+              onDelete={() => remove.mutate(s.id)}
+              busy={toggle.isPending || remove.isPending}
+            />
           ))}
         </ul>
 
@@ -67,13 +114,21 @@ export function SearchProfiles() {
           <h3 className="text-[0.8125rem] font-medium">Add with one click</h3>
           <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => (
-              <Button key={p.label} size="sm" disabled={create.isPending || have.has(p.body.name)} onClick={() => create.mutate(p.body)}>
+              <Button
+                key={p.label}
+                size="sm"
+                disabled={create.isPending || have.has(p.body.name)}
+                onClick={() => create.mutate(p.body)}
+              >
                 <Plus aria-hidden="true" /> {p.label}
               </Button>
             ))}
           </div>
         </div>
-        <CustomSearch onAdd={(body) => create.mutate(body)} busy={create.isPending} />
+        <CustomSearch
+          onAdd={(body) => create.mutate(body)}
+          busy={create.isPending}
+        />
         {error && (
           <p role="alert" className="text-sm text-danger-text">
             {error.message}
@@ -84,9 +139,22 @@ export function SearchProfiles() {
   );
 }
 
-function SearchRow({ search, onToggle, onDelete, busy }: { search: SearchProfile; onToggle: (on: boolean) => void; onDelete: () => void; busy: boolean }) {
+function SearchRow({
+  search,
+  onToggle,
+  onDelete,
+  busy,
+}: {
+  search: SearchProfile;
+  onToggle: (on: boolean) => void;
+  onDelete: () => void;
+  busy: boolean;
+}) {
   return (
-    <li className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-subtle p-3" aria-label={`Search: ${search.name}`}>
+    <li
+      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-subtle p-3"
+      aria-label={`Search: ${search.name}`}
+    >
       <div className="min-w-0">
         <p className="font-medium">{search.name}</p>
         <div className="mt-1 flex flex-wrap gap-1.5">
@@ -114,10 +182,21 @@ function SearchRow({ search, onToggle, onDelete, busy }: { search: SearchProfile
       </div>
       <div className="flex items-center gap-3">
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={search.enabled} disabled={busy} onCheckedChange={onToggle} aria-label={`Use ${search.name}`} />
+          <Switch
+            checked={search.enabled}
+            disabled={busy}
+            onCheckedChange={onToggle}
+            aria-label={`Use ${search.name}`}
+          />
           {search.enabled ? "On" : "Paused"}
         </label>
-        <Button size="sm" variant="ghost" disabled={busy} onClick={onDelete} aria-label={`Delete search ${search.name}`}>
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={busy}
+          onClick={onDelete}
+          aria-label={`Delete search ${search.name}`}
+        >
           <Trash2 aria-hidden="true" />
         </Button>
       </div>
@@ -125,7 +204,13 @@ function SearchRow({ search, onToggle, onDelete, busy }: { search: SearchProfile
   );
 }
 
-function CustomSearch({ onAdd, busy }: { onAdd: (body: NewSearchProfile) => void; busy: boolean }) {
+function CustomSearch({
+  onAdd,
+  busy,
+}: {
+  onAdd: (body: NewSearchProfile) => void;
+  busy: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [regions, setRegions] = useState<string[]>([]);
@@ -166,14 +251,48 @@ function CustomSearch({ onAdd, busy }: { onAdd: (body: NewSearchProfile) => void
       className="flex flex-col gap-4 rounded-lg border border-border-subtle bg-surface-muted p-4"
     >
       <Field label="Name of this search" required>
-        {(p) => <Input placeholder="e.g. Bengaluru and Hyderabad, hybrid" value={name} onChange={(e) => setName(e.target.value)} {...p} />}
+        {(p) => (
+          <Input
+            placeholder="e.g. Bengaluru and Hyderabad, hybrid"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            {...p}
+          />
+        )}
       </Field>
-      <ToggleChips label="Regions" options={REGIONS} value={regions} onChange={setRegions} />
-      <TagInput label="Cities (for on site and hybrid)" items={cities} onChange={setCities} placeholder="e.g. Bangalore" emptyText="Any city in those regions." />
-      <ToggleChips label="Ways of working" options={WORK_MODES} value={modes} onChange={setModes} />
-      <TagInput label="Title must contain one of" items={keywords} onChange={setKeywords} placeholder="e.g. backend" emptyText="Any title." />
+      <ToggleChips
+        label="Regions"
+        options={REGIONS}
+        value={regions}
+        onChange={setRegions}
+      />
+      <TagInput
+        label="Cities (for on site and hybrid)"
+        items={cities}
+        onChange={setCities}
+        placeholder="e.g. Bangalore"
+        emptyText="Any city in those regions."
+      />
+      <ToggleChips
+        label="Ways of working"
+        options={WORK_MODES}
+        value={modes}
+        onChange={setModes}
+      />
+      <TagInput
+        label="Title must contain one of"
+        items={keywords}
+        onChange={setKeywords}
+        placeholder="e.g. backend"
+        emptyText="Any title."
+      />
       <div className="flex gap-2">
-        <Button type="button" variant="primary" disabled={!ready || busy} onClick={submit}>
+        <Button
+          type="button"
+          variant="primary"
+          disabled={!ready || busy}
+          onClick={submit}
+        >
           Add this search
         </Button>
         <Button type="button" variant="ghost" onClick={() => setOpen(false)}>

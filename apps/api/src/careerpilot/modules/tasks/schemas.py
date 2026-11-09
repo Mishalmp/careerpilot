@@ -18,7 +18,7 @@ class TaskEventOut(BaseModel):
     id: uuid.UUID
     at: datetime
     attempt: int
-    level: str  # info | warning | error
+    level: str  # info | warning | error | result
     step: str | None
     message: str
 

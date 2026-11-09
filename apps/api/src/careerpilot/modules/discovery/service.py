@@ -1,5 +1,9 @@
 import uuid
+from collections import Counter
+from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
+from pathlib import Path
 from typing import Any
 
 from pydantic import ValidationError
@@ -16,7 +20,7 @@ from careerpilot.modules.discovery.adapters import (
     fetch_greenhouse_description,
 )
 from careerpilot.modules.discovery.enums import BoardKind, CandidateStatus
-from careerpilot.modules.discovery.locations import SearchSpec, matches_any
+from careerpilot.modules.discovery.locations import SearchSpec, matches_any, why_outside
 from careerpilot.modules.discovery.models import DiscoveredJob, DiscoverySource, SearchProfile
 from careerpilot.modules.discovery.schemas import (
     AcceptOut,
@@ -25,16 +29,27 @@ from careerpilot.modules.discovery.schemas import (
     DiscoverySourceCreate,
     DiscoverySourceOut,
     DiscoverySourceUpdate,
+    FollowedOut,
+    Listing,
     RunOut,
     SearchProfileIn,
     SearchProfileOut,
     SearchProfileUpdate,
+    SuggestedBoardOut,
 )
+from careerpilot.modules.discovery.suggestions import as_kind, load_suggestions
 from careerpilot.modules.tracker import service as tracker_service
 from careerpilot.modules.tracker.enums import Portal, WorkMode
 from careerpilot.modules.tracker.schemas import JobCreate
 
 MAX_TITLE = 200
+
+
+@dataclass(frozen=True)
+class AutoAdded:
+    added: int
+    failed: int
+    unwanted: int  # left waiting because they scored under the minimum
 
 
 def _not_found(what: str) -> ProblemError:
@@ -64,6 +79,8 @@ def _source_out(source: DiscoverySource, new_count: int) -> DiscoverySourceOut:
         last_run_at=source.last_run_at,
         last_error=source.last_error,
         last_listed=source.last_listed,
+        last_kept=source.last_kept,
+        left_out=source.last_left_out or {},
         new_count=new_count,
     )
 
@@ -94,6 +111,55 @@ async def add_source(
         await db.rollback()
         raise ProblemError(409, "Already added", "That board is already in your list.") from exc
     return _source_out(source, 0)
+
+
+async def suggested(
+    db: AsyncSession, owner_id: uuid.UUID, content_dir: Path
+) -> list[SuggestedBoardOut]:
+    followed = {f"{s.kind.value}/{s.board}" for s in await repository.list_sources(db, owner_id)}
+    return [
+        SuggestedBoardOut(
+            key=b.key,
+            kind=as_kind(b.kind),
+            board=b.board,
+            company=b.company,
+            tags=list(b.tags),
+            roles=b.roles,
+            india=b.india,
+            remote=b.remote,
+            followed=b.key in followed,
+        )
+        for b in load_suggestions(content_dir)
+    ]
+
+
+async def follow_suggested(
+    db: AsyncSession, owner_id: uuid.UUID, content_dir: Path, keys: list[str]
+) -> FollowedOut:
+    """Follow the chosen suggested boards. Only boards from the checked list can be named here."""
+    known = {b.key: b for b in load_suggestions(content_dir)}
+    unknown = [k for k in keys if k not in known]
+    if unknown:
+        raise ProblemError(422, "Not in the suggested list", f"Unknown: {', '.join(unknown[:5])}.")
+    have = {f"{s.kind.value}/{s.board}" for s in await repository.list_sources(db, owner_id)}
+    added = 0
+    for key in dict.fromkeys(keys):
+        if key in have:
+            continue
+        board = known[key]
+        repository.add_source(
+            db,
+            owner_id,
+            kind=as_kind(board.kind),
+            board=board.board,
+            company_name=board.company,
+            include=[],
+            exclude=[],
+            enabled=True,
+        )
+        added += 1
+    await db.commit()
+    return FollowedOut(added=added, already=len(set(keys)) - added)
 
 
 async def update_source(
@@ -166,10 +232,24 @@ async def run_source(
     await repository.touch_seen(
         db, source.id, [j.external_id for j in kept if j.external_id in known], now
     )
+    kept_ids = {id(j) for j in kept}
+    left_out = dict(
+        Counter(
+            why_outside(specs, title=j.title, location=j.location, remote=j.remote)
+            for j in named
+            if id(j) not in kept_ids
+        ).most_common(6)
+    )
     source.last_run_at, source.last_error, source.last_listed = now, None, len(jobs)
+    source.last_kept, source.last_left_out = len(kept), left_out
     await db.commit()
     return RunOut(
-        listed=len(jobs), kept=len(kept), new=inserted, outside_search=len(named) - len(kept)
+        listed=len(jobs),
+        kept=len(kept),
+        new=inserted,
+        outside_search=len(named) - len(kept),
+        left_out=left_out,
+        source=source.company_name,
     )
 
 
@@ -211,7 +291,7 @@ async def accept(
     db: AsyncSession,
     owner_id: uuid.UUID,
     candidate_id: uuid.UUID,
-    fetcher: Fetcher,
+    fetcher: Fetcher | None,
     *,
     today: date,
 ) -> AcceptOut:
@@ -226,7 +306,7 @@ async def accept(
         raise _not_found("Source")
 
     description = candidate.description
-    if description is None and source.kind is BoardKind.GREENHOUSE:
+    if description is None and fetcher is not None and source.kind is BoardKind.GREENHOUSE:
         description = await fetch_greenhouse_description(
             fetcher, source.board, candidate.external_id
         )
@@ -259,6 +339,55 @@ async def accept(
     candidate.status, candidate.job_id = CandidateStatus.ACCEPTED, created.job.id
     await db.commit()
     return AcceptOut(job_id=created.job.id, already_tracked=not created.created)
+
+
+async def auto_accept(
+    db: AsyncSession,
+    owner_id: uuid.UUID,
+    fetcher: Fetcher | None,
+    *,
+    limit: int,
+    today: date,
+    score: Callable[[Listing], int] | None = None,
+    minimum: int = 0,
+) -> AutoAdded:
+    """Copy the best waiting listings (already filtered by your searches) into the tracker.
+
+    With `score`, listings under `minimum` stay waiting for you to look at (they are not added and
+    not dismissed) and the highest scores go first. One listing the tracker will not hold does not
+    stop the rest.
+    """
+    if limit <= 0:
+        return AutoAdded(0, 0, 0)
+    waiting = await repository.list_candidates(db, owner_id, CandidateStatus.NEW, None)
+    ranked: list[tuple[int, DiscoveredJob]] = []
+    unwanted = 0
+    for candidate, source in waiting:
+        points = 0
+        if score is not None:
+            points = score(
+                Listing(
+                    title=candidate.title,
+                    company=candidate.company_name or source.company_name,
+                    location=candidate.location,
+                    published_on=candidate.published_on,
+                    remote=candidate.remote,
+                )
+            )
+            if points < minimum:
+                unwanted += 1
+                continue
+        ranked.append((points, candidate))
+    ranked.sort(key=lambda pair: -pair[0])  # stable: equal scores keep newest first
+    added = failed = 0
+    for _, candidate in ranked[:limit]:
+        try:
+            await accept(db, owner_id, candidate.id, fetcher, today=today)
+            added += 1
+        except ProblemError:
+            failed += 1
+            await db.rollback()
+    return AutoAdded(added, failed, unwanted)
 
 
 async def set_status(

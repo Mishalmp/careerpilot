@@ -1,0 +1,47 @@
+# Company job boards worth following, each checked live on 2026-11-09 (the board exists, is public,
+# and was read successfully by the app's own reader). Counts are a snapshot, not a promise.
+# Public Greenhouse, Lever and Ashby boards only: read once a day through the safe fetcher.
+# `india` = roles whose location names an Indian city or India; `remote` = roles flagged remote.
+# This is a starting list: add any other company by its board name on the Discover page.
+boards:
+  - { kind: greenhouse, board: okta, company: "Okta", tags: [india], roles: 376, india: 104, remote: 0 }
+  - { kind: greenhouse, board: databricks, company: "Databricks", tags: [india], roles: 921, india: 89, remote: 0 }
+  - { kind: greenhouse, board: zscaler, company: "Zscaler", tags: [india], roles: 375, india: 82, remote: 0 }
+  - { kind: greenhouse, board: mongodb, company: "MongoDB", tags: [india], roles: 375, india: 77, remote: 0 }
+  - { kind: lever, board: meesho, company: "Meesho", tags: [india], roles: 53, india: 51, remote: 0 }
+  - { kind: greenhouse, board: stripe, company: "Stripe", tags: [india], roles: 768, india: 44, remote: 0 }
+  - { kind: greenhouse, board: gitlab, company: "GitLab", tags: [india], roles: 250, india: 34, remote: 0 }
+  - { kind: greenhouse, board: fivetran, company: "Fivetran", tags: [india], roles: 166, india: 22, remote: 0 }
+  - { kind: greenhouse, board: toast, company: "Toast", tags: [india], roles: 334, india: 22, remote: 0 }
+  - { kind: lever, board: mindtickle, company: "Mindtickle", tags: [india], roles: 21, india: 19, remote: 0 }
+  - { kind: greenhouse, board: elastic, company: "Elastic", tags: [india], roles: 425, india: 17, remote: 0 }
+  - { kind: greenhouse, board: twilio, company: "Twilio", tags: [india], roles: 129, india: 15, remote: 0 }
+  - { kind: lever, board: cred, company: "CRED", tags: [india], roles: 14, india: 13, remote: 0 }
+  - { kind: ashby, board: snowflake, company: "Snowflake", tags: [india, remote], roles: 369, india: 11, remote: 169 }
+  - { kind: greenhouse, board: coinbase, company: "Coinbase", tags: [india], roles: 283, india: 11, remote: 0 }
+  - { kind: greenhouse, board: airbnb, company: "Airbnb", tags: [india], roles: 205, india: 10, remote: 0 }
+  - { kind: greenhouse, board: druva, company: "Druva", tags: [india], roles: 27, india: 10, remote: 0 }
+  - { kind: ashby, board: clickhouse, company: "ClickHouse", tags: [india, remote], roles: 201, india: 9, remote: 141 }
+  - { kind: greenhouse, board: groww, company: "Groww", tags: [india], roles: 9, india: 9, remote: 0 }
+  - { kind: greenhouse, board: datadog, company: "Datadog", tags: [india], roles: 404, india: 8, remote: 0 }
+  - { kind: greenhouse, board: anthropic, company: "Anthropic", tags: [india], roles: 677, india: 6, remote: 0 }
+  - { kind: ashby, board: cursor, company: "Cursor (Anysphere)", tags: [india, remote], roles: 121, india: 5, remote: 52 }
+  - { kind: greenhouse, board: figma, company: "Figma", tags: [india], roles: 144, india: 5, remote: 0 }
+  - { kind: greenhouse, board: samsara, company: "Samsara", tags: [india], roles: 315, india: 5, remote: 0 }
+  - { kind: greenhouse, board: mixpanel, company: "Mixpanel", tags: [india], roles: 44, india: 4, remote: 0 }
+  - { kind: ashby, board: notion, company: "Notion", tags: [india, remote], roles: 154, india: 2, remote: 89 }
+  - { kind: ashby, board: temporal, company: "Temporal", tags: [india, remote], roles: 81, india: 2, remote: 81 }
+  - { kind: greenhouse, board: grafanalabs, company: "Grafana Labs", tags: [india], roles: 132, india: 2, remote: 0 }
+  - { kind: lever, board: crypto, company: "Crypto", tags: [india], roles: 97, india: 1, remote: 2 }
+  - { kind: greenhouse, board: cockroachlabs, company: "Cockroach Labs", tags: [india], roles: 12, india: 1, remote: 0 }
+  - { kind: greenhouse, board: duolingo, company: "Duolingo", tags: [india], roles: 59, india: 1, remote: 0 }
+  - { kind: greenhouse, board: scaleai, company: "Scale AI", tags: [india], roles: 168, india: 1, remote: 0 }
+  - { kind: greenhouse, board: vercel, company: "Vercel", tags: [india], roles: 87, india: 1, remote: 0 }
+  - { kind: ashby, board: ramp, company: "Ramp", tags: [remote], roles: 169, india: 0, remote: 153 }
+  - { kind: ashby, board: cohere, company: "Cohere", tags: [remote], roles: 124, india: 0, remote: 112 }
+  - { kind: ashby, board: perplexity, company: "Perplexity", tags: [remote], roles: 137, india: 0, remote: 63 }
+  - { kind: ashby, board: supabase, company: "Supabase", tags: [remote], roles: 70, india: 0, remote: 42 }
+  - { kind: ashby, board: sentry, company: "Sentry", tags: [remote], roles: 39, india: 0, remote: 38 }
+  - { kind: ashby, board: linear, company: "Linear", tags: [remote], roles: 32, india: 0, remote: 32 }
+  - { kind: lever, board: spotify, company: "Spotify", tags: [remote], roles: 85, india: 0, remote: 29 }
+  - { kind: ashby, board: replit, company: "Replit", tags: [remote], roles: 28, india: 0, remote: 28 }

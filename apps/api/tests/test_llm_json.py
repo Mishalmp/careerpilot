@@ -101,6 +101,18 @@ async def test_one_repair_attempt_is_made_and_shows_the_model_what_was_wrong(
     assert "could not be used" in llm.calls[1]["user"] and '{"ok": "maybe"}' in llm.calls[1]["user"]
 
 
+async def test_a_reply_cut_off_for_length_is_retried_shorter_without_echoing_it(
+    app: FastAPI, settings: Settings, owner_id: uuid.UUID
+) -> None:
+    llm = FakeLlm(
+        replies=['{"ok": true, "reason": "a very long rea', '{"ok": true, "reason": "r"}'],
+        output_tokens=PROMPT.max_tokens,  # it used every token it was allowed
+    )
+    assert (await run(app, settings, owner_id, llm)).ok is True
+    asked = llm.calls[1]["user"]
+    assert "cut off because it was too long" in asked and "very long rea" not in asked
+
+
 async def test_two_bad_replies_fail_cleanly_without_guessing(
     app: FastAPI, settings: Settings, owner_id: uuid.UUID
 ) -> None:

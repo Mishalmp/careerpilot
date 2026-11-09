@@ -48,6 +48,46 @@ def similar_titles(a: str, b: str) -> bool:
     return len(fa & fb) / min(len(fa), len(fb)) >= 0.5  # share at least half of the shorter one
 
 
+# Engineering-sounding titles that are not software development jobs.
+_NOT_DEVELOPMENT = frozenset(
+    {
+        "sales",
+        "presales",
+        "pre-sales",
+        "support",
+        "customer",
+        "success",
+        "escalation",
+        "solutions",
+        "solution",
+        "account",
+        "technician",
+        "field",
+        "recruiter",
+        "recruiting",
+        "marketing",
+        "hr",
+        "legal",
+        "finance",
+        "accountant",
+        "operations",
+        "implementation",
+        "consultant",
+        "designated",
+        "trainer",
+        "instructor",
+        "writer",
+    }
+)
+
+
+def is_development_title(title: str) -> bool:
+    """True when the title names an engineering role and none of the words that make it a sales,
+    support or other non-development job: "Backend Engineer" yes, "Sales Engineer" no."""
+    words = {w for w in _TOKEN.findall(title.casefold())}
+    return not (words & _NOT_DEVELOPMENT)
+
+
 @dataclass(frozen=True)
 class Match:
     score: int

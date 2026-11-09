@@ -15,10 +15,13 @@ from careerpilot.modules.discovery.schemas import (
     DiscoverySourceCreate,
     DiscoverySourceOut,
     DiscoverySourceUpdate,
+    FollowedOut,
+    FollowSuggested,
     RunOut,
     SearchProfileIn,
     SearchProfileOut,
     SearchProfileUpdate,
+    SuggestedBoardOut,
 )
 
 router = APIRouter(prefix="/discovery", tags=["discovery"])
@@ -27,6 +30,21 @@ router = APIRouter(prefix="/discovery", tags=["discovery"])
 @router.get("/sources", operation_id="list_discovery_sources")
 async def list_sources(session: Authenticated, db: DbSession) -> list[DiscoverySourceOut]:
     return await service.list_sources(db, session.user_id)
+
+
+@router.get("/suggestions", operation_id="list_suggested_boards")
+async def list_suggested(
+    session: Authenticated, db: DbSession, settings: AppSettings
+) -> list[SuggestedBoardOut]:
+    """Company boards that were checked and are worth following (content/job-boards.yaml)."""
+    return await service.suggested(db, session.user_id, settings.content_dir)
+
+
+@router.post("/suggestions/follow", operation_id="follow_suggested_boards")
+async def follow_suggested(
+    body: FollowSuggested, session: Authenticated, db: DbSession, settings: AppSettings
+) -> FollowedOut:
+    return await service.follow_suggested(db, session.user_id, settings.content_dir, body.keys)
 
 
 @router.post("/sources", operation_id="add_discovery_source", status_code=status.HTTP_201_CREATED)

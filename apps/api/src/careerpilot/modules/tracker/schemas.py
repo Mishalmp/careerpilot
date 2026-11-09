@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 from urllib.parse import urlsplit
 
 from pydantic import (
@@ -211,3 +211,24 @@ class JobDetail(JobSummary):
 class JobPage(BaseModel):
     items: list[JobSummary]
     next_cursor: str | None
+
+
+class LinksIn(BaseModel):
+    """Job links pasted from LinkedIn, Indeed, Naukri or anywhere else, one per entry."""
+
+    links: Annotated[list[Annotated[str, StringConstraints(max_length=2000)]], Field(max_length=50)]
+
+
+class LinkResult(BaseModel):
+    link: str
+    status: Literal["added", "already_saved", "rejected"]
+    job_id: uuid.UUID | None = None
+    title: str | None = None
+    company: str | None = None
+    portal: Portal | None = None
+    needs_details: bool = False  # the address did not say the company or the title
+    note: str | None = None
+
+
+class LinksOut(BaseModel):
+    results: list[LinkResult]

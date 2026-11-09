@@ -9,6 +9,7 @@ from decimal import Decimal
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from pydantic import TypeAdapter, ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from careerpilot.core.errors import ProblemError
@@ -16,6 +17,7 @@ from careerpilot.modules.tracker import repository
 from careerpilot.modules.tracker.enums import EventType, Status
 from careerpilot.modules.tracker.filters import JobFilters
 from careerpilot.modules.tracker.identity import job_fingerprint, normalize_company
+from careerpilot.modules.tracker.links import guess_link
 from careerpilot.modules.tracker.models import Application, Contact, Job
 from careerpilot.modules.tracker.progress import Progress, progress_of
 from careerpilot.modules.tracker.schemas import (
@@ -25,7 +27,9 @@ from careerpilot.modules.tracker.schemas import (
     ContactCreate,
     JobCreate,
     JobUpdate,
+    LinkResult,
     StatusChange,
+    Url,
 )
 from careerpilot.modules.tracker.workflow import (
     STAGE,
@@ -33,6 +37,8 @@ from careerpilot.modules.tracker.workflow import (
     InvalidTransition,
     check_transition,
 )
+
+_LINK: TypeAdapter[Url] = TypeAdapter(Url)
 
 # Other modules annotate with this instead of importing the model (the import contract forbids it).
 JobRecord = Job
@@ -312,3 +318,67 @@ async def progress(db: AsyncSession, owner_id: uuid.UUID, timezone: str) -> list
         progress_of(job_id, status, applied_on, history)
         for job_id, status, applied_on, history in rows
     ]
+
+
+async def add_links(
+    db: AsyncSession, owner_id: uuid.UUID, links: Sequence[str], *, today: date
+) -> list[LinkResult]:
+    """Save pasted job links as jobs. The pages are not opened (see `links.py`).
+
+    Each link becomes a job with the portal as its source and the link as both the description
+    and the apply link, so it shows up in the tracker and on the daily list ready to click. The
+    same link twice, or a link already saved, is reported and not duplicated.
+    """
+    results: list[LinkResult] = []
+    seen: set[str] = set()
+    for raw in links:
+        text = raw.strip()
+        if not text:
+            continue
+        try:
+            link = _LINK.validate_python(text)
+        except ValidationError:
+            results.append(
+                LinkResult(
+                    link=text[:200], status="rejected", note="Not a web address (http or https)."
+                )
+            )
+            continue
+        guess = guess_link(link)
+        if guess.url in seen:
+            continue
+        seen.add(guess.url)
+        known_id = await repository.find_job_id_by_link(db, owner_id, guess.url)
+        known = await repository.get_job(db, owner_id, known_id) if known_id else None
+        if known is not None:
+            results.append(
+                LinkResult(
+                    link=guess.url,
+                    status="already_saved",
+                    job_id=known.id,
+                    title=known.title,
+                    company=known.company.name,
+                    portal=guess.portal,
+                )
+            )
+            continue
+        data = JobCreate(
+            company_name=guess.company,
+            title=guess.title,
+            source=guess.portal,
+            jd_url=guess.url,
+            apply_url=guess.url,
+        )
+        created = await create_job(db, owner_id, data, today=today)
+        results.append(
+            LinkResult(
+                link=guess.url,
+                status="added" if created.created else "already_saved",
+                job_id=created.job.id,
+                title=created.job.title,
+                company=created.job.company.name,
+                portal=guess.portal,
+                needs_details=not (guess.company_known and guess.title_known),
+            )
+        )
+    return results

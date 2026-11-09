@@ -20,6 +20,10 @@ class AiStatus(BaseModel):
     configured: bool  # an Anthropic API key is set
     tokens_today: int
     daily_cap: int
+    spent_today_usd: float
+    spent_month_usd: float
+    daily_budget_usd: float
+    monthly_budget_usd: float
 
 
 class SearchStatus(BaseModel):
@@ -56,6 +60,7 @@ class AiCallOut(BaseModel):
     model: str
     input_tokens: int
     output_tokens: int
+    cost_micro_usd: int  # millionths of a US dollar
     latency_ms: int
     status: str  # ok | refused | error
     error: str | None
@@ -65,3 +70,7 @@ class AiCalls(BaseModel):
     items: list[AiCallOut]  # newest first
     tokens_today: int
     daily_cap: int
+    spent_today_usd: float
+    spent_month_usd: float
+    daily_budget_usd: float
+    monthly_budget_usd: float

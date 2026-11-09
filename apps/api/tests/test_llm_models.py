@@ -22,8 +22,8 @@ async def test_bulk_reading_prompts_use_the_light_model_and_judgement_uses_the_d
     app: FastAPI, owner_id: uuid.UUID
 ) -> None:
     llm = FakeLlm("ok")
-    await run(app, owner_id, "research-extract@v1", llm)
-    await run(app, owner_id, "research-extract@v1:repair", llm)  # a repair call stays cheap too
+    await run(app, owner_id, "research-extract@v2", llm)
+    await run(app, owner_id, "research-extract@v2:repair", llm)  # a repair call stays cheap too
     await run(app, owner_id, "ask-notes@v1", llm)
     await run(app, owner_id, "mock-evaluate@v1", llm)
     assert [c["model"] for c in llm.calls] == ["claude-haiku-5-5", "claude-haiku-5-5", None, None]
@@ -44,5 +44,5 @@ async def test_the_light_list_is_a_setting_not_code(app: FastAPI, owner_id: uuid
     )
     llm = FakeLlm("ok")
     await run(app, owner_id, "ask-notes@v1", llm)
-    await run(app, owner_id, "research-extract@v1", llm)
+    await run(app, owner_id, "research-extract@v2", llm)
     assert [c["model"] for c in llm.calls] == ["some-other-model", None]

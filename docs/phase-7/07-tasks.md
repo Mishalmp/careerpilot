@@ -348,6 +348,26 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [ ] | C09 | Company-level question frequency and feeding mock-interview misses into the ranking | C05 | M | Measured on real research runs |
 | [ ] | C10 | Batch review screen for 50 to 100 items (compact rows, keyboard approve, open next 5 links) | C04 | M | Browser test |
 
+## D: money safety, feed-to-list pipeline, links, Telegram, hardening (2026-11-09)
+| Done | ID | Task | Deps | Size | Done when |
+|---|---|---|---|---|---|
+| [x] | D01 | Dollar budgets (daily, monthly) checked before every model call; cost stored per call; shown in Activity and Live status (migration 0023) | none | M | `test_llm_budget.py`; live cost matched the console ($0.022 vs $0.02) |
+| [x] | D02 | Reuse the stored job-description reading; retry a cut-off reply shorter; research prompt v2 (10 items, shorter quotes) | D01 | S | tests; live run $0.011 per job |
+| [x] | D03 | Provider "no credit" reply named, paused ten minutes, other features keep working | none | S | `test_llm.py` |
+| [x] | D04 | Fetcher judges the IPv4 inside NAT64 and 6to4 addresses instead of refusing them (real sites failed on this network) | none | S | `test_fetcher.py` |
+| [x] | D05 | Paste job links (LinkedIn, Indeed, Naukri, company pages), saved from the address, never opened | none | M | `test_job_links.py`, browser spec |
+| [x] | D06 | Find published hiring emails on the company's own site (rules, source kept) and "Open in my mail app" for approved drafts | none | M | `test_contact_discovery.py` |
+| [x] | D07 | Telegram bot: daily list in your chat, approve, skip, save links; only your chat id; no model; no send action | none | L | `test_telegram.py`; **needs a bot token from the owner; never run against the real Telegram** |
+| [x] | D08 | Feed-to-list pipeline: listings that fit the searches and a development title copy into the tracker (`auto_add_limit`); result lines in every build and board read; empty Apply list explains itself (migration 0024) | none | L | `test_pipeline.py`; real run: 8,930 listings read, 80 copied, 35 on the list, 22 in India |
+| [x] | D09 | 41 checked company boards (`content/job-boards.yaml`) with one-click follow | D08 | M | `test_pipeline.py`, browser spec |
+| [x] | D10 | Hardening: API headers and CSP, page CSP, request size and rate caps, API docs off by default, committed-secret scan | none | M | `test_hardening.py`; browser suite |
+| [ ] | D11 | Adzuna (and Jooble) adapter for India on-site coverage | D08 | M | needs the owner's free key; verify India support and terms first |
+| [ ] | D12 | Nonce-based page CSP (dynamic rendering) | D10 | M | browser suite with no violations |
+| [ ] | D13 | CI pipeline and dependency re-check on a schedule (needs a GitHub repository, X09) | none | M | green run |
+| [ ] | D14 | Application-level encryption of CV text and contacts; DB roles (migration vs app) | none | L | design note first |
+| [ ] | D15 | Telegram alerts for failed tasks and budget use; worker heartbeat | D07 | S | test |
+| [ ] | D16 | Batch review screen for 50 to 100 items (C10) | D08 | M | browser test |
+
 ## Changes to the plan
 (Append dated entries here when the plan changes: what, why.)
 - 2026-11-06: plan created.

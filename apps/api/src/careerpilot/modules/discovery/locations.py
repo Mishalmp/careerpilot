@@ -438,6 +438,17 @@ def matches(spec: SearchSpec, *, title: str, location: str | None, remote: bool)
     return Fit(True, "place and way of working fit")
 
 
+def why_outside(specs: list[SearchSpec], *, title: str, location: str | None, remote: bool) -> str:
+    """One plain reason a listing fits none of the searches (empty when it fits, or no searches)."""
+    reasons = [matches(s, title=title, location=location, remote=remote) for s in specs]
+    if not specs or any(r.ok for r in reasons):
+        return ""
+    distinct = list(dict.fromkeys(r.why for r in reasons))
+    if len(distinct) <= 2:
+        return " / ".join(distinct)
+    return f"{distinct[0]} / {distinct[1]} (and {len(distinct) - 2} more reasons)"
+
+
 def matches_any(specs: list[SearchSpec], *, title: str, location: str | None, remote: bool) -> bool:
     """True when there are no searches (nothing is filtered) or any one of them fits."""
     return not specs or any(

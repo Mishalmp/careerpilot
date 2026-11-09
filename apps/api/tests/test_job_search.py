@@ -212,7 +212,8 @@ async def test_a_search_keeps_only_listings_in_your_places_and_ways_of_working(
     )
     assert made.status_code == 201, made.text
     run = (await api.post(f"{DISCOVERY}/sources/{source}/run")).json()
-    assert run == {"listed": 5, "kept": 2, "new": 2, "outside_search": 3}
+    assert (run["listed"], run["kept"], run["new"], run["outside_search"]) == (5, 2, 2, 3)
+    assert sum(run["left_out"].values()) == 3
     titles = {c["location"] for c in (await api.get(f"{DISCOVERY}/candidates")).json()["items"]}
     assert titles == {"Bangalore, India", "Hyderabad (Hybrid)"}
 

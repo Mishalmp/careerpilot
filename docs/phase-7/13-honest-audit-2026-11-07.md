@@ -105,3 +105,14 @@ Still not verified after this run:
 4. Measure the CV reader on 10 CVs and the pay parser on 50 real pages; put the numbers here.
 5. Redesign the remaining pages with the shared components; add the command palette.
 6. Only then start the role-agnostic design (Part A of `12`).
+
+## 7. Second real run and the empty list (2026-11-09)
+
+What the owner saw on Nov 8: an empty Apply list and 19 "Done" tasks with nothing to look at. Cause, found by reading the database: the discovery runs read 456 free-feed jobs, none fitted the single search "India on site or hybrid" (the feeds are almost all remote), so nothing waited; even when something waits, the list is built only from jobs in the tracker, and listings reached the tracker only when accepted by hand; and neither the task history nor the pages said any of this.
+
+Fixes (all tested, then run for real on a scratch copy with the real feeds, 41 checked boards and SearXNG): automatic copy of fitting listings into the tracker, result lines in the history, empty-state explanation, per-board "kept and why not".
+
+Real results, first run: 8,930 listings from 46 sources, 2,933 fitted the searches, 61 copied, 50 listed. **What the real data exposed that tests did not**: (1) the list contained a product manager and "Sales Engineer" jobs, because skills named in a long description outweighed a non-matching title and a plain "Software Engineer" on the CV matched every "X Engineer": auto-add now requires a development-like title (no sales, support, solutions, customer-success words); (2) the "why left out" text said only "fits none of your 4 searches", which explains nothing: it now lists the distinct reasons. After the fixes: 80 copied, 35 listed, 22 of them in India, none with a non-engineering title; a handful of listed titles are still dubious (for example "Manager, Site Reliability Engineer"), because the title rule is deliberately simple.
+
+Still true: nothing from LinkedIn, Indeed, Glassdoor or Naukri is read; India on-site coverage rests on the Indian-hiring companies on the checked list plus pasted links until an Adzuna or Jooble key is added. The Telegram bot was tested only against a fake Bot API.
+

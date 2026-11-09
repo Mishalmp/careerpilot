@@ -190,3 +190,19 @@ def test_the_shipped_example_is_valid_and_has_no_auto_submit() -> None:
     _policy, source = load_policy(REPO_ROOT / "content")
     assert source in ("private/apply-policy.yaml", "apply-policy.example.yaml")
     assert "auto_submit" not in Policy.model_fields
+
+
+def test_sales_and_support_engineers_are_not_development_roles() -> None:
+    from careerpilot.modules.apply.matching import is_development_title
+
+    for yes in ("Backend Engineer", "Senior Software Development Engineer - Python", "SRE II"):
+        assert is_development_title(yes)
+    for no in (
+        "Senior Sales Engineer - Federal",
+        "Product Support Engineer III",
+        "Escalation Engineer",
+        "Customer Success Engineer",
+        "Solutions Architect",
+        "Designated Support Engineer III",
+    ):
+        assert not is_development_title(no)

@@ -122,11 +122,12 @@ modules:
     - { id: "module:auth", title: Auth, summary: "Sign-in, sessions, CSRF.", x: 1100, y: 260 }
     - { id: "core", title: Core, summary: "Shared plumbing: database, config, fetcher, model calls, evidence checks, backups.", x: 550, y: 400 }
     - { id: "module:apply", title: Daily apply list, summary: "Picks a few jobs a day and finds pay and interview information step by step, each with its source. You approve and apply yourself; there is no submit action.", x: 660, y: 400 }
+    - { id: "module:telegram", title: Telegram, summary: "Your own chat as a second front door: the daily list arrives there, and you can approve, skip or save a job link. Only your chat id is answered; nothing is sent anywhere else and the model is never called.", x: 440, y: 400 }
     - { id: "module:research", title: Research, summary: "Finds interview topics and questions for a job: search, fetch, extract, verify quotes, then an inbox you approve.", x: 880, y: 400 }
     - { id: "module:system", title: System status, summary: "A live snapshot: database version, task counts, AI use today, search service and backup age.", x: 0, y: 400 }
     - { id: "module:profile", title: Profile, summary: "Your CV turned into skills, role titles and years by rules; you can edit them. Used to aim research.", x: 220, y: 400 }
     - { id: "module:architecture", title: Architecture explorer, summary: "Serves these diagrams, flows and concept pages, and checks them against the code.", x: 1100, y: 400 }
     - { id: "core:fetcher", title: Safe fetcher, summary: "The only way code reads a web page: private addresses refused, size and time capped, blocked sites refused.", links: ["apps/api/src/careerpilot/core/fetcher.py"], x: 330, y: 530 }
-    - { id: "core:llm", title: Model calls, summary: "Every Claude call goes through here: daily token cap, audit row, validated JSON.", links: ["apps/api/src/careerpilot/core/llm.py"], x: 550, y: 530 }
+    - { id: "core:llm", title: Model calls, summary: "Every Claude call goes through here: token cap, dollar budgets (daily and monthly) checked before the call, audit row with its cost, validated JSON.", links: ["apps/api/src/careerpilot/core/llm.py"], x: 550, y: 530 }
     - { id: "core:evidence", title: Quote check, summary: "A quote a model gives must appear in the fetched page before it is stored.", links: ["apps/api/src/careerpilot/core/evidence.py"], x: 770, y: 530 }
     - { id: "core:backup", title: Backups, summary: "Encrypted backups; restore goes into a new database, never the live one.", links: ["apps/api/src/careerpilot/core/backup.py"], x: 990, y: 530 }
