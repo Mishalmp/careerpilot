@@ -343,7 +343,7 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [x] | C04 | Daily list up to 100: `deep_limit`, quick items, "Research this job" | C02 | M | API and browser tests |
 | [x] | C05 | Interview questions merged across pages, counted and ranked ("Asked on N pages") | R-group | M | Tests |
 | [x] | C06 | Weekly research refresh of live applications, 3 a day, only with a key and search | C05 | S | Test |
-| [ ] | C07 | Adzuna adapter (needs the owner's free key) and Jooble adapter | C02 | M | Fake tests, then a live check with a key |
+| [ ] | C07 | Adzuna adapter (paid: 8 GBP a month for 5,000 calls; only 25 free test calls) and Jooble adapter (key by request form, cost unknown) | C02 | M | Fake tests, then a live check with a key |
 | [ ] | C08 | JSearch or job-alert-email intake for Naukri and LinkedIn listings | C02 | L | Decision first: cost and terms |
 | [ ] | C09 | Company-level question frequency and feeding mock-interview misses into the ranking | C05 | M | Measured on real research runs |
 | [ ] | C10 | Batch review screen for 50 to 100 items (compact rows, keyboard approve, open next 5 links) | C04 | M | Browser test |
@@ -359,9 +359,9 @@ Requirement ids (REQ-nn) are defined in `01-requirements.md`; spec details in `0
 | [x] | D06 | Find published hiring emails on the company's own site (rules, source kept) and "Open in my mail app" for approved drafts | none | M | `test_contact_discovery.py` |
 | [x] | D07 | Telegram bot: daily list in your chat, approve, skip, save links; only your chat id; no model; no send action | none | L | `test_telegram.py`; **needs a bot token from the owner; never run against the real Telegram** |
 | [x] | D08 | Feed-to-list pipeline: listings that fit the searches and a development title copy into the tracker (`auto_add_limit`); result lines in every build and board read; empty Apply list explains itself (migration 0024) | none | L | `test_pipeline.py`; real run: 8,930 listings read, 80 copied, 35 on the list, 22 in India |
-| [x] | D09 | 41 checked company boards (`content/job-boards.yaml`) with one-click follow | D08 | M | `test_pipeline.py`, browser spec |
+| [x] | D09 | 64 checked company boards (41 on 2026-11-09, 23 more on 2026-11-10, 1,180 India roles in total) (`content/job-boards.yaml`) with one-click follow | D08 | M | `test_pipeline.py`, browser spec |
 | [x] | D10 | Hardening: API headers and CSP, page CSP, request size and rate caps, API docs off by default, committed-secret scan | none | M | `test_hardening.py`; browser suite |
-| [ ] | D11 | Adzuna (and Jooble) adapter for India on-site coverage | D08 | M | needs the owner's free key; verify India support and terms first |
+| [ ] | D11 | Adzuna (and Jooble) adapter for India on-site coverage | D08 | M | **not free** (Adzuna's own sign-up page, 2026-11-10); only worth building if the owner decides to pay or Jooble proves free |
 | [ ] | D12 | Nonce-based page CSP (dynamic rendering) | D10 | M | browser suite with no violations |
 | [ ] | D13 | CI pipeline and dependency re-check on a schedule (needs a GitHub repository, X09) | none | M | green run |
 | [ ] | D14 | Application-level encryption of CV text and contacts; DB roles (migration vs app) | none | L | design note first |

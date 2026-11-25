@@ -4,10 +4,46 @@ Job application tracker, interview prep, an in-browser practice editor, and a pl
 
 Status: Phase 6. Track jobs, follow the 45-day prep plan, practise 28 problems in an in-browser editor (Python, JavaScript, TypeScript, SQL), ask questions of your own notes with cited answers, and let Claude Desktop or Claude Code use your tracker through an MCP server. Each job page also checks whether the company looks genuine (with quoted evidence), scores the fit against your profile, collects interview intel, and keeps outreach drafts that need your approval (nothing is ever sent for you). A mock interviewer asks and scores questions on a job or topic. Follow companies' public job boards (Greenhouse, Lever, Ashby): new listings wait in an inbox until you add them to the tracker, and a daily digest summarises the day. Insights show your funnel and prep progress, an offer calculator compares offers in rupees, a story bank holds interview stories, and encrypted nightly backups can be restored into a fresh database. Learn how the last two are built in [docs/learn](docs/learn).
 
-**Next (Phase 7, planned, not built):** new blue design system with light and dark modes, a learning platform that researches interview topics for each job, an interactive architecture explorer, and a hardening pass. Everything is specified in [docs/phase-7](docs/phase-7/README.md); resume from [docs/phase-7/STATUS.md](docs/phase-7/STATUS.md).
+**Phase 7 (in progress):** blue design system with light and dark modes, an account-setup wizard, a daily apply list built from job boards and feeds, an Activity page showing every background step and AI cost, Telegram control, and a security pass. What is done and what is not: [docs/phase-7/STATUS.md](docs/phase-7/STATUS.md).
 
 ## Run it anywhere
 Whole product in containers (API, worker, web, Postgres), or native for development: step-by-step for Windows, macOS and Linux, backups you can carry to another machine, and a new-laptop checklist are in [docs/setup](docs/setup/README.md).
+
+## Quick start on Windows (Command Prompt)
+One-time installs: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (start it and wait until it says Running), [Python 3.12](https://www.python.org/downloads/) (tick **Add python.exe to PATH**), [Node 22](https://nodejs.org/), then `python -m pip install uv`.
+
+Open **Command Prompt** (Start menu, type `cmd`) and run:
+```bat
+cd /d D:\careerpilot
+start.bat
+```
+`start.bat` does everything: starts the database (and the search service), installs what is missing the first time (a few minutes), updates the database schema, opens the API and the web app in two console windows, waits until they answer, and opens http://localhost:3100.
+
+First time only, create your login (it asks for a password of 12+ characters):
+```bat
+create-user.bat you@example.com
+```
+then run `start.bat` again (it opens the browser once a user exists).
+
+| Command | What it does |
+|---|---|
+| `start.bat` | Start everything. Safe to run again: what already runs is left alone. |
+| `stop.bat` | Stop the API, the web app and the containers. Your data is kept. |
+| `status.bat` | Show what is running and the API's health checks. |
+| `create-user.bat you@example.com` | Create your login (once). |
+| `reset-password.bat you@example.com` | Set a new password and sign every session out. |
+
+Keep the two console windows (API, Web) open while you use the app; closing one stops that part. Your settings and keys live in `.env` in this folder (never committed): `ANTHROPIC_API_KEY=` for Claude, `TELEGRAM_BOT_TOKEN=` and `CAREERPILOT_TELEGRAM_CHAT_ID=` for Telegram. Restart with `stop.bat` then `start.bat` after changing it.
+
+| If you see | Do |
+|---|---|
+| "Docker Desktop is not running" | Open Docker Desktop, wait for "Running", run `start.bat` again. |
+| "uv ... not recognized" or "The uv tool is missing" | `python -m pip install uv` |
+| The web window says port 3100 is in use | Run `stop.bat`, then `start.bat`. |
+| Page loads but everything errors | Run `status.bat`: "ready" must show for the API. If not, look at the API window. |
+| First start is slow | Normal: the web app compiles pages the first time you open them. |
+
+The same steps by hand, and macOS or Linux, are in the sections below and in [docs/setup](docs/setup/README.md).
 
 ## Requirements
 Docker Desktop, Python 3.12, Node 22, and `uv` (`pip install uv`).

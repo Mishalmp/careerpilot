@@ -1,7 +1,35 @@
-# secrets and local state
+# secrets and local state (a leaked key stays in git history forever: ignore first, commit after)
 .env
+.env.*
+!.env.example
 *.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.keystore
+id_rsa*
+id_ed25519*
 backups/
+*.dump
+*.sql.gz
+*.bak
+
+# the owner's incident evidence, screenshots and exports are never committed
+anthropic-incident-*/
+*.eml
+
+# editor, OS and tool output
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+.mypy_cache/
+.hypothesis/
+.import_linter_cache/
+test-results/
+playwright-report/
+.claude/settings.local.json
 
 # personal source material, migrated into content/ in Phase 1 and never committed
 resume-kit/

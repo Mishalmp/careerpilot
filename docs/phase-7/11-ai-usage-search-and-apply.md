@@ -168,8 +168,8 @@ No live Claude call (E01). Tavily and Brave not called with real keys. The `effo
 | Company boards (Greenhouse, Lever, Ashby) | built, live-tested | one request per board per day; you must know the company's board name |
 | Free feeds: Remote OK, Remotive, We Work Remotely, Himalayas, Arbeitnow | built (checked live for shape on 2026-11-08) | no key. Terms: link back and name the source (shown on each job); Remotive delays jobs 24 h and asks for at most 4 reads a day (we read once) |
 | LinkedIn, Indeed, Glassdoor, Naukri | **not read, by design** | their terms forbid automation; scraping gets accounts banned. Add such a job yourself from the Jobs page with its link and the app researches it |
-| Adzuna API (free key; India among its countries) | not built, needs your key | a search API: keywords and cities from your searches. Official limits not verified (sources disagree: 250 a day or about 1,000 a month) |
-| Jooble API (free key) | not built, needs your key | POST search; India and UAE coverage not confirmed |
+| Adzuna API (**paid**: 8 GBP a month for 5,000 calls a month and 500 a day; the free plan is 25 test calls) | not built; earlier text called this a free key, which was wrong | a search API: keywords and cities from your searches. Official limits not verified (sources disagree: 250 a day or about 1,000 a month) |
+| Jooble API (key by request form; price and limits not stated on its page) | not built | POST search; India and UAE coverage not confirmed |
 | JSearch (Google for Jobs data, includes big boards) | not built | small free plan, paid beyond; a licensed way to see listings that also appear on LinkedIn or Indeed |
 | Job-alert emails forwarded to the app | not built | would cover Naukri and LinkedIn alerts without reading their sites |
 
